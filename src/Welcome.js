@@ -1,5 +1,5 @@
 import React from 'react';
-import DeckGL from 'deck.gl';
+// import DeckGL from 'deck.gl';
 import MapGL, { NavigationControl, FlyToInterpolator } from 'react-map-gl';
 import centroid from '@turf/centroid';
 import bbox from '@turf/bbox';
@@ -20,6 +20,7 @@ import './App.css';
 import Tooltip from './components/Tooltip';
 import { sfType } from './geojsonutils';
 import { isNumber } from './JSUtils';
+import DeckGL from './DeckGL';
 
 const osmtiles = {
   "version": 8,
@@ -292,6 +293,7 @@ export default class Welcome extends React.Component {
       tooltip:
         // react did not like x and y props.
         <Tooltip
+          key={x + y + ""}
           isMobile={isMobile()}
           topx={x} topy={y} hoveredObject={hoveredObject} />
     })
@@ -351,39 +353,14 @@ export default class Welcome extends React.Component {
           visibility: typeof mapStyle === 'string' &&
             mapStyle.endsWith("No map-v9") ? 'hidden' : 'visible'
         }} />
-        <MapGL
-          // key={height+width} //causes layer to disappear
-          ref={ref => {
-            // save a reference to the mapboxgl.Map instance
-            this.map = ref && ref.getMap();
-          }}
-          mapStyle={mapStyle}
-          onViewportChange={(viewport) => {
-            this._updateURL(viewport)
-            this.setState({ viewport })
-          }}
-          height={window.innerHeight - 54 + 'px'}
-          width={window.innerWidth + 'px'}
-          //crucial bit below
-          viewState={viewport ? viewport : initialViewState}
-        // mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
-        >
-          <div className='mapboxgl-ctrl-top-right' style={{
-            zIndex: 9
-          }}>
-            <NavigationControl
-              {...viewport}
-              onViewportChange={viewport => this.setState({ viewport })}
-            />
-          </div>
-          <DeckGL
-            viewState={viewport ? viewport : initialViewState}
-            initialViewState={initialViewState}
-            layers={this.state.layers}
-          >
-            {tooltip}
-          </DeckGL>
-        </MapGL>
+        <DeckGL
+          viewport={viewport || false}
+          data={this.state.filtered}
+          location={this.props.location}
+          layers={this.state.layers}
+          mapCallback={(map) => (this.map = map)}
+        />
+        {tooltip}
         <DeckSidebarContainer
           layerStyle={layerStyle}
           isMobile={isMobile()}
