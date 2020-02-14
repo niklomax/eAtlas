@@ -9,29 +9,7 @@ import {
 } from './utils';
 import history from './history';
 
-const osmtiles = {
-  "version": 8,
-  "sources": {
-    "simple-tiles": {
-      "type": "raster",
-      "tiles": [
-        // "http://tile.openstreetmap.org/{z}/{x}/{y}.png",
-        // "http://b.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        "http://tile.stamen.com/toner/{z}/{x}/{y}.png"
-      ],
-      "tileSize": 256
-    }
-  },
-  "layers": [{
-    "id": "simple-tiles",
-    "type": "raster",
-    "source": "simple-tiles",
-  }]
-};
 const URL = (process.env.NODE_ENV === 'development' ? Constants.DEV_URL : Constants.PRD_URL);
-
-// Set your mapbox access token here
-const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 export default class DeckGLMap extends React.Component {
   constructor(props) {
@@ -56,7 +34,6 @@ export default class DeckGLMap extends React.Component {
     }
 
     this.state = {
-      mapStyle: MAPBOX_ACCESS_TOKEN ? "mapbox://styles/mapbox/dark-v9" : osmtiles,
       initialViewState: init,
       subsetBoundsChange: false,
       lastViewPortChange: new Date(),
@@ -104,37 +81,21 @@ export default class DeckGLMap extends React.Component {
 
   }
 
-  // static getDerivedStateFromProps(props, state) {
-  //   if (props.viewport) {
-  //     const nvp = props.viewport;
-  //     Object.keys(state.viewport).map(e => (
-  //       nvp[e] = props.viewport[e]
-  //     ))
-  //     console.log(nvp);
-      
-  //     return {
-  //       viewport: nvp
-  //     }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if (JSON.stringify(nextState.viewport) !==
+  //     JSON.stringify(this.state.viewport)) {
+  //     return true;
   //   }
-  //   return null
+  //   if (nextProps.data && this.props.data &&
+  //     this.props.data.length === nextProps.data.length) {
+  //     return false;
+  //   }
+  //   return true;
   // }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (JSON.stringify(nextState.viewport) !==
-      JSON.stringify(this.state.viewport)) {
-      return true;
-    }
-    if (nextProps.data && this.props.data &&
-      this.props.data.length === nextProps.data.length) {
-      return false;
-    }
-    return true;
-  }
-
   render() {
-    const { viewport, initialViewState,
-      mapStyle } = this.state;
-    const { mapCallback } = this.props;
+    const { viewport, initialViewState } = this.state;
+    const { mapCallback, mapStyle } = this.props;
     return (
       <MapGL
         key="mainmap"

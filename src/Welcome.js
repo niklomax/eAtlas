@@ -1,6 +1,6 @@
 import React from 'react';
 // import DeckGL from 'deck.gl';
-import MapGL, { NavigationControl, FlyToInterpolator } from 'react-map-gl';
+import { FlyToInterpolator } from 'react-map-gl';
 import centroid from '@turf/centroid';
 import bbox from '@turf/bbox';
 
@@ -339,7 +339,7 @@ export default class Welcome extends React.Component {
   }
 
   render() {
-    const { tooltip, viewport, initialViewState,
+    const { tooltip, viewport,
       loading, mapStyle, alert,
       layerStyle, geomType, legend } = this.state;
     // console.log(geomType, legend);
@@ -359,6 +359,7 @@ export default class Welcome extends React.Component {
           location={this.props.location}
           layers={this.state.layers}
           mapCallback={(map) => (this.map = map)}
+          mapStyle={mapStyle}
         />
         {tooltip}
         <DeckSidebarContainer
