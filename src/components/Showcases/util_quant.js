@@ -7,7 +7,7 @@ const URL = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
 
 const fetchQuant = (callback) => {
   const fullURL = URL + '/api/quant';
-  console.log(fullURL);
+  // console.log(fullURL);
 
   fetchData(fullURL, (data, error) => {
     if (!error && data.length == 2) {
@@ -30,7 +30,7 @@ const fetchQuant = (callback) => {
         }
       })
       collection = helpers.featureCollection(collection);
-      console.log(collection);
+      // console.log(collection);
       
       callback && callback(collection)
     } else {

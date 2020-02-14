@@ -19,7 +19,7 @@ const W = 250;
  * @param {Object} options 
  */
 const popPyramid = (options) => {
-  if (!options || !options.data || !options.data[0] || 
+  if (!options || !options.data || !options.data[0] ||
     !options.data[0].properties.date ||
     !options.data[0].properties.sex_of_casualty) return;
   const mf = propertyCountByProperty(options.data, "sex_of_casualty",
@@ -45,27 +45,17 @@ const popPyramid = (options) => {
       y0: i + 1
     })
   })
-  // const d = [Array.apply(null, { length: 9 })
-  //   .map(Number.call, Number).map(d => d + 2009)]
-  //   .map((e, i) =>
-  //     ({
-  //       x: i % 2 ? 1 : -1,
-  //       x0: (i % 2 ? 1 : -1) * (i + 5),
-  //       y: e === 0 ? 2009 : e,
-  //       y0: i % 2 ? (e - 1 + 5) : e + 5
-  //     })
-  //   )
   return (
     <XYPlot
       margin={{ left: options.margin || 60 }} // default is 40
       height={options.plotStyle && options.plotStyle.height || W}
       width={options.plotStyle && options.plotStyle.width || W} >
       <HorizontalRectSeries
-        color="red"
+        color='rgb(18, 147, 154)'
         stroke='black'
         data={mf_array_female} />
       <HorizontalRectSeries
-        color="blue"
+        color='rgb(239, 93, 40)'
         stroke='black'
         data={mf_array_male} />
 

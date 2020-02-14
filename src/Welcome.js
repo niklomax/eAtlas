@@ -1,15 +1,35 @@
+/**
+ * Main entry to the application.
+ * 
+ * The crucial bits are:
+ * 
+     this.state = {
+      data,            <= main data holding param   
+      layers: [],      <= mapgl layers object
+      initialViewState:<= deckgl/mapgl initial state object
+      legend: false    <= map legend to avoid rerender.
+    }
+ * and
+ * DeckSidebarContainer which holds DeckSidebar object itself.
+ * 
+ * Main funcitons:
+ * _generateLayer which is the main/factory of filtering state
+ * of the map area of the application.
+ * 
+ */
 import React from 'react';
 // import DeckGL from 'deck.gl';
 import { FlyToInterpolator } from 'react-map-gl';
 import centroid from '@turf/centroid';
 import bbox from '@turf/bbox';
+import _ from 'underscore';
 
 import {
   fetchData, generateDeckLayer,
   getParamsFromSearch, getBbx,
   isMobile, colorScale,
   colorRanges,
-  convertRange, getMin, getMax
+  convertRange, getMin, getMax, isURL
 } from './utils';
 import Constants from './Constants';
 import DeckSidebarContainer from
@@ -108,7 +128,15 @@ export default class Welcome extends React.Component {
     this._fetchAndUpdateState()
   }
 
-  _fetchAndUpdateState(aURL) {
+  /**
+   * Main function to fetch data and update state.
+   * 
+   * @param {String} aURL to use if not default `/api/stats19` is used.
+   * @param {Object} customError to use in case of urlCallback object/urls.
+   */
+  _fetchAndUpdateState(aURL, customError) {
+    if(aURL && !isURL(aURL)) return;
+    if(customError && typeof(customError) !== 'object') return;
     // TODO: more sanity checks?
     const fullURL = aURL ?
       // TODO: decide which is better.
@@ -122,7 +150,7 @@ export default class Welcome extends React.Component {
         this.setState({
           loading: false,
           data: data,
-          alert: null
+          alert: customError || null
         })
         this._fitViewport(data)
         this._generateLayer()
@@ -142,12 +170,15 @@ export default class Welcome extends React.Component {
    * Welcome should hold own state in selected as:
    * {property: Set(val1, val2), ...}.
    * 
-   * @param {*} radius specific to changing geoms
-   * @param {*} elevation specific to changing geoms
-   * @param {*} filter multivariate filter of properties
-   * @param {*} cn short for colorName passed from callback
+   * @param {*} values includes
+   * radius: specific to changing geoms
+   * elevation: specific to changing geoms
+   * filter: multivariate filter of properties
+   * cn: short for colorName passed from callback
    */
-  _generateLayer(radius, elevation, filter, cn) {
+  _generateLayer(values  = {}) {
+    const {radius, elevation, filter, cn} = values;
+    
     if(filter && filter.what === 'mapstyle') {
       this.setState({
         mapStyle: !MAPBOX_ACCESS_TOKEN ? osmtiles :
@@ -163,12 +194,16 @@ export default class Welcome extends React.Component {
     if (!data) return;
     if (filter && filter.what === "%") {
       data = data.slice(0, filter.selected / 100 * data.length)
+    } 
+    // to optimize the search keep state as the source of truth
+    if (this.state.coords) {
+      data = this.state.filtered;
     }
     const geomType = sfType(data[0]).toLowerCase();
     //if resetting a value
     if (filter && filter.selected !== "") {
       data = data.filter(
-        d => {
+        d => {        
           if (filter.what === 'multi') {
             // go through each selection
             const selected = filter.selected;
@@ -180,6 +215,13 @@ export default class Welcome extends React.Component {
               if (!selected[each].has(nextValue)) {
                 return false
               }
+            }
+          }
+          if (filter.what === 'coords') {
+            // coords in 
+            if (_.difference(filter.selected || this.state.coords, 
+              d.geometry.coordinates.flat()).length !== 0) {
+              return false;
             }
           }
           return (true)
@@ -204,10 +246,23 @@ export default class Welcome extends React.Component {
       layerStyle = "line"
       // https://github.com/uber/deck.gl/blob/master/docs/layers/line-layer.md
       options.getColor = d => [235, 170, 20]
-      // options.getSourceColor = d => [15, 0, 239]
-      // options.getTargetColor = d => [+(d.properties.hs2), 140, 0]
-      options.getSourcePosition = d => d.geometry.coordinates[0] // geojson
-      options.getTargetPosition = d => d.geometry.coordinates[1] // geojson
+      options.getPath = d => d.geometry.coordinates
+      options.onClick = (info) => {
+        // console.log(info);
+        if(info && info.hasOwnProperty('coordinate')) {
+          if(['path', 'arc', 'line'].includes(this.state.layerStyle) &&
+          info.object.geometry.coordinates) {        
+            this._generateLayer({filter: {what: 'coords', 
+            selected: info.object.geometry.coordinates[0]}})
+          }
+        }
+      }
+      if(layerStyle === 'line') {
+        // options.getSourceColor = d => [Math.sqrt(+(d.properties.base)) * 1000, 140, 0]
+        // options.getTargetColor = d => [Math.sqrt(+(d.properties.hs2)) * 1e13, 140, 0]
+        options.getSourcePosition = d => d.geometry.coordinates[0] // geojson
+        options.getTargetPosition = d => d.geometry.coordinates[1] // geojson
+      }
       let columnNameOrIndex =
         (filter && filter.what === 'column' && filter.selected) ||
         column || 1;
@@ -217,9 +272,13 @@ export default class Welcome extends React.Component {
         const max = getMax(colArray);        
         const min = getMin(colArray)
         options.getWidth = d => {
+          let newMax = 10, newMin = 0.1;
+          if(data.length > 100000) {            
+            newMax = 0.5; newMin = 0.005
+          } 
           const r = convertRange(
             d.properties[columnNameOrIndex], {
-            oldMin: min, oldMax: max, newMax: 10, newMin: 0.1
+            oldMin: min, oldMax: max, newMax: newMax, newMin: newMin
           })
           return r
         }; // avoid id
@@ -257,6 +316,8 @@ export default class Welcome extends React.Component {
         this.state.road_type,
       colourName: cn || colourName,
       column, // all checked
+      coords: filter && filter.what === 'coords' ? filter.selected :
+        this.state.coords
     })
   }
 
@@ -341,7 +402,7 @@ export default class Welcome extends React.Component {
   render() {
     const { tooltip, viewport,
       loading, mapStyle, alert,
-      layerStyle, geomType, legend } = this.state;
+      layerStyle, geomType, legend, coords } = this.state;
     // console.log(geomType, legend);
       
     return (
@@ -360,8 +421,15 @@ export default class Welcome extends React.Component {
           layers={this.state.layers}
           mapCallback={(map) => (this.map = map)}
           mapStyle={mapStyle}
+          onClick={(e)=> {      
+            if(!e.layer && coords){
+              this.setState({coords: null})
+              this._generateLayer()
+            }
+          }}
         />
         {tooltip}
+
         <DeckSidebarContainer
           layerStyle={layerStyle}
           isMobile={isMobile()}
@@ -369,8 +437,7 @@ export default class Welcome extends React.Component {
           alert={alert}
           data={this.state.filtered}
           colourCallback={(colourName) =>
-            this._generateLayer(undefined, undefined, undefined,
-              colourName)
+            this._generateLayer({colourName})
           }
           urlCallback={(url_returned, geojson_returned) => {
             this.setState({
@@ -378,22 +445,29 @@ export default class Welcome extends React.Component {
               road_type: "",
               radius: 100,
               elevation: 4,
-              loading: true
+              loading: true,
+              coords: null
             })
             if (geojson_returned) {
-              this.setState({
-                data: geojson_returned
-              })
-              this._fitViewport(geojson_returned)
-              this._generateLayer()
+              // confirm valid geojson
+              try {
+                this.setState({
+                  data: geojson_returned
+                })
+                this._fitViewport(geojson_returned)
+                this._generateLayer()
+              } catch (error) {
+                // load up default
+                this._fetchAndUpdateState(undefined, { content: error.message });
+              }
             } else {
               this._fetchAndUpdateState(url_returned);
             }
           }}
           column={this.state.column}
-          onSelectCallback={(selected) => this._generateLayer(undefined, undefined, selected)}
-          onChangeRadius={(value) => this._generateLayer(value)}
-          onChangeElevation={(value) => this._generateLayer(undefined, value)}
+          onSelectCallback={(selected) => this._generateLayer({filter:selected})}
+          onChangeRadius={(value) => this._generateLayer({radius:value})}
+          onChangeElevation={(value) => this._generateLayer({elevation: value})}
           toggleSubsetBoundsChange={(value) => {
             this.setState({
               loading: true,

@@ -80,7 +80,20 @@ export default class DeckGLMap extends React.Component {
     }
 
   }
-
+  // static getDerivedStateFromProps(props, state) {
+  //   if (props.viewport) {
+  //     const nvp = props.viewport;
+  //     Object.keys(state.viewport).map(e => (
+  //       nvp[e] = props.viewport[e]
+  //     ))
+  //     console.log(nvp);
+      
+  //     return {
+  //       viewport: nvp
+  //     }
+  //   }
+  //   return null
+  // }
   // shouldComponentUpdate(nextProps, nextState) {
   //   if (JSON.stringify(nextState.viewport) !==
   //     JSON.stringify(this.state.viewport)) {
@@ -128,6 +141,11 @@ export default class DeckGLMap extends React.Component {
           viewState={viewport ? viewport : initialViewState}
           initialViewState={initialViewState}
           layers={this.props.layers}
+          // see docs below, url split for readability
+          // https://deck.gl/#/documentation/developer-guide/
+          // adding-interactivity?
+          // section=using-the-built-in-event-handling
+          onClick={this.props.onClick}
         />
       </MapGL>
     )
