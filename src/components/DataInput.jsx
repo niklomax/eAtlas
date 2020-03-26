@@ -42,11 +42,11 @@ export default function (props) {
 
   function cards() {
     const info = {
-      // SPENSER2: {
-      //   image: "images/spenser.png",
-      //   body: "SPENSER Manchester 2011 - 2020.",
-      //   api: fetchSPENSER
-      // },
+      SPENSER2: {
+        image: "images/spenser.png",
+        body: "SPENSER Manchester 2011 - 2020.",
+        api: fetchSPENSER
+      },
       SPENSER: {
         image: "images/spenser.png",
         body: "SPENSER Cambridge sample.",

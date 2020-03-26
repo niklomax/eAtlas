@@ -1,6 +1,6 @@
 ########### STEP 2
 # get the RDS from github, see STEP 1 to see how it was generated.
-pop_rds = "~/Downloads/population.Rds"
+pop_rds = "~/Desktop/data/spenser/population.Rds"
 if(!file.exists(pop_rds)) {
   download.file("https://github.com/layik/eAtlas/releases/download/0.0.1/population.Rds",
                 pop_rds)
@@ -137,3 +137,22 @@ m_sfc = st_geometry(msoa[match(unique(pop$Area), msoa$msoa11cd),])
 m_sf = st_as_sf(as.data.frame(list(Area =unique(c$Area))), 
                 geometry = m_sfc)
 st_write(m_sf, "~/Desktop/data/spenser/man.geojson")
+
+####### age ranges
+man = readRDS(pop_rds)
+range = function (t) {
+  if(1 <= t && t <= 14) return(1)
+  if(15 <= t && t <= 19) return(2)
+  if(20 <= t && t <= 24) return(3)
+  if(25 <= t && t <= 29) return(4)
+  if(30 <= t && t <= 44) return(5)
+  if(45 <= t && t <= 59) return(6)
+  if(60 <= t && t <= 74) return(7)
+  8
+}
+a = sapply(man$DC1117EW_C_AGE, range)
+man$DC1117EW_C_AGE = a
+# count again
+man = count(man, vars = names(man))
+names(man) = c("c", "s", "a", "e", "y", "f")
+saveRDS(man, "~/Desktop/data/spenser/man_freqs.Rds")

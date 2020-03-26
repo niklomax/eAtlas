@@ -21,7 +21,7 @@ const fetchSPENSER = (callback) => {
     console.log(data.length);
     
     if (!error && data[1]) {
-      console.log(JSON.parse(data[1]))
+      // console.log(JSON.parse(data[1]))
       let collection = [];
       const map_code_point = {}
       JSON.parse(data[1]).features.forEach(f => {
@@ -33,7 +33,7 @@ const fetchSPENSER = (callback) => {
         const line = helpers.multiPolygon(
           map_code_point[e.c] // in the data Area is c for code
           , //properties next
-          { code:e.c, age:e.a, sex: e.s, ethnicity: e.e, year: e.y }
+          { age:e.a, sex: e.s, ethnicity: e.e, year: e.y }
         )        
         collection.push(line)
       }

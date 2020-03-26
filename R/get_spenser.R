@@ -17,5 +17,6 @@ download()
 spenser_msoa <- readChar(spenser_msoa, 
                          file.info(spenser_msoa)$size)
 sp <- readRDS(spenser_rds)
-sp <- sp[sp$y %in% 2011:2015, ]
+# some 190mb even with age range
+sp <- sp[sp$y %in% 2011:2015, ] 
 spenser2 <- list(sp, spenser_msoa)
