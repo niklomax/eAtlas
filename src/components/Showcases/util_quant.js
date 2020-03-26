@@ -35,7 +35,7 @@ const fetchSPENSER = (callback) => {
           , //properties next
           { age:e.a, sex: e.s, ethnicity: e.e, year: e.y }
         )        
-        collection.push(line)
+        if(e.a === "1-14") collection.push(line)
       }
       collection = helpers.featureCollection(collection);
       console.log(collection);

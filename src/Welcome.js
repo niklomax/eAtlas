@@ -40,6 +40,7 @@ import './App.css';
 import Tooltip from './components/Tooltip';
 import { sfType } from './geojsonutils';
 import { isNumber, isArray } from './JSUtils';
+import { fetchSPENSER } from './components/Showcases/util_quant';
 
 const osmtiles = {
   "version": 8,
@@ -61,7 +62,7 @@ const osmtiles = {
   }]
 };
 const URL = (process.env.NODE_ENV === 'development' ? Constants.DEV_URL : Constants.PRD_URL);
-const defualtURL = "/api/stats19";
+const defualtURL = "/api/spenser2";
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
@@ -122,6 +123,7 @@ export default class Welcome extends React.Component {
     this._renderTooltip = this._renderTooltip.bind(this);
     this._fetchAndUpdateState = this._fetchAndUpdateState.bind(this);
     this._fitViewport = this._fitViewport.bind(this);
+    this._updateWithGeoJSON = this._updateWithGeoJSON.bind(this);
   }
 
   componentDidMount() {
@@ -145,8 +147,19 @@ export default class Welcome extends React.Component {
       URL + defualtURL;
 
     fetchData(fullURL, (data, error) => {
+      // TODO:DELETE
+      // let us show a choropleth of fixed age
+      // fixed sex change in years
+      if(fullURL.endsWith("spenser2")) {
+        fetchSPENSER((geojson_returned) =>{ 
+          // const part = geojson_returned.features.filter(f => 
+          //   f.properties.age === "1-14")
+          this._updateWithGeoJSON(geojson_returned)
+          // console.log(part)
+        })
+        return;
+      }
       if (!error) {
-        // this._updateURL(viewport)
         this.setState({
           loading: false,
           data: data,
@@ -483,16 +496,7 @@ export default class Welcome extends React.Component {
             })
             if (geojson_returned) {
               // confirm valid geojson
-              try {
-                this.setState({
-                  data: geojson_returned
-                })
-                this._fitViewport(geojson_returned)
-                this._generateLayer()
-              } catch (error) {
-                // load up default
-                this._fetchAndUpdateState(undefined, { content: error.message });
-              }
+              this._updateWithGeoJSON(geojson_returned);
             } else {
               this._fetchAndUpdateState(url_returned);
             }
@@ -523,5 +527,20 @@ export default class Welcome extends React.Component {
         }
       </div>
     );
+  }
+
+  _updateWithGeoJSON(geojson_returned) {
+    try {
+      this.setState({
+        loading: false,
+        data: geojson_returned
+      });
+      this._fitViewport(geojson_returned);
+      this._generateLayer();
+    }
+    catch (error) {
+      // load up default
+      this._fetchAndUpdateState(undefined, { content: error.message });
+    }
   }
 }
