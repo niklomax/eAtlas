@@ -44,7 +44,7 @@ export default class DeckSidebar extends React.Component {
       all_road_types: ["Dual carriageway",
         "Single carriageway", "Roundabout", "Unknown",
         "Slip road", "One way street"],
-      year: "",
+      year: "2011",
       reset: false,
       multiVarSelect: {},
       barChartVariable: "road_type",

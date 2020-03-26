@@ -18,7 +18,7 @@ const URL = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
 const fetchSPENSER = (callback) => {
   const fullURL = URL + '/api/spenser2';
   fetchData(fullURL, (data, error) => {
-    console.log(data.length);
+    // console.log(data.length);
     
     if (!error && data[1]) {
       // console.log(JSON.parse(data[1]))
@@ -33,15 +33,17 @@ const fetchSPENSER = (callback) => {
         const line = helpers.multiPolygon(
           map_code_point[e.c] // in the data Area is c for code
           , //properties next
-          { age:e.a, sex: e.s, ethnicity: e.e, year: e.y }
+          { age:e.a, sex: e.s, ethnicity: e.e, year: e.y,
+            frequency:e.f }
         )        
-        if(e.a === "1-14") collection.push(line)
+        collection.push(line)
       }
       collection = helpers.featureCollection(collection);
       console.log(collection);
       
       callback && callback(collection)
     } else {
+      callback && callback(undefined, error)
       console.log(error);
     }
   })

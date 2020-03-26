@@ -57,14 +57,14 @@ const yearSlider = (options) => {
   const {data, year, multiVarSelect, onSelectCallback,
     callback} = options;  
   return data && data.length > 1 &&
-    (data[0].properties.date || data[0].properties['YEAR']) &&
+    (data[0].properties.date || data[0].properties['year']) &&
     (DateTime.fromFormat(data[0].properties.date + '', 'dd/MM/yyyy').isValid ||
-      DateTime.fromFormat(data[0].properties['YEAR'] + '', 'yyyy').isValid) &&
+      DateTime.fromFormat(data[0].properties['year'] + '', 'yyyy').isValid) &&
     <GenerateUI
       title={
         // TODO: change min max labels dynamically
         // so should all the values generated
-        <h5>Year(s): {year ? year : "2009 - 2017"}.
+        <h5>Year(s): {year ? year : "2011 - 2015"}.
         {year &&
             <i style={{ fontSize: '2rem' }} className="fa fa-trash"
               onClick={() => {                         
@@ -81,13 +81,13 @@ const yearSlider = (options) => {
         </h5>}
       sublist={data[0].properties.date ?
         Array.apply(null, { length: 9 }).map(Number.call, Number).map(d => d + 2009) :
-        Array.apply(null, { length: 31 }).map(Number.call, Number).map(d => d + 2020)}
+        Array.apply(null, { length: 5 }).map(Number.call, Number).map(d => d + 2011)}
       suggested="slider"
       onChange={(value) => {
         // the kye is one of `date` or `YEAR`
         // keep it the same in delete
         multiVarSelect[data[0].properties.date ?
-          'date' : 'YEAR'] = new Set([value + ""]);
+          'date' : 'year'] = new Set([value + ""]);
         callback({
           year: value + "",
           multiVarSelect

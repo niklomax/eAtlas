@@ -83,6 +83,13 @@ const LIGHT_SETTINGS = {
   numberOfLights: 2
 };
 
+const initMultiVarSelect = {
+  year: new Set(["2011"]),
+  age:new Set(["1-14"]), 
+  sex:new Set(["1"]),
+  ethnicity: new Set(["15"])
+}
+
 export default class Welcome extends React.Component {
   constructor(props) {
     super(props)
@@ -117,7 +124,8 @@ export default class Welcome extends React.Component {
       lastViewPortChange: new Date(),
       colourName: 'default',
       iconLimit: 500,
-      legend: false
+      legend: false,
+      column: "frequency"
     }
     this._generateLayer = this._generateLayer.bind(this)
     this._renderTooltip = this._renderTooltip.bind(this);
@@ -151,11 +159,17 @@ export default class Welcome extends React.Component {
       // let us show a choropleth of fixed age
       // fixed sex change in years
       if(fullURL.endsWith("spenser2")) {
-        fetchSPENSER((geojson_returned) =>{ 
+        fetchSPENSER((geojson_returned, error) =>{ 
           // const part = geojson_returned.features.filter(f => 
           //   f.properties.age === "1-14")
-          this._updateWithGeoJSON(geojson_returned)
-          // console.log(part)
+          if(!error) {
+            this._updateWithGeoJSON(geojson_returned)
+          } else {
+            this.setState({
+              loading: false,
+              alert: { content: 'Could not reach: ' + fullURL }
+            })
+          }
         })
         return;
       }
@@ -191,7 +205,8 @@ export default class Welcome extends React.Component {
    * TODO: other
    */
   _generateLayer(values = {}) {
-    const { radius, elevation, filter, cn } = values;
+    const { radius, elevation, cn } = values;
+    let { filter } = values
 
     if (filter && filter.what === 'mapstyle') {
       this.setState({
@@ -214,7 +229,16 @@ export default class Welcome extends React.Component {
       data = this.state.filtered;
     }
     const geomType = sfType(data[0]).toLowerCase();
-    //if resetting a value
+    //if resetting a value    
+    if(!filter || filter.selected === "") {
+      console.log("pp");
+      filter = {
+        what: 'multi', 
+        selected: initMultiVarSelect
+      }
+    }
+    console.log(filter);
+
     if (filter && filter.selected !== "") {
       data = data.filter(
         d => {
@@ -481,7 +505,9 @@ export default class Welcome extends React.Component {
           isMobile={isMobile()}
           key="decksidebar"
           alert={alert}
+          multiVarSelect={initMultiVarSelect}
           data={this.state.filtered}
+          fullData={this.state.filtered && this.state.data.features}
           colourCallback={(colourName) =>
             this._generateLayer({ cn: colourName })
           }
@@ -540,6 +566,8 @@ export default class Welcome extends React.Component {
     }
     catch (error) {
       // load up default
+      console.log(error);
+      
       this._fetchAndUpdateState(undefined, { content: error.message });
     }
   }
