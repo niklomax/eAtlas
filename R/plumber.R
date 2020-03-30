@@ -84,7 +84,7 @@ get_covid19r <- function(res) {
 }
 
 ### tests
-tests = read.csv("https://gist.githubusercontent.com/layik/cc4835bbafbb6159fbb1b34d9a755ae8/raw/13b86d3a93f6a6c087c61d11f7a126e38d4fc1fa/tests.csv")
+tests = read.csv("https://gist.githubusercontent.com/layik/cc4835bbafbb6159fbb1b34d9a755ae8/raw")
 #' @serializer unboxedJSON
 #' @get /api/covid19t
 get_covid19r <- function(res) {
