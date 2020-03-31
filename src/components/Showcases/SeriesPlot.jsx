@@ -3,12 +3,11 @@ import {
   makeWidthFlexible,
   XYPlot, XAxis, YAxis, MarkSeries,
   Hint,
-  VerticalBarSeries
+  LabelSeries
 } from 'react-vis';
 import { format } from 'd3-format';
 
 import { shortenName } from '../../utils';
-import verticalBarSeries from 'react-vis/dist/plot/series/vertical-bar-series';
 
 const W = 250;
 const FlexibleXYPlot = makeWidthFlexible(XYPlot);
@@ -37,8 +36,23 @@ export default function SeriesPlot(options) {
   }));
 
   const { plotStyle, title, noXAxis, noYAxis,
-    onValueClick, onDragSelected } = options;
-      
+    onValueClick, onDragSelected, noLabels } = options;
+  let labels = [], ticks = [];
+  if (data.length > limit) {
+      ticks = data.filter((item, idx) => {
+        if ((idx % Math.floor(data.length / limit)) === 0) {
+          return item.x
+        }
+      }).map(item => {
+        labels.push(item)
+        return(item.x)
+      })
+
+    } else {
+      ticks = data.map(item => (item.x));
+      labels = data;
+    }
+    
   return data && data.length > 1 &&
     // https://github.com/uber/react-vis/issues/584#issuecomment-401693372
     <div className="unselectable"
@@ -99,16 +113,7 @@ export default function SeriesPlot(options) {
           <XAxis
             tickSize={0}
             tickFormat={v => shortenName(v, 10)}
-            tickValues={
-              (data.length > limit)
-                ? data
-                  .filter((item, idx) => {
-                    if ((idx % Math.floor(data.length / limit)) === 0) {
-                      return item.x
-                    }
-                  }).map(item => (item.x))
-                : data.map(item => (item.x))
-            }
+            tickValues={ticks}
             position="right" tickLabelAngle={-65} style={{
               line: { strokeWidth: 0 },
               text: { fill: options.dark ? '#fff' : '#000' } 
@@ -153,6 +158,7 @@ export default function SeriesPlot(options) {
           // style={{ fill: type === LineSeries ? 'none' : 'rgb(18, 147, 154)' }}
           data={dataWithColor} />
         {hint && <Hint value={hint} />}
+        {!noLabels && <LabelSeries data={labels} getLabel={d => d.y} />}
       </FlexibleXYPlot>
       {x && x1 && rect}
     </div>;

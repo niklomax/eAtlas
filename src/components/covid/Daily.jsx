@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Slider } from 'baseui/slider';
 
 import MultiLinePlot from '../Showcases/MultiLinePlot';
+import MultiSelect from '../MultiSelect';
 
 export default (props) => {
   const { data, dark, tests } = props;  
@@ -11,7 +12,8 @@ export default (props) => {
   const [start, setStart] = useState(20);
   const [end, setEnd] = useState(days + 1);
   const [value, setValue] = useState([days - 30, days]);
-  
+  const [increase, setIncrease] = useState([23]);
+
   let sliced = data.slice(0, days);
   let testsSliced = tests.slice(0, days)
   if(end - start > 2) {
@@ -40,6 +42,15 @@ export default (props) => {
       y: e.DailyDeaths || 0
     }))
   ];
+
+  const expGrowth = [sliced[0][0]];
+  for (let i = 1; i < sliced[0].length; i++) {
+    const y = +(expGrowth[i - 1].y)
+    expGrowth.push({
+      x: sliced[0][i].x,
+      y: (y + y * (increase[0]/100)).toFixed(2)
+    })
+  }
   
   return(
     <>
@@ -51,11 +62,15 @@ export default (props) => {
         title={"DailyVsDeaths"} noXAxis={true}
         plotStyle={{ height: 200, marginBottom: 10 }}
       />
+      
       <MultiLinePlot
         dark={dark}
         data={
-          [sliced[0], testsSliced.map(e => ({x:e.x, y:e.y/10}))]
-        } legend={["Cases", "Tests"]}
+          [sliced[0],
+            testsSliced.map(e => ({ x: e.x, y: e.y / 10 })),
+            expGrowth
+          ]
+        } legend={["Cases", "Tests", "23%"]}
         title={"CasesVsTests÷10"}
         plotStyle={{ height: 200, marginBottom:60 }} noLimit={true}
       />
@@ -70,6 +85,13 @@ export default (props) => {
         }}
         overrides={{
           MinValue: ({$min}) => data[0][$min].x
+        }}
+      />
+      "Increase %"<Slider
+        min={1} max={100}
+        value={[increase]}
+        onChange={({value}) => {
+          setIncrease([value])
         }}
       />
     </>

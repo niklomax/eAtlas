@@ -1,18 +1,31 @@
 import React, { useState } from 'react';
+import {
+  XYPlot, XAxis, YAxis,
+  LabelSeries, DiscreteColorLegend
+} from 'react-vis';
+import { format } from 'd3-format';
 
 import { breakdown } from './utils';
 import { VerticalBarSeries } from 'react-vis';
 import SeriesPlot from '../Showcases/SeriesPlot';
+import { Slider } from 'baseui/slider';
 
 export default React.memo((props) => {
   const [open, setOpen] = useState(props.isMobile === false);
+  const [threshold, setThreshold] = useState([20000]);
+
   const { data, dark } = props;
   const notEmpty = data && data.length > 1;
   if (notEmpty) {
     let world = breakdown(data);
     world = Object.keys(world)
-    .filter(e => world[e] > 30000)
-    .map(e => ({x:e, y: world[e]}));
+      .filter(e => world[e] > threshold[0])
+      .map(e => ({ x: e, y: world[e] }));
+
+    let worldDeaths = breakdown(data, "deaths");
+    worldDeaths = Object.keys(worldDeaths)
+      .filter(e => worldDeaths[e] > 1000)
+      .map(e => ({ x: e, y: worldDeaths[e] }));
 
     return (
       <div
@@ -40,18 +53,36 @@ export default React.memo((props) => {
               "fa fa-arrow-circle-left"} />
         </div>
         <div>
-          <SeriesPlot
-            dark={dark}
-            title="World(>30k)"
-            plotStyle={{ 
-              height: 200, 
-              width: 350 }}
-            type={VerticalBarSeries}
-            // sorts the results if x is a number
-            // TODO: do we want to do this?
-            // also think about sorting according to y
-            data={world}
+          "xK countries"<Slider
+            min={5000} max={70000} step={5000}
+            value={[threshold]}
+            onChange={({value}) => {
+              setThreshold([value])
+            }}
           />
+          <XYPlot
+            xType="ordinal" width={350}
+            yDomain={[0, Math.max(...worldDeaths.map(e => e.y))]}
+            height={200}>
+            <YAxis tickLabelAngle={-45}
+              tickFormat={v => format(".2s")(v)}
+              style={{
+                line: { strokeWidth: 0 },
+                title: { fill: dark ? '#fff' : '#000' },
+                text: { fill: dark ? '#fff' : '#000' }
+              }} position="start" 
+              // title={"30kCases+1kDeaths"} 
+            />
+            <XAxis tickLabelAngle={-45} />
+            <VerticalBarSeries data={world} />
+            <VerticalBarSeries data={worldDeaths} />
+            {/* <LabelSeries 
+            style={{text: {title: '#f00'}}}
+            data={worldDeaths} getLabel={d => d.y} /> */}
+          </XYPlot>
+          <DiscreteColorLegend
+            orientation="horizontal" width={300}
+            items={["Cases", "Deaths"]} />
         </div>
       </div>
     );
