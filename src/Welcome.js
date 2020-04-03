@@ -169,13 +169,13 @@ export default class Welcome extends React.Component {
     })
 
     fetchData(URL + "/api/covid19d", (daily, error) => {
-      if(!error) {        
-        this.setState({daily});
+      if(!error) {
         fetchData(URL + "/api/covid19t", (json, error) => {
           if(!error) {
             const asObject = {};
             json.forEach(e => asObject[e.date] = e.number)
             this.setState({
+              daily,
               tests: daily.map(e => ({x: e.DateVal, y: asObject[e.DateVal] || 0}))
             })
           }

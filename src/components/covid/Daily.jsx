@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 
 import { Slider } from 'baseui/slider';
-
+import { daysDiff } from './utils';
 import MultiLinePlot from '../Showcases/MultiLinePlot';
-import MultiSelect from '../MultiSelect';
 
 export default (props) => {
   const { data, dark, tests } = props;  
@@ -70,7 +69,7 @@ export default (props) => {
             testsSliced.map(e => ({ x: e.x, y: e.y / 10 })),
             expGrowth
           ]
-        } legend={["Cases", "Tests", "23%"]}
+        } legend={["Cases", "Tests", increase + "%"]}
         title={"CasesVsTests÷10"}
         plotStyle={{ height: 200, marginBottom:60 }} noLimit={true}
       />
@@ -96,12 +95,4 @@ export default (props) => {
       />
     </>
   )
-}
-
-const daysDiff = (s, e) => {
-  const start = new Date(s);
-  const end = new Date(e);
-  let diff = end.getTime() - start.getTime();
-  diff = diff / (1000 * 3600 * 24);
-  return diff;
 }

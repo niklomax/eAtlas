@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import {
   XYPlot, XAxis, YAxis,
-  LabelSeries, DiscreteColorLegend
+  DiscreteColorLegend
 } from 'react-vis';
 import { format } from 'd3-format';
 
 import { breakdown } from './utils';
 import { VerticalBarSeries } from 'react-vis';
-import SeriesPlot from '../Showcases/SeriesPlot';
 import { Slider } from 'baseui/slider';
 
 export default React.memo((props) => {

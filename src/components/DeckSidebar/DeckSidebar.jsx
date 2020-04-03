@@ -13,7 +13,6 @@ import {
   searchNominatom,
   humanize, generateLegend, sortNumericArray
 } from '../../utils';
-import { LineSeries } from 'react-vis';
 import Variables from '../Variables';
 import RBAlert from '../RBAlert';
 import { propertyCount } from '../../geojsonutils';
@@ -24,13 +23,12 @@ import DataTable from '../Table';
 
 import { yearSlider } from '../Showcases/Widgets';
 import { crashes_plot_data } from '../Showcases/Plots';
-import SeriesPlot from '../Showcases/SeriesPlot';
-import { isEmptyOrSpaces, isNumber } from '../../JSUtils';
+import { isNumber } from '../../JSUtils';
 import MultiSelect from '../MultiSelect';
 import AddVIS from '../AddVIS';
-import MultiLinePlot from '../Showcases/MultiLinePlot';
 import Daily from '../covid/Daily';
-// import GenerateUI from '../UI';
+import WorldDaily from '../covid/WorldDaily';
+
 
 const URL = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
 
@@ -146,7 +144,7 @@ export default class DeckSidebar extends React.Component {
                 : "Nothing to show"}
               </h2>
             }
-            dataset: {this.props.datasetName}
+            dataset: {this.state.datasetName}
           </div>
           <div>
             updated: {d.toLocaleString()}
@@ -203,8 +201,10 @@ export default class DeckSidebar extends React.Component {
                   }, dark))
               }
               <hr style={{ clear: 'both' }} />
-              {daily && tests &&
+              {daily && tests && this.state.datasetName.endsWith("covid19") &&
                   <Daily data={daily} tests={tests} dark={dark}/>}
+              {notEmpty && this.state.datasetName.endsWith("covid19w") &&
+                  <WorldDaily data={data} dark={dark}/>}
               <Tabs defaultActiveKey={"1"} id="main-tabs">
                 <Tab eventKey="1" title={
                   <i style={{ fontSize: '2rem' }}
@@ -214,58 +214,7 @@ export default class DeckSidebar extends React.Component {
                   <AddVIS data={data} dark={dark} plotStyle={{
                     marginBottom:80
                   }} />
-                  {/* distribution example */}
-                  {notEmpty &&
-                    data[0].properties.hasOwnProperty(['age_of_casualty']) &&
-                    <SeriesPlot
-                      dark={dark}
-                      title="Casualty age" noYAxis={true}
-                      plotStyle={{ height: 100 }} noLimit={true}
-                      type={LineSeries}
-                      // sorts the results if x is a number
-                      // TODO: do we want to do this?
-                      // also think about sorting according to y
-                      data={xyObjectByProperty(data, "age_of_casualty")}
-                    />
-                  }
-                  {notEmpty && plot_data_multi[0].length > 0 &&
-                    <MultiLinePlot
-                      dark={dark}
-                      data={
-                        [...plot_data_multi, plot_data]
-                      } legend={["Male", "Female", "Total"]}
-                      title="Crashes" noYAxis={true}
-                      plotStyle={{ height: 100, marginBottom: 50 }}
-                    />
-                  }
-                  {
-                    notEmpty &&
-                    Object.keys(data[0].properties)
-                      .filter(p => !isEmptyOrSpaces(p)).length > 0 &&
-                    <>
-                      <h6>Column for layer:</h6>
-                      <MultiSelect
-                        title="Choose Column"
-                        single={true}
-                        values={
-                          Object.keys(data[0].properties).map(e =>
-                            ({ id: humanize(e), value: e }))
-                        }
-                        onSelectCallback={(selected) => {
-                          // array of seingle {id: , value: } object
-                          const newBarChartVar = (selected && selected[0]) ?
-                            selected[0].value : barChartVariable;
-                          this.setState({
-                            barChartVariable: newBarChartVar
-                          });
-                          typeof onSelectCallback === 'function' &&
-                            onSelectCallback({
-                              what: 'column', selected: newBarChartVar
-                            });
-                        }}
-                      />
-                    </>
-                  }
+                  
                 </Tab>
                 <Tab eventKey="2" title={
                   <i style={{ fontSize: '2rem' }}

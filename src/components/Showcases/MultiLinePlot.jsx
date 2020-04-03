@@ -88,7 +88,7 @@ export default function MultiLinePlot(options) {
             data={line} />)}
         {hint && <Crosshair
           values={hint}
-          style={'test-class-name'}
+          className='test-class-name'
         > 
           <div style={{
               color: options.dark ? '#fff' : '#000'

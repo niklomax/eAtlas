@@ -16,6 +16,15 @@ const breakdown = (data, by = "cases") => {
   return map;
 }
 
+const daysDiff = (s, e) => {
+  const start = new Date(s);
+  const end = new Date(e);  
+  let diff = end.getTime() - start.getTime();
+  diff = diff / (1000 * 3600 * 24);
+  return diff;
+}
+
 export {
-  breakdown
+  breakdown,
+  daysDiff
 }
