@@ -558,7 +558,9 @@ export default class Welcome extends React.Component {
         {
           legend && (geomType === 'polygon' ||
             geomType === 'multipolygon') &&
-          <div className="right-side-panel mapbox-legend">
+          <div 
+            style={{textAlign: 'center'}}
+            className="right-side-panel mapbox-legend">
             {legend}
           </div>
         }

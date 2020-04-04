@@ -13,7 +13,7 @@ import HexPlot from './HexPlot';
  * 
  */
 export default (props) => {
-  const [open, setOpen] = useState(!props.isMobile);
+  const [open, setOpen] = useState(true);
   const [hex, setHex] = useState(false);
 
   // console.log(hex);
