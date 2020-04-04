@@ -6,7 +6,7 @@ import MultiSelect from '../MultiSelect';
 // import { Table } from 'baseui/table';
 
 export default React.memo((props) => {
-  const { data, dark } = props;
+  const { data, dark, onSelectCallback } = props;
   if(!data || data.length < 1000) return(null)
   
   const [country, setCountry] = useState("GBR"); //countryterritoryCode
@@ -71,6 +71,8 @@ export default React.memo((props) => {
             setStart(0); 
             setEnd(f.length);
           }
+          typeof onSelectCallback === 'function' &&
+          selected[0] && onSelectCallback(selected[0].id)
         }}
       />
       <MultiLinePlot
@@ -85,7 +87,7 @@ export default React.memo((props) => {
         } 
         legend={["DailyCases", "DailyDeath", increase + "%"]}
         title={"DailyVsDeaths"}
-        plotStyle={{ height: 200, marginBottom: 10 }}
+        plotStyle={{ height: 200, marginBottom: 60 }}
       />
       <Slider
         min={0} max={days}

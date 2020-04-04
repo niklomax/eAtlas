@@ -23,7 +23,6 @@ import { yearSlider } from '../Showcases/Widgets';
 import { crashes_plot_data } from '../Showcases/Plots';
 import { isNumber } from '../../JSUtils';
 import MultiSelect from '../MultiSelect';
-import AddVIS from '../AddVIS';
 import Daily from '../covid/Daily';
 import WorldDaily from '../covid/WorldDaily';
 import SwitchData from '../covid/SwitchData';
@@ -225,17 +224,22 @@ export default class DeckSidebar extends React.Component {
               {daily && tests && datasetName.endsWith("covid19") &&
                 <Daily data={daily} tests={tests} dark={dark} />}
               {notEmpty && datasetName.endsWith("covid19w") &&
-                <WorldDaily data={data} dark={dark} />}
+                <WorldDaily data={data} dark={dark} 
+                  // onSelectCallback={(selected) => {
+                  //   typeof onSelectCallback === 'function' &&
+                  //     onSelectCallback({
+                  //       what: selected ? 'multi' : '',
+                  //       selected: {countryterritoryCode: new Set([selected])}
+                  //     });
+                  // }}
+                />
+              }
               <Tabs defaultActiveKey={"1"} id="main-tabs">
                 <Tab eventKey="1" title={
                   <i style={{ fontSize: '2rem' }}
                     className="fa fa-info" />
                 }>
-                  {/* pick a column and vis type */}
-                  <AddVIS data={data} dark={dark} plotStyle={{
-                    marginBottom: 80
-                  }} />
-
+                  Main view
                 </Tab>
                 <Tab eventKey="2" title={
                   <i style={{ fontSize: '2rem' }}
