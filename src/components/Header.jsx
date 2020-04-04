@@ -7,6 +7,11 @@ import { Link, withRouter } from 'react-router-dom';
 
 const navs = [
   {
+    key: 1,
+    to: 'world',
+    title: 'World'
+  },
+  {
     key: 2,
     to: "about",
     title: "About"

@@ -334,7 +334,7 @@ export default class Welcome extends React.Component {
     if(geomType === "point" && cols.includes("TotalCases")) {
       options.getPosition = d => d.geometry.coordinates;
       options.getFillColor = d => colorScale(d, data, 1) //2nd prop
-      options.getRadius = d => +(Object.values(d.properties)[2]) * 30
+      options.getRadius = d => +(Object.values(d.properties)[2]) * 5
       options.getElevationValue = p => +(p[0].properties.TotalCases)
     }
     const alayer = generateDeckLayer(

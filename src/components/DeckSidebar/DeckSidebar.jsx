@@ -3,10 +3,8 @@ import {
   Tabs, Tab, FormGroup, InputGroup,
   FormControl, Glyphicon, Checkbox
 } from 'react-bootstrap';
-import { Button, KIND, SIZE } from 'baseui/button';
 
 import './DeckSidebar.css';
-import DataInput from '../DataInput';
 import MapboxBaseLayers from '../MapboxBaseLayers';
 import {
   xyObjectByProperty, percentDiv,
@@ -16,7 +14,7 @@ import {
 import Variables from '../Variables';
 import RBAlert from '../RBAlert';
 import { propertyCount, getPropertyValues } from '../../geojsonutils';
-import { DEV_URL, PRD_URL, LAYERSTYLES } from '../../Constants';
+import { LAYERSTYLES } from '../../Constants';
 import ColorPicker from '../ColourPicker';
 import Modal from '../Modal';
 import DataTable from '../Table';
@@ -28,9 +26,10 @@ import MultiSelect from '../MultiSelect';
 import AddVIS from '../AddVIS';
 import Daily from '../covid/Daily';
 import WorldDaily from '../covid/WorldDaily';
+import SwitchData from '../covid/SwitchData';
 
-
-const URL = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
+import { DEV_URL, PRD_URL } from '../../Constants';
+const host = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
 
 export default class DeckSidebar extends React.Component {
   constructor(props) {
@@ -149,9 +148,9 @@ export default class DeckSidebar extends React.Component {
                   :
                   <h2>{data && data.length ?
                     data && data.length && data[0].properties.cases &&
-                      data.reduce((t, next) => 
-                      isNumber(t) ? t + +(next.properties.cases) : 
-                      +(t.properties.cases) + +(next.properties.cases)) + " cases"
+                    data.reduce((t, next) =>
+                      isNumber(t) ? t + +(next.properties.cases) :
+                        +(t.properties.cases) + +(next.properties.cases)) + " cases"
                     : "Nothing to show"}
                   </h2>
             }
@@ -160,30 +159,16 @@ export default class DeckSidebar extends React.Component {
           <div>
             updated: {d.toLocaleString()}
             <br />
-            <DataInput
-              toggleOpen={() => typeof toggleOpen === 'function' && toggleOpen()}
-              urlCallback={(url, geojson, name) => {
-                resetState(url || name);
-                typeof (urlCallback) === 'function'
-                  && urlCallback(url, geojson);
-                typeof (toggleOpen) === 'function' && toggleOpen()
-              }
-              } />
+            <SwitchData onSelectCallback={(url) => {
+              if(datasetName === url || 
+                datasetName.endsWith(url)) return;
+              resetState(host + url);
+              typeof (urlCallback) === 'function'
+                && urlCallback(host + url);
+            }} />
             <Modal
               toggleOpen={() => typeof toggleOpen === 'function' && toggleOpen()}
               component={<DataTable data={data} />} />
-            {
-              this.state.reset &&
-              <Button
-                kind={KIND.secondary} size={SIZE.compact}
-                onClick={() => {
-                  resetState("/api/covid19", false);
-                  typeof (urlCallback) === 'function'
-                    && urlCallback(URL + "/api/covid19");
-                  typeof (this.props.showLegend) === 'function' &&
-                    this.props.showLegend(false);
-                }}>Reset</Button>
-            }
           </div>
           <div className="side-panel-body">
             <div className="side-panel-body-content">

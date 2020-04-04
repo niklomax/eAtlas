@@ -16,6 +16,7 @@ import { Client as Styletron } from 'styletron-engine-atomic';
 import '../node_modules/react-vis/dist/style.css';
 
 import './App.css';
+import World from './components/covid/World';
 
 const engine = new Styletron();
 
@@ -51,7 +52,7 @@ function App() {
               {...props}
               dark={dark}
               />} />
-              <Route exact path="/fui" component={(props) => <DUI 
+              <Route exact path="/world" component={(props) => <World 
               {...props}
               dark={dark}
               />} />

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import DeckSidebar from "./DeckSidebar";
 import HexPlot from './HexPlot';
-import World from "../covid/World";
 
 /**
  * The idea of this component is to avoid 
@@ -34,8 +33,6 @@ export default (props) => {
       {hex &&
         <HexPlot open={open} isMobile={props.isMobile}
           data={props.data} />}
-      {props.world && <World isMobile={props.isMobile} 
-        data={props.world} dark={props.dark}/>}
       <div
         className="close-button"
         onClick={() => setOpen(!open)}
