@@ -8,7 +8,7 @@ import { Table } from 'baseui/table';
 export default React.memo((props) => {
   const { data, dark } = props;
   if(!data || data.length < 1000) return(null)
-
+  
   const [country, setCountry] = useState("GBR"); //countryterritoryCode
   let today = {
     cases: 0, deaths: 0,
@@ -42,27 +42,16 @@ export default React.memo((props) => {
   const [increase, setIncrease] = useState([23]);
 
   let sliced = countryHistory.slice(0, days);
-  if(end - start > 2) {
+  if(end - start > 2 && start < countryHistory.length && 
+    end <= countryHistory.length) {
     sliced = countryHistory.slice(start, end);
-  } else {
-    setStart(start); 
-    setEnd(days);
   }
-
-  if(sliced.length === 0) {
+  
+  if(sliced.length === 0) {    
     setCountry("GBR")
   }
-  const expGrowth = [{
-    x: sliced[0].properties.dateRep,
-    y: sliced[0].properties.cases
-  }];
-  for (let i = 1; i < sliced.length; i++) {
-    const y = +(expGrowth[i - 1].y)
-    expGrowth.push({
-      x: sliced[i].properties.dateRep,
-      y: (y + y * (increase[0]/100)).toFixed(2)
-    })
-  }
+
+  const expGrowth = getGrowthRate(sliced, increase);
   return(
     <>
       <MultiSelect
@@ -72,9 +61,16 @@ export default React.memo((props) => {
         onSelectCallback={(selected) => {
           // array of seingle {id: , value: } object  
           setCountry(selected[0].value);
-          setCountryHistory(data.filter(e => 
+          const f = data.filter(e => 
             e.properties.countryterritoryCode === 
-            selected[0].value).reverse());
+            selected[0].value).reverse()
+          setCountryHistory(f);
+          //chek if value/start/end are good
+          if(start > f.length || end > f.length) {
+            setValue([0, f.length]);
+            setStart(0); 
+            setEnd(f.length);
+          }
         }}
       />
       <MultiLinePlot
@@ -88,7 +84,7 @@ export default React.memo((props) => {
           ]
         } 
         legend={["DailyCases", "DailyDeath", increase + "%"]}
-        title={"DailyVsDeaths"} noXAxis={true}
+        title={"DailyVsDeaths"}
         plotStyle={{ height: 200, marginBottom: 10 }}
       />
       <Slider
@@ -100,7 +96,7 @@ export default React.memo((props) => {
           setEnd(value[1]);
         }}
       />
-      "Increase %"<Slider
+      "Increase %" <Slider
         min={1} max={100}
         value={[increase]}
         onChange={({value}) => {
@@ -116,3 +112,18 @@ export default React.memo((props) => {
     </>
   )
 })
+function getGrowthRate(sliced, increase) {
+  const expGrowth = [{
+    x: sliced[0].properties.dateRep,
+    y: sliced[0].properties.cases
+  }];
+  for (let i = 1; i < sliced.length; i++) {
+    const y = +(expGrowth[i - 1].y);
+    expGrowth.push({
+      x: sliced[i].properties.dateRep,
+      y: (y + y * (increase[0] / 100)).toFixed(2)
+    });
+  }
+  return expGrowth;
+}
+

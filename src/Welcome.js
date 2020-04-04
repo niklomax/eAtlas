@@ -507,6 +507,7 @@ export default class Welcome extends React.Component {
           key="decksidebar"
           alert={alert}
           data={this.state.filtered}
+          unfiltered={this.state.data}
           colourCallback={(colourName) =>
             this._generateLayer({ cn: colourName })
           }

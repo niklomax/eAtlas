@@ -15,8 +15,8 @@ import {
 } from '../../utils';
 import Variables from '../Variables';
 import RBAlert from '../RBAlert';
-import { propertyCount } from '../../geojsonutils';
-import {DEV_URL, PRD_URL, LAYERSTYLES} from '../../Constants';
+import { propertyCount, getPropertyValues } from '../../geojsonutils';
+import { DEV_URL, PRD_URL, LAYERSTYLES } from '../../Constants';
 import ColorPicker from '../ColourPicker';
 import Modal from '../Modal';
 import DataTable from '../Table';
@@ -61,7 +61,7 @@ export default class DeckSidebar extends React.Component {
       tests !== nextProps.tests) return true;
     //TODO:  a more functional way is needed        
     if (data && nextProps && nextProps.data &&
-      data.length === nextProps.data.length) {
+      JSON.stringify(data) === JSON.stringify(nextProps.data)) {
       return false
     }
     return true;
@@ -72,7 +72,7 @@ export default class DeckSidebar extends React.Component {
    * Partly because we like to load from a URL.
    */
   render() {
-    const { elevation, radius, year,
+    const { elevation, radius, year, datasetName,
       subsetBoundsChange, multiVarSelect, barChartVariable } = this.state;
     const { onChangeRadius, onChangeElevation,
       onSelectCallback, data, colourCallback, daily, tests,
@@ -82,31 +82,34 @@ export default class DeckSidebar extends React.Component {
     let plot_data_multi = [[], []];
     const notEmpty = data && data.length > 1;
     plot_data = crashes_plot_data(notEmpty, data, plot_data, plot_data_multi);
-    const severity_data = propertyCount(data, "accident_severity");    
+    const severity_data = propertyCount(data, "accident_severity");
     let columnDomain = [];
     const columnData = notEmpty ?
       xyObjectByProperty(data, column || barChartVariable) : [];
+    const regions = data && data.length > 0 && datasetName.endsWith("19") ?
+      getPropertyValues(this.props.unfiltered, 'name') : [];
     const geomType = notEmpty && data[0].geometry.type.toLowerCase();
-    // console.log(geomType);
-    if(notEmpty && column && (geomType === 'polygon' ||
-    geomType === 'multipolygon' || "linestring") &&
+    // console.log(regions);
+    if (notEmpty && column && (geomType === 'polygon' ||
+      geomType === 'multipolygon' || "linestring") &&
       isNumber(data[0].properties[column])) {
-        // we dont need to use generateDomain(data, column)
-        // columnData already has this in its x'es
-        columnDomain = columnData.map(e => e.x);
-        // we will just sort it        
-        columnDomain = sortNumericArray(columnDomain);
-        // console.log(columnDomain);
-        
-        this.props.showLegend(
-          generateLegend(
-            {domain: columnDomain, 
-              title: humanize(column)
-            }
-          )
-        );
+      // we dont need to use generateDomain(data, column)
+      // columnData already has this in its x'es
+      columnDomain = columnData.map(e => e.x);
+      // we will just sort it        
+      columnDomain = sortNumericArray(columnDomain);
+      // console.log(columnDomain);
+
+      this.props.showLegend(
+        generateLegend(
+          {
+            domain: columnDomain,
+            title: humanize(column)
+          }
+        )
+      );
     }
-    const resetState = (urlOrName, reset = true) => {      
+    const resetState = (urlOrName, reset = true) => {
       this.setState({
         reset: reset,
         year: "",
@@ -126,29 +129,37 @@ export default class DeckSidebar extends React.Component {
           }}
           className="side-panel">
           <RBAlert alert={alert} />
-          <div 
-              style={{
-                background: dark ? '#29323C' : '#eee'
-              }}
-              className="side-pane-header">
+          <div
+            style={{
+              background: dark ? '#29323C' : '#eee'
+            }}
+            className="side-pane-header">
             {
-              (data && data.length && data[0].properties.TotalCases) ||
-              this.state.TotalCases || daily ?
-              <h2>
-                {(this.state.TotalCases || 
-                  daily && daily[0] && daily[daily.length - 1].CumCases) + " cases"}
-              </h2>
-              :
-              <h2>{data && data.length ?
-                data.length + " row" + (data.length > 1 ? "s" : "") + "."
-                : "Nothing to show"}
-              </h2>
+              //if specific region shown, show its count
+              multiVarSelect.name && multiVarSelect.name.size === 1 ?
+                <h2>
+                  {data[0].properties.TotalCases + " cases"}
+                </h2>
+                :
+                (data && data.length && data[0].properties.TotalCases) ?
+                  <h2>
+                    {(this.state.TotalCases ||
+                      daily && daily[0] && daily[daily.length - 1].CumCases) + " cases"}
+                  </h2>
+                  :
+                  <h2>{data && data.length ?
+                    data && data.length && data[0].properties.cases &&
+                      data.reduce((t, next) => 
+                      isNumber(t) ? t + +(next.properties.cases) : 
+                      +(t.properties.cases) + +(next.properties.cases)) + " cases"
+                    : "Nothing to show"}
+                  </h2>
             }
             dataset: {this.state.datasetName}
           </div>
           <div>
             updated: {d.toLocaleString()}
-            <br/>
+            <br />
             <DataInput
               toggleOpen={() => typeof toggleOpen === 'function' && toggleOpen()}
               urlCallback={(url, geojson, name) => {
@@ -170,19 +181,21 @@ export default class DeckSidebar extends React.Component {
                   typeof (urlCallback) === 'function'
                     && urlCallback(URL + "/api/covid19");
                   typeof (this.props.showLegend) === 'function' &&
-                  this.props.showLegend(false);
+                    this.props.showLegend(false);
                 }}>Reset</Button>
             }
           </div>
           <div className="side-panel-body">
             <div className="side-panel-body-content">
-                {/* <DateSlider data={yy} multiVarSelect={multiVarSelect}
+              {/* <DateSlider data={yy} multiVarSelect={multiVarSelect}
                   onSelectCallback={(changes) => console.log(changes)} 
                   callback={(changes) => console.log(changes)}/> */}
               {/* range of two values slider is not native html */
-                yearSlider({data, year, multiVarSelect,
+                yearSlider({
+                  data, year, multiVarSelect,
                   // for callback we get { year: "",multiVarSelect }
-                  onSelectCallback, callback: (changes) => this.setState(changes)})
+                  onSelectCallback, callback: (changes) => this.setState(changes)
+                })
               }
               {/* TODO: generate this declaritively too */}
               {
@@ -201,10 +214,33 @@ export default class DeckSidebar extends React.Component {
                   }, dark))
               }
               <hr style={{ clear: 'both' }} />
-              {daily && tests && this.state.datasetName.endsWith("covid19") &&
-                  <Daily data={daily} tests={tests} dark={dark}/>}
-              {notEmpty && this.state.datasetName.endsWith("covid19w") &&
-                  <WorldDaily data={data} dark={dark}/>}
+              {data && data.length > 0 && datasetName.endsWith("19") &&
+                <MultiSelect
+                  title={"Country|Region"}
+                  single={true}
+                  values={regions.map(e => ({ id: e, value: e }))}
+                  onSelectCallback={(selected) => {
+                    // array of seingle {id: , value: } object
+                    if (selected[0]) {
+                      multiVarSelect['name'] = new Set([selected[0].id])
+                    } else {
+                      if (multiVarSelect.name) delete multiVarSelect.name;
+                    }
+                    this.setState({
+                      multiVarSelect
+                    })
+                    typeof onSelectCallback === 'function' &&
+                      onSelectCallback({
+                        what: 'multi',
+                        selected: multiVarSelect
+                      });
+                  }}
+                />
+              }
+              {daily && tests && datasetName.endsWith("covid19") &&
+                <Daily data={daily} tests={tests} dark={dark} />}
+              {notEmpty && datasetName.endsWith("covid19w") &&
+                <WorldDaily data={data} dark={dark} />}
               <Tabs defaultActiveKey={"1"} id="main-tabs">
                 <Tab eventKey="1" title={
                   <i style={{ fontSize: '2rem' }}
@@ -212,9 +248,9 @@ export default class DeckSidebar extends React.Component {
                 }>
                   {/* pick a column and vis type */}
                   <AddVIS data={data} dark={dark} plotStyle={{
-                    marginBottom:80
+                    marginBottom: 80
                   }} />
-                  
+
                 </Tab>
                 <Tab eventKey="2" title={
                   <i style={{ fontSize: '2rem' }}
@@ -223,8 +259,8 @@ export default class DeckSidebar extends React.Component {
                   {notEmpty &&
                     <div>
                       <ColorPicker colourCallback={(color) =>
-                          typeof colourCallback === 'function' &&
-                          colourCallback(color)} />
+                        typeof colourCallback === 'function' &&
+                        colourCallback(color)} />
                       <input
                         type="range"
                         id="radius"
@@ -258,7 +294,7 @@ export default class DeckSidebar extends React.Component {
                       />
                       <h5>Elevation: {elevation}.</h5>
                     </div>
-                    }
+                  }
                   {notEmpty &&
                     <>
                       <h6>Deck Layer:</h6>
@@ -306,7 +342,7 @@ export default class DeckSidebar extends React.Component {
                       }
                     }}
                   >Subset by map boundary</Checkbox>
-                  
+
                 </Tab>
                 {/* <Tab eventKey="3" title={
                   <i style={{ fontSize: '2rem' }}
