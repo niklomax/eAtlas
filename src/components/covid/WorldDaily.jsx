@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Slider } from 'baseui/slider';
 import MultiLinePlot from '../Showcases/MultiLinePlot';
 import MultiSelect from '../MultiSelect';
-import { Table } from 'baseui/table';
+// import { Table } from 'baseui/table';
 
 export default React.memo((props) => {
   const { data, dark } = props;
@@ -103,12 +103,12 @@ export default React.memo((props) => {
           setIncrease([value])
         }}
       />
-      <Table 
+      {/* <Table 
         columns={Object.keys(today).slice(2,4)} 
         data={[Object.values(today).slice(2,4)]}/>
       <Table 
         columns={Object.keys(today).slice(0,2)} 
-        data={[Object.values(today).slice(0,2)]}/>
+        data={[Object.values(today).slice(0,2)]}/> */}
     </>
   )
 })
