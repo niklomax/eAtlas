@@ -106,9 +106,9 @@ export default class DeckSidebar extends React.Component {
           )
         );
     }
-    const resetState = (urlOrName) => {      
+    const resetState = (urlOrName, reset = true) => {      
       this.setState({
-        reset: true,
+        reset: reset,
         year: "",
         multiVarSelect: {},
         barChartVariable: "TotalCases",
@@ -166,7 +166,7 @@ export default class DeckSidebar extends React.Component {
               <Button
                 kind={KIND.secondary} size={SIZE.compact}
                 onClick={() => {
-                  resetState();
+                  resetState("/api/covid19", false);
                   typeof (urlCallback) === 'function'
                     && urlCallback(URL + "/api/covid19");
                   typeof (this.props.showLegend) === 'function' &&

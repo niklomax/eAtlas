@@ -52,15 +52,19 @@ export default React.memo((props) => {
   if(sliced.length === 0) {
     setCountry("GBR")
   }
-  
+  const expGrowth = [{
+    x: sliced[0].properties.dateRep,
+    y: sliced[0].properties.cases
+  }];
+  for (let i = 1; i < sliced.length; i++) {
+    const y = +(expGrowth[i - 1].y)
+    expGrowth.push({
+      x: sliced[i].properties.dateRep,
+      y: (y + y * (increase[0]/100)).toFixed(2)
+    })
+  }
   return(
     <>
-      <Table 
-        columns={Object.keys(today).slice(0,2)} 
-        data={[Object.values(today).slice(0,2)]}/>
-      <Table 
-        columns={Object.keys(today).slice(2,4)} 
-        data={[Object.values(today).slice(2,4)]}/>
       <MultiSelect
         title={country}
         single={true}
@@ -73,6 +77,20 @@ export default React.memo((props) => {
             selected[0].value).reverse());
         }}
       />
+      <MultiLinePlot
+        dark={dark}
+        data={
+          [sliced.map(e => ({x:e.properties.dateRep, 
+            y:e.properties.cases})),
+            sliced.map(e => ({x: e.properties.dateRep, 
+              y: e.properties.deaths})),
+            expGrowth
+          ]
+        } 
+        legend={["DailyCases", "DailyDeath", increase + "%"]}
+        title={"DailyVsDeaths"} noXAxis={true}
+        plotStyle={{ height: 200, marginBottom: 10 }}
+      />
       <Slider
         min={0} max={days}
         value={value}
@@ -82,19 +100,19 @@ export default React.memo((props) => {
           setEnd(value[1]);
         }}
       />
-      <MultiLinePlot
-        dark={dark}
-        data={
-          [sliced.map(e => ({x:e.properties.dateRep, 
-            y:e.properties.cases})),
-            sliced.map(e => ({x: e.properties.dateRep, 
-              y: e.properties.deaths}))
-          ]
-        } 
-        legend={["DailyCases", "DailyDeath"]}
-        title={"DailyVsDeaths"} noXAxis={true}
-        plotStyle={{ height: 200, marginBottom: 10 }}
+      "Increase %"<Slider
+        min={1} max={100}
+        value={[increase]}
+        onChange={({value}) => {
+          setIncrease([value])
+        }}
       />
+      <Table 
+        columns={Object.keys(today).slice(2,4)} 
+        data={[Object.values(today).slice(2,4)]}/>
+      <Table 
+        columns={Object.keys(today).slice(0,2)} 
+        data={[Object.values(today).slice(0,2)]}/>
     </>
   )
 })
