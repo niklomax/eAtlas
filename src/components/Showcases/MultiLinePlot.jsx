@@ -31,7 +31,7 @@ export default function MultiLinePlot(options) {
   const { plotStyle, title, noXAxis, noYAxis,
     onValueClick, data, legend } = options;
 
-  return options.data && options.data.length > 1 &&
+  return options.data && options.data.length > 0 &&
     // https://github.com/uber/react-vis/issues/584#issuecomment-401693372
     <div className="unselectable" 
       style={{ 
@@ -101,7 +101,7 @@ export default function MultiLinePlot(options) {
         </Crosshair>}
       </XYPlot>
       <DiscreteColorLegend
-        orientation="horizontal" width={W}
+        orientation="horizontal"
         items={legend} />
     </div>;
 }
