@@ -1,5 +1,5 @@
 df = read.csv("https://www.arcgis.com/sharing/rest/content/items/b684319181f94875a6879bbc833ca3a6/data")
-class(df); names(df)
+df$TotalCases = as.numeric(df$TotalCases)
 # get LAs
 folder = "Counties_and_UA"
 if(!dir.exists(folder)) {
@@ -36,6 +36,7 @@ r = st_read("https://opendata.arcgis.com/datasets/01fd6b2d7600446d8af768005992f7
 # r = st_transform(r, 4326)
 w = st_within(covid19,r)
 w = as.numeric(as.character(w))
+w[is.na(w)] = 9
 stopifnot(nrow(covid19) == length(w))
 covid19$region = w
 a = aggregate(TotalCases ~ region, covid19, sum)
