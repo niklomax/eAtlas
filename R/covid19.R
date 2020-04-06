@@ -1,5 +1,8 @@
 df = read.csv("https://www.arcgis.com/sharing/rest/content/items/b684319181f94875a6879bbc833ca3a6/data")
-df$TotalCases = as.numeric(df$TotalCases)
+if(is.factor(df$TotalCases)) {
+  df$TotalCases = as.numeric(as.character(df$TotalCases))
+}
+is.na(df$TotalCases) = 0
 # get LAs
 folder = "Counties_and_UA"
 if(!dir.exists(folder)) {
