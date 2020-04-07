@@ -5,6 +5,12 @@
 * TOD0: separate/component'ize rules.
 * TODO: don not overwrite React default package created.
 */
+@media (min-width: 768px) {
+  .navbar {
+    border-radius: 0;
+  }
+}
+
 .xyz {
   pointer-events: none; 
   position: absolute; 
@@ -184,7 +190,7 @@
 	height: calc(100% - 50px);
 }
 
-html, body, main, .App, #root {
+html, body, main {
   height: 100%;
 }
 /* top center for now */

@@ -51,7 +51,6 @@ export default React.memo((props) => {
           background: dark ? '#242730' : 'white',
           color: dark ? 'white' : 'black'
         }}>
-        <div>
           "xK countries"<Slider
             min={5000} max={100000} step={5000}
             value={[threshold]}
@@ -129,8 +128,6 @@ export default React.memo((props) => {
             plotStyle={{ width: 800, marginBottom: 60 }}
             noLimit={true}
           />
-
-        </div>
         <div style={{minHeight:100}}></div>
       </div>
     );

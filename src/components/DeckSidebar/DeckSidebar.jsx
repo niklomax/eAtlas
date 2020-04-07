@@ -14,7 +14,7 @@ import {
 import Variables from '../Variables';
 import RBAlert from '../RBAlert';
 import { propertyCount, getPropertyValues } from '../../geojsonutils';
-import { LAYERSTYLES } from '../../Constants';
+import { LAYERSTYLES, LIDA } from '../../Constants';
 import ColorPicker from '../ColourPicker';
 import Modal from '../Modal';
 import DataTable from '../Table';
@@ -393,6 +393,8 @@ export default class DeckSidebar extends React.Component {
                 </InputGroup>
               </FormGroup>
             </form>
+            <img  
+              src={LIDA} alt="LIDA logo" />
           </div>
         </div>
       </>

@@ -42,7 +42,9 @@ function App() {
     const [dark, setDark] = useState(false)
     
     return (
-      <main>
+      <main style={{
+        background: dark ? '#242730' : 'white'
+      }}>
         <Header dark={dark}
         toggleTheme={() => setDark(!dark)}/>
         <StyletronProvider value={engine}>
