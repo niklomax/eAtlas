@@ -153,7 +153,6 @@ export default class DeckSidebar extends React.Component {
                     : "Nothing to show"}
                   </h2>
             }
-            dataset: {this.state.datasetName}
           </div>
           <div>
             updated: {d.toLocaleString()}
