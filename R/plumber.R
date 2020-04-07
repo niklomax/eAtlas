@@ -6,7 +6,11 @@ if(is.null(curl::nslookup("r-project.org", error = FALSE))) {
   ))
 }
 packages <- c("sf", "geojsonsf", "osmdata", "curl", "readxl")
+if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
+  install.packages(setdiff(packages, rownames(installed.packages())),repos='http://cran.us.r-project.org')
+}
 
+lapply(packages, library, character.only = TRUE)
 # Enable CORS -------------------------------------------------------------
 #' CORS enabled for now. See docs of plumber
 #' for disabling it for any endpoint we want in future
