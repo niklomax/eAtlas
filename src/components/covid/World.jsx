@@ -13,7 +13,10 @@ import { DEV_URL, PRD_URL } from '../../Constants';
 import MultiLinePlot from '../Showcases/MultiLinePlot';
 import { Checkbox } from 'baseui/checkbox';
 import MultiSelect from '../MultiSelect';
+import './style.css';
 const host = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
+let W = 760;
+W = window.innerWidth < W ? window.innerWidth : W;
 
 export default React.memo((props) => {
   const [threshold, setThreshold] = useState([20000]);
@@ -45,9 +48,9 @@ export default React.memo((props) => {
     
     return (
       <div
+        className="world"
         style={{
           margin: 'auto',
-          maxWidth: 800,
           background: dark ? '#242730' : 'white',
           color: dark ? 'white' : 'black'
         }}>
@@ -59,7 +62,8 @@ export default React.memo((props) => {
             }}
           />
           <XYPlot
-            xType="ordinal" width={800} height={300}
+            className="world-plot"
+            xType="ordinal" width={W} height={300}
             yDomain={[0, Math.max(...worldDeaths.map(e => e.y))]}>
             <YAxis tickLabelAngle={-45}
               tickFormat={v => format(".2s")(v)}
@@ -125,7 +129,9 @@ export default React.memo((props) => {
             title={minMax[0] + "<Cases< " + minMax[1] + ": " + 
               Object.keys(countryHistories).length+
             (Object.keys(countryHistories).length > 1 ? " countries" : "country")}
-            plotStyle={{ width: 800, marginBottom: 60 }}
+            plotStyle={{ 
+              width: W, 
+              marginBottom: 60 }}
             noLimit={true}
           />
         <div style={{minHeight:100}}></div>
