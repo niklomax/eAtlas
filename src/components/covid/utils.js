@@ -1,7 +1,7 @@
 import { isArray } from "../../JSUtils";
 
 const countryHistory = (data, by = "cases", min = 200, max=500, 
-includeUSA = false) => {
+list) => {
   if(!data || data.length === 0) return null;
   
   const map = {}
@@ -16,13 +16,15 @@ includeUSA = false) => {
       }
     }
   });
-  //last 21 days
   const topx = {}
   Object.keys(map).forEach(country => {
-    const l = map[country].length;    
+    const l = map[country].length;  
+      
     if((map[country][0].y > min && map[country][0].y < max) ||
-    (includeUSA && country === "USA")) {
+    (list && list.includes(country))) {
+      // most recent first
       topx[country] = map[country].reverse()
+      // last 21 days
       .slice(l - 21 < 0 ? 0 : (l - 21), l - 1)
     }
   });
@@ -38,7 +40,7 @@ const breakdown = (data, by = "cases") => {
   data.forEach(feature => {
     const location = feature.properties["countryterritoryCode"];
     const cases = feature.properties[by];
-    if (location !== null) {
+    if (location) {
       if (map[location]) {
         map[location] = map[location] + cases
       } else {
