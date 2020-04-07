@@ -58,7 +58,7 @@ function App() {
               {...props}
               dark={dark}
               />} />
-              <Route exact path="/about" component={About} />
+              <Route dark={dark} exact path="/about" component={About} />
             </Switch>
           </BaseProvider>
         </StyletronProvider>

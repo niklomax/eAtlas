@@ -8,6 +8,8 @@ import marked from "marked";
  * Separate the Header and the main content.
  * Up to this point we are still not using SSR
  */
+import { LIDA } from './Constants';
+
 class About extends Component {
   state = { markdown: null }
   componentDidMount() {
@@ -23,12 +25,22 @@ class About extends Component {
         })
       })
   }
+  
   render() {
+    console.log("fiq");
     const { markdown } = this.state;
 
     return (
-      <section style={{ background: 'white', padding: '5%' }}>
-        <article dangerouslySetInnerHTML={{ __html: markdown }}></article>
+      <section style={{
+        color: this.props.dark ? "white" : "black",
+        padding: '5%',
+        textAlign: 'center',
+        height: '100%'
+      }}>
+        <article 
+          style={{height: '100%'}}
+          dangerouslySetInnerHTML={{ __html: markdown }}></article>
+        <img src={LIDA} alt="LIDA logo" />
       </section>
     )
   }

@@ -393,8 +393,7 @@ export default class DeckSidebar extends React.Component {
                 </InputGroup>
               </FormGroup>
             </form>
-            <img  
-              src={LIDA} alt="LIDA logo" />
+            <img src={LIDA} alt="LIDA logo" />
           </div>
         </div>
       </>
