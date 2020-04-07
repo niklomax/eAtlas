@@ -1,28 +1,32 @@
-df = read.csv("https://www.arcgis.com/sharing/rest/content/items/b684319181f94875a6879bbc833ca3a6/data")
+# get LAs
+folder = "data"
+if(!dir.exists(folder)) {
+  dir.create(folder)
+}
+casesRds = "cases.Rds"
+url = "https://www.arcgis.com/sharing/rest/content/items/b684319181f94875a6879bbc833ca3a6/data"
+if(!file.exists(file.path(folder, casesRds))) {
+  csv = read.csv(url)
+  saveRDS(csv, file.path(folder, casesRds))
+}
+df = readRDS(file.path(folder, casesRds))
 if(is.factor(df$TotalCases)) {
   df$TotalCases = as.numeric(as.character(df$TotalCases))
 }
 is.na(df$TotalCases) = 0
-# get LAs
-folder = "Counties_and_UA"
-if(!dir.exists(folder)) {
-  dir.create(folder)
-}
-url = "https://opendata.arcgis.com/datasets/658297aefddf49e49dcd5fbfc647769e_1.zip"
-las_shape = list.files(folder, pattern = "shp")[1]
-if(!file.exists(file.path(folder, las_shape))) {
-  download.file(url, destfile = file.path(folder, "data.zip"))
-  unzip(file.path(folder, "data.zip"), exdir = folder)
-  las_shape = list.files(folder, pattern = "shp")[1]
+url = "https://github.com/layik/eAtlas/releases/download/0.0.1/LAs_centroids.Rds"
+lasRds = "LAs_centroids.Rds"
+if(!file.exists(file.path(folder, lasRds))) {
+  download.file(url, destfile = file.path(folder, lasRds))
 }
 library(sf)
-las = st_read(file.path(folder, las_shape))
-# las = st_centroid(las)
+las = readRDS(file.path(folder, lasRds))
+# las already centroids
 m = match(tolower(df$GSS_NM), 
           tolower(las$ctyua17nm))
-nrow(df) - length(las) # 139
-nrow(df) # 150 names
-length(which(is.na(m)))
+# nrow(df) - length(las) # 139
+# nrow(df) # 150 names
+# length(which(is.na(m)))
 df = df[df$GSS_NM %in% las$ctyua17nm, ]
 m = m[!is.na(m)]
 stopifnot(!any(is.na(m)))
@@ -31,11 +35,15 @@ covid19 = st_as_sf(df, geom=sfc)
 # top 30 regions
 # plot(covid19[order(df$TotalCases, decreasing = T)[1:30],
               # "TotalCases"])
-covid19 = st_centroid(covid19)
 # plot(covid19)
 # st_write(covid19, "covid19.geojson", update=TRUE)
 
-r = st_read("https://opendata.arcgis.com/datasets/01fd6b2d7600446d8af768005992f76a_4.geojson")
+regions_geojson = "regions.geojson"
+url = "https://opendata.arcgis.com/datasets/01fd6b2d7600446d8af768005992f76a_4.geojson"
+if(!file.exists(file.path(folder, regions_geojson))) {
+  download.file(url, destfile = file.path(folder, regions_geojson))
+}
+r = st_read(file.path(folder, regions_geojson))
 # r = st_transform(r, 4326)
 w = st_within(covid19,r)
 w = as.numeric(as.character(w))
@@ -57,8 +65,13 @@ covid19_regions = geojsonsf::sf_geojson(covid19_regions)
 ########### world ###########
 # url changed 
 # https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
-csv = read.csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv", 
-               stringsAsFactors = FALSE)
+url = "https://opendata.ecdc.europa.eu/covid19/casedistribution/csv"
+worldRds = "world.Rds"
+if(!file.exists(file.path(folder, worldRds))) {
+  csv = read.csv(url, stringsAsFactors = FALSE)
+  saveRDS(csv, file.path(folder, worldRds))
+}
+csv = readRDS(file.path(folder, worldRds))
 c = read.csv("countries.csv")
 library(sf)
 c = st_as_sf(c, coords = c("longitude","latitude"))
