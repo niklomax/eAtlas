@@ -118,7 +118,7 @@ export default React.memo((props) => {
             <Radio value="2">
               Deaths
             </Radio>
-            <Radio value="3">Cases per Population</Radio>
+            {/* <Radio value="3">Cases per Population</Radio> */}
           </RadioGroup>
           <hr/>
           "xCase countries wtih 1k fatalities"<Slider
