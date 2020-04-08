@@ -75,7 +75,7 @@ export default function MultiLinePlot(options) {
             tickLabelAngle={-45} tickFormat={v => format(".2s")(v)} style={{
               line: { strokeWidth: 0 },
               title: { fill: options.dark ? '#fff' : '#000' },
-            }} position="end" title={data[0][data[0].length-1].x} />
+            }} position="end" />
         }
         {data.map((line, i) =>
           <LineSeries
@@ -86,16 +86,20 @@ export default function MultiLinePlot(options) {
             }}
             style={{ fill: 'none' }}
             data={line} />)}
-        {hint && <Crosshair
+        {hint && 
+        <Crosshair
           values={hint}
           className='test-class-name'
         > 
           <div style={{
+              maxHeight: plotStyle.height || W, 
+              overflowY: 'auto',
               color: options.dark ? '#fff' : '#000'
             }}>
-            <p>{hint[0] && hint[0].x}</p>
+            <b>{hint[0] && hint[0].x}</b><br/>
             {
-              legend.map((e, i) => e + ": " + hint[i].y + " ")
+              legend.map((e, i) => e + ": " + 
+              ((hint[i] && hint[i].y) || "") + " ")
             }
           </div>
         </Crosshair>}
