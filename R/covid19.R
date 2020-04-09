@@ -96,14 +96,22 @@ covid19_world = geojsonsf::sf_geojson(csv)
 
 #### UK daily
 url = "https://www.arcgis.com/sharing/rest/content/items/e5fd11150d274bebaaf8fe2a7a2bda11/data"
-daily = list.files(folder, pattern = "xlsx", full.names = TRUE)[1]
+daily = "daily.xlsx"
 if(!file.exists(file.path(folder, daily))) {
   download.file(url, extra = '-L',
-                destfile = file.path(folder, "daily.xlsx"))
-  daily = list.files(folder, pattern = "xlsx", full.names = TRUE)[1]
+                destfile = file.path(folder, daily))}
+daily = readxl::read_xlsx(file.path(folder, daily))
+#### LA historical
+url = "https://fingertips.phe.org.uk/documents/Historic%20COVID-19%20Dashboard%20Data.xlsx"
+las_historical = "historyLAs.xlsx"
+if(!file.exists(file.path(folder, las_historical))) {
+  download.file(url, extra = '-L',
+                destfile = file.path(folder, las_historical))
 }
-daily = readxl::read_xlsx(daily)
-#### daily no's
-# library(rvest)
-# daily = read_html("https://www.arcgis.com/home/item.html?id=23258c605db74e6696e72a65513a1770&view=lis#data")
-# daily = html_node(daily, "table")
+las_historical = readxl::read_xlsx(
+  file.path(folder, las_historical), sheet = 6)
+las_historical = las_historical[8:nrow(las_historical), ]
+names(las_historical) = 
+  c("code", "name", 
+    unlist(lapply(1:(length(las_historical)-2), 
+                  function(x)as.character(as.Date("2020-03-08")+x))))
