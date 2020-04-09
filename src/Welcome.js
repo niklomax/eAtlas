@@ -112,8 +112,8 @@ export default class Welcome extends React.Component {
       loading: true,
       layers: [],
       backgroundImage: gradient.backgroundImage,
-      radius: 1000,
-      elevation: 6,
+      radius: 1500,
+      elevation: 24,
       mapStyle: MAPBOX_ACCESS_TOKEN ? ("mapbox://styles/mapbox/" +
         (props.dark ? "dark" : "basic") + "-v9") : osmtiles,
       initialViewState: init,
@@ -272,7 +272,8 @@ export default class Welcome extends React.Component {
       (filter && filter.what === 'column' && filter.selected) || column || 1;
     if (layerStyle === 'heatmap') {
       options.getPosition = d => d.geometry.coordinates
-      // options.getWeight = d => d.properties[columnNameOrIndex]
+      options.getWeight = d => d.properties.TotalCases ? 
+      d.properties.TotalCases : d.properties.cases
     }
     if (geomType === 'linestring') {
       layerStyle = "line"

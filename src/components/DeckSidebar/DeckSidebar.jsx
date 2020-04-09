@@ -249,38 +249,6 @@ export default class DeckSidebar extends React.Component {
                       <ColorPicker colourCallback={(color) =>
                         typeof colourCallback === 'function' &&
                         colourCallback(color)} />
-                      <input
-                        type="range"
-                        id="radius"
-                        min={50}
-                        max={1000}
-                        step={50}
-                        value={radius}
-                        onChange={(e) => {
-                          this.setState({
-                            radius: e.target.value,
-                          })
-                          typeof (onChangeRadius) === 'function' &&
-                            onChangeRadius(e.target.value)
-                        }}
-                      />
-                      <h5>Radius: {radius}.</h5>
-                      <input
-                        type="range"
-                        id="elevation"
-                        min={2}
-                        max={8}
-                        step={2}
-                        value={elevation}
-                        onChange={(e) => {
-                          this.setState({
-                            elevation: e.target.value
-                          })
-                          typeof (onChangeElevation) === 'function' &&
-                            onChangeElevation(e.target.value)
-                        }}
-                      />
-                      <h5>Elevation: {elevation}.</h5>
                     </div>
                   }
                   {notEmpty &&
