@@ -18,9 +18,6 @@ export default (props) => {
   if(end - start > 2) {
     sliced = data.slice(start, end);
     testsSliced = tests.slice(start, end);
-  } else {
-    setStart(start); 
-    setEnd(days);
   }
   const slicedMulti = [[],[],[],[]];
   for(let i = 0; i < sliced.length; i++) {
@@ -78,9 +75,11 @@ export default (props) => {
         min={0} max={days}
         value={value}
         onChange={({value}) => {
-          value && setValue(value)
-          setStart(value[0]); 
-          setEnd(value[1]);
+          if(value && (value[1] - value[0] > 2)) {
+            setValue(value)
+            setStart(value[0]); 
+            setEnd(value[1]);
+          }
         }}
         overrides={{
           MinValue: ({$min}) => data[0][$min].x
