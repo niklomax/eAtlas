@@ -91,8 +91,8 @@ export default class Welcome extends React.Component {
       latitude: 52.075,
       zoom: 6.77,
       alt: 1.5,
-      bearing: -8.14,
-      pitch: 46.809
+      // bearing: -8.14,
+      // pitch: 46.809
     }
     const param = getParamsFromSearch(props.location.search);
     if (param) {
@@ -107,7 +107,7 @@ export default class Welcome extends React.Component {
     }
 
     this.state = {
-      layerStyle: 'hex',
+      layerStyle: 'scatterplot',
       column: 'TotalCases',
       loading: true,
       layers: [],
@@ -333,10 +333,20 @@ export default class Welcome extends React.Component {
         colorScale(d, data, column ? column : SPENSER ? 1 : 0)
     }
     if(geomType === "point" && cols.includes("TotalCases")) {
-      options.getPosition = d => d.geometry.coordinates;
-      options.getFillColor = d => colorScale(d, data, 1) //2nd prop
-      options.getRadius = d => +(Object.values(d.properties)[2]) * 5
+      // options.getPosition = d => d.geometry.coordinates;
+      // options.getFillColor = d => colorScale(d, data, 1) //2nd prop
+      options.getRadius = d => +(d.properties.TotalCases) * 5
       options.getElevationValue = p => +(p[0].properties.TotalCases)
+      // scatterplot
+      options.getLineWidth = 200
+      options.stroked = true
+      // options.filled = false
+      options.getLineColor  = this.props.dark ? 
+      [255,255,204] : [189,0,38]
+      options.lineWidthMinPixels = 1
+      options.lineWidthMaxPixels = 10
+      options.opacity = 0.3
+
     }
     const alayer = generateDeckLayer(
       layerStyle, data, this._renderTooltip, options
@@ -521,7 +531,8 @@ export default class Welcome extends React.Component {
               loading: true,
               coords: null,
               layerStyle: url_returned && url_returned.endsWith("covid19w") ?
-              "heatmap" : this.state.layerStyle
+              "heatmap" : url_returned.endsWith("covid19") ? "scatterplot" : 
+              this.state.layerStyle
             })
             if (geojson_returned) {
               // confirm valid geojson

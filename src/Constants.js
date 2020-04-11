@@ -15,14 +15,14 @@ define("UI_LIST", [
   "dropdown",
   "slider"]) 
 define("LAYERSTYLES", [
-  "arc",
+  // "arc",
   "geojson",
   "grid",
   "heatmap",
   "hex",
   "icon",
-  "line",
-  "path",
+  // "line",
+  // "path",
   "scatterplot",
   "sgrid"
 ])     

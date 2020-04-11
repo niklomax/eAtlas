@@ -3,7 +3,7 @@ import { StatefulButtonGroup, MODE } from 'baseui/button-group';
 import { Button, KIND, SIZE } from "baseui/button";
 
 const urls = {
-  UTLA:  '/api/covid19',
+  Local:  '/api/covid19',
   Regions: '/api/covid19r',
   World: '/api/covid19w'
 }

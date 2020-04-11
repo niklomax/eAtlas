@@ -39,7 +39,7 @@ const DUI = (props) => (
  * Up to this point we are still not using SSR
  */
 function App() {
-    const [dark, setDark] = useState(false)
+    const [dark, setDark] = useState(true)
     
     return (
       <main style={{
