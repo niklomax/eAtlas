@@ -70,8 +70,18 @@ get_covid19r <- function(res) {
   tests
 }
 
+#' Allowed paths.
+#' @get /world
+#' @get /world/
+#' @get /about
+#' @get /about/
+routesAllowed <- function(req, res){
+  # cat(req$PATH_INFO)
+  fname <- file.path(here::here(), "build", "index.html")
+  plumber::include_html(fname, res)
+}
+
 #' Tell plumber where our public facing directory is to SERVE.
-#' No need to map / to the build or public index.html. This will do.
 #'
 #' @assets ./build /
 list()
