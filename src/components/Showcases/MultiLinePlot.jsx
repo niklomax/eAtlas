@@ -29,8 +29,7 @@ export default function MultiLinePlot(options) {
   const limit = 10;
 
   const { plotStyle, title, noXAxis, noYAxis,
-    onValueClick, data, legend } = options;
-
+    onValueClick, data, legend, colors, noLegend } = options;
   return options.data && options.data.length > 0 &&
     // https://github.com/uber/react-vis/issues/584#issuecomment-401693372
     <div className="unselectable" 
@@ -85,7 +84,8 @@ export default function MultiLinePlot(options) {
               setHint(data.map(d => d[index]))
             }}
             style={{ fill: 'none' }}
-            data={line} />)}
+            data={line} 
+            color={colors && colors[i]} />)}
         {hint && 
         <Crosshair
           values={hint}
@@ -104,8 +104,9 @@ export default function MultiLinePlot(options) {
           </div>
         </Crosshair>}
       </XYPlot>
-      <DiscreteColorLegend
+      {!noLegend && <DiscreteColorLegend
         orientation="horizontal"
-        items={legend} />
+        items={legend} 
+        colors={colors}/>}
     </div>;
 }

@@ -28,6 +28,7 @@ import WorldDaily from '../covid/WorldDaily';
 import SwitchData from '../covid/SwitchData';
 
 import { DEV_URL, PRD_URL } from '../../Constants';
+import LocalHistory from '../covid/LocalHistory';
 const host = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
 
 export default class DeckSidebar extends React.Component {
@@ -197,6 +198,8 @@ export default class DeckSidebar extends React.Component {
                   }, dark))
               }
               <hr style={{ clear: 'both' }} />
+              {notEmpty && datasetName.endsWith("covid19") &&
+              <LocalHistory dark={dark}/> }
               {data && data.length > 0 && datasetName.endsWith("19") &&
                 <MultiSelect
                   title={"Country|Region"}

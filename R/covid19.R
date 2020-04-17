@@ -115,3 +115,18 @@ names(las_historical) =
   c("code", "name", 
     unlist(lapply(1:(length(las_historical)-2), 
                   function(x)as.character(as.Date("2020-03-08")+x))))
+m = match(tolower(las_historical$name), 
+          tolower(las$ctyua17nm))
+# las_historical$name(is.na(m))
+# [1] "Unconfirmed"                        
+# [2] "Cornwall and Isles of Scilly"       
+# [3] "Bournemouth, Christchurch and Poole"
+# [4] "Hackney and City of London"         
+# [5] "England"
+las_historical = las_historical[tolower(las_historical$name) %in% 
+                                  tolower(las$ctyua17nm),]
+m = m[!is.na(m)]
+stopifnot(!any(is.na(m)) && nrow(las_historical) == length(m))
+las_historical = st_as_sf(las_historical, 
+                          st_geometry(las[m,]))
+las_historical = geojsonsf::sf_geojson(las_historical)

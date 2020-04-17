@@ -40,6 +40,14 @@ get_covid19 <- function(res) {
   res
 }
 
+allcsv = read.csv("data/coronavirus-cases.csv")
+#' serve all
+#' @serializer unboxedJSON
+#' @get /api/covid19h
+get_las_historical <- function() {
+  allcsv
+}
+
 #' serve covid19
 #' @get /api/covid19w
 get_covid19w <- function(res) {
