@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 // import { RadioGroup, Radio } from "baseui/radio";
 // import { VerticalBarSeries } from 'react-vis';
 // import { Slider } from 'baseui/slider';
-import {schemeCategory10} from 'd3-scale-chromatic';
+import {schemeTableau10} from 'd3-scale-chromatic';
 
 // import { breakdown, countryHistory } from './utils';
 import { fetchData } from '../../utils';
@@ -40,7 +40,7 @@ export default React.memo((props) => {
     
     filteredHistory.avg = avg;
     keys.push("avg")
-    console.log(filteredHistory);
+    // console.log(filteredHistory);
     // console.log(schemeCategory10)
 
     // if(list.length) {
@@ -92,8 +92,8 @@ export default React.memo((props) => {
               marginBottom: 60 }}
             noLimit={true}
             colors={keys.length <= 10 ?
-              schemeCategory10 : keys
-              .map((e, i) => i === (keys.length - 1) ? '#f00' : '#777')
+              [...schemeTableau10.slice(0,keys.length-1), "#f00"] : 
+              keys.map((e, i) => i === (keys.length - 1) ? '#f00' : '#777')
             }
             noLegend={keys.length > 10}
           />}
