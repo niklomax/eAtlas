@@ -1,8 +1,4 @@
 import React, { useState } from 'react';
-// import {
-//   XYPlot, XAxis, YAxis,
-//   DiscreteColorLegend
-// } from 'react-vis';
 // import { format } from 'd3-format';
 // import { Checkbox } from 'baseui/checkbox';
 // import { RadioGroup, Radio } from "baseui/radio";
@@ -10,24 +6,18 @@ import React, { useState } from 'react';
 // import { Slider } from 'baseui/slider';
 import { schemeTableau10 } from 'd3-scale-chromatic';
 
-// import { breakdown, countryHistory } from './utils';
-import { fetchData } from '../../utils';
-import { DEV_URL, PRD_URL } from '../../Constants';
 import MultiLinePlot from '../Showcases/MultiLinePlot';
 import MultiSelect from '../MultiSelect';
 import './style.css';
-import { isNumber } from '../../JSUtils';
-const host = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
 
-export default React.memo((props) => {
+export default React.memo((props) => {  
   const [minMax, setMinMax] = useState([200, 500]);
-  const [{ las, allHistory, regions, avg, lasHistory }, setData] =
-    useState({ data: null, las: null, allHistory: {}, regions: [] });
+  const [{ las, avg, lasHistory }, setData] =
+    useState({ las: null, avg: null, lasHistory: null });
   const [filteredHistory, setFilteredHistory] = useState(null);
 
   const { dark } = props;
-
-  if (!filteredHistory && props.data) {    
+  if (!filteredHistory && props.data) {        
     initialState(props.data, setData, setFilteredHistory);
   }
   // console.log(avg);
@@ -43,9 +33,6 @@ export default React.memo((props) => {
     // console.log(filteredHistory);
     // console.log(schemeCategory10)
 
-    // if(list.length) {
-    //   keys.push(keys.splice(keys.indexOf(list[0]), 1)[0]);
-    // }
     return (
       <>
         <MultiSelect
@@ -107,47 +94,39 @@ export default React.memo((props) => {
 });
 
 function initialState(data, setData, setFilteredHistory) {
-  const allHistory = {}, lasHistory = {}, regions = [];
-  data.forEach(e => {
-    const area = e['Area.name'], date = e['Specimen.date'], cum = e['Cumulative.lab.confirmed.cases'],
-      isLAS = e['Area.type'] === "Upper tier local authority";
-    // const num = area === 'England' ? cum / 100 : cum;
-    if (isNumber(cum)) {
-      if (allHistory[area]) {
-        allHistory[area].push({ x: date, y: cum });
-        if (isLAS) {
-          lasHistory[area] = allHistory[area];
-        }
-      }
-      else {
-        allHistory[area] = [
-          { x: date, y: cum }
-        ];
-      }
-    }
-    if (e['Area.type'] === 'Region') {
-      regions.push(area);
-    }
-  });
-  const las = Object.keys(lasHistory);
-
-  //reverse 
-  const orderByDate = {};
-  Object.keys(allHistory).forEach(e => {
-    orderByDate[e] = allHistory[e].sort((a, b) => new Date(a.x) > new Date(b.x) ? 1 : -1)
-    if (las.includes(e)) {
-      lasHistory[e] = orderByDate[e];
-    }
-  })
+  const lasHistory = {};
 
   //add average
-  const avg = [];
-  allHistory[las[0]].forEach((xy, i) => {
-    const y = Object.values(allHistory).reduce((sum, e) =>
-      isNumber(sum) ? sum + ((e[i] && e[i].y) || 0) :
-        sum[i].y + ((e[i] && e[i].y) || 0));
-    avg.push({ x: xy.x, y: Math.floor(y / las.length) })
+  const avg = []; let m = 0, utla;
+  // find longest  
+  Object.keys(data.utlas).map(e => {
+    const cc = data.utlas[e].dailyTotalConfirmedCases;
+    if(cc && cc.length > m) {
+      m = cc.length; utla = data.utlas[e];
+    }
+    lasHistory[data.utlas[e].name.value] = 
+    data.utlas[e].dailyTotalConfirmedCases.map(v => ({x: v.date, y: v.value}))
   })
-  setData({ las, allHistory: orderByDate, regions, avg, lasHistory });
+  console.log(lasHistory);
+  const las = Object.keys(lasHistory);
+
+  utla.dailyTotalConfirmedCases.map(v => {
+    //e.date, e.value
+    let y = v.value;
+    //go through the rest and add values of same dates
+    Object.keys(data.utlas).map(e => {
+      const cc = data.utlas[e].dailyTotalConfirmedCases;
+      cc.map(ov => {
+        if(utla.name.value !== data.utlas[e].name.value) {
+          if(ov.date === v.date) {
+            y += ov.value
+          }
+        }
+      })
+    })
+    avg.push({x: v.date, y: Math.floor(y / Object.keys(data.utlas).length)})
+  })
+  
+  setData({ las, avg, lasHistory });
   setFilteredHistory(lasHistory);
 }

@@ -187,20 +187,20 @@ export default class Welcome extends React.Component {
         this.setState({world: d.features})
       }
     })
-    // getLatestBlobFromPHE((blob) => {
-    //   fetchData(`https://c19pub.azureedge.net/${blob}`, (data, e) => {        
-    //     console.log(data);
+    getLatestBlobFromPHE((blob) => {
+      fetchData(`https://c19pub.azureedge.net/${blob}`, (data, e) => {        
+        console.log(data);
         
-    //     if(!e) {
-    //       this.setState({historyData: data})
-    //     }
-    //   })
-    // })
-    fetchData(URL + "/api/covid19h", (data, error) => {
-      if (!error) {
-        this.setState({historyData: data})
-      }
-    });
+        if(!e) {
+          this.setState({historyData: data})
+        }
+      })
+    })
+    // fetchData(URL + "/api/covid19h", (data, error) => {
+    //   if (!error) {
+    //     this.setState({historyData: data})
+    //   }
+    // });
   }
 
   /**

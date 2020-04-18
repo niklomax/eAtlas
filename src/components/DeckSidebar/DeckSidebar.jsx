@@ -46,7 +46,7 @@ export default class DeckSidebar extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { data, alert, loading, daily, tests } = this.props;
+    const { data, alert, loading, daily, tests, historyData } = this.props;
     const { elevation, radius, reset,
       barChartVariable } = this.state;
     // avoid rerender as directly
@@ -57,7 +57,8 @@ export default class DeckSidebar extends React.Component {
       loading !== nextProps.loading ||
       barChartVariable !== nextState.barChartVariable ||
       daily !== nextProps.daily ||
-      tests !== nextProps.tests) return true;
+      tests !== nextProps.tests||
+      historyData !== nextProps.historyData) return true;
     //TODO:  a more functional way is needed        
     if (data && nextProps && nextProps.data &&
       JSON.stringify(data) === JSON.stringify(nextProps.data)) {
@@ -117,8 +118,6 @@ export default class DeckSidebar extends React.Component {
         datasetName: urlOrName || this.state.datasetName
       })
     }
-    let d = new Date();
-    d = new Date(d - d.getMinutes() * 60000 - d.getSeconds() * 1000)
     return (
       <>
         <div
@@ -133,30 +132,27 @@ export default class DeckSidebar extends React.Component {
               background: dark ? '#29323C' : '#eee'
             }}
             className="side-pane-header">
+            <h2>
             {
               //if specific region shown, show its count
               multiVarSelect.name && multiVarSelect.name.size === 1 ?
-                <h2>
-                  {data[0].properties.TotalCases + " cases"}
-                </h2>
+                  data[0].properties.TotalCases + " cases"
                 :
-                (data && data.length && data[0].properties.TotalCases) ?
-                  <h2>
-                    {(this.state.TotalCases ||
-                      daily && daily[0] && daily[daily.length - 1].CumCases) + " cases"}
-                  </h2>
-                  :
-                  <h2>{data && data.length ?
+                (historyData && historyData.overview) ?
+                historyData.overview.K02000001.totalCases.value + " cases"
+                :
+                data && data.length ?
                     data && data.length && data[0].properties.cases &&
                     data.reduce((t, next) =>
                       isNumber(t) ? t + +(next.properties.cases) :
                         +(t.properties.cases) + +(next.properties.cases)) + " cases"
-                    : "Nothing to show"}
-                  </h2>
+                    : "Nothing to show"
             }
+            </h2>
           </div>
           <div>
-            updated: {d.toLocaleString()}
+            {historyData && historyData.overview && 
+            `updated: ${new Date(historyData.lastUpdatedAt).toLocaleDateString()}`}
             <br />
             <SwitchData onSelectCallback={(url) => {
               if(datasetName === url || 
