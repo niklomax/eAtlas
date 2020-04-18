@@ -29,7 +29,7 @@ import {
   getParamsFromSearch, getBbx,
   isMobile, colorScale,
   colorRanges,
-  convertRange, getMin, getMax, isURL
+  convertRange, getMin, getMax, isURL, getLatestBlobFromPHE
 } from './utils';
 import Constants from './Constants';
 import DeckSidebarContainer from
@@ -187,6 +187,20 @@ export default class Welcome extends React.Component {
         this.setState({world: d.features})
       }
     })
+    // getLatestBlobFromPHE((blob) => {
+    //   fetchData(`https://c19pub.azureedge.net/${blob}`, (data, e) => {        
+    //     console.log(data);
+        
+    //     if(!e) {
+    //       this.setState({historyData: data})
+    //     }
+    //   })
+    // })
+    fetchData(URL + "/api/covid19h", (data, error) => {
+      if (!error) {
+        this.setState({historyData: data})
+      }
+    });
   }
 
   /**
@@ -509,6 +523,7 @@ export default class Welcome extends React.Component {
           </DeckGL>
         </MapGL>
         <DeckSidebarContainer
+          historyData={this.state.historyData}
           world={this.state.world}
           tests={this.state.tests}
           daily={this.state.daily}
@@ -579,7 +594,7 @@ export default class Welcome extends React.Component {
           legend && (geomType === 'polygon' ||
             geomType === 'multipolygon') &&
           <div 
-            style={{textAlign: 'center'}}
+            style={{textAlign: 'center', marginBottom: 45}}
             className="right-side-panel mapbox-legend">
             {legend}
           </div>

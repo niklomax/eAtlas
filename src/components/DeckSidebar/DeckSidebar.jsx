@@ -74,7 +74,7 @@ export default class DeckSidebar extends React.Component {
     const { elevation, radius, year, datasetName,
       subsetBoundsChange, multiVarSelect, barChartVariable } = this.state;
     const { onChangeRadius, onChangeElevation,
-      onSelectCallback, data, colourCallback, daily, tests,
+      onSelectCallback, data, colourCallback, daily, tests, historyData,
       toggleSubsetBoundsChange, urlCallback, alert,
       onlocationChange, column, dark, toggleOpen, toggleHexPlot } = this.props;
     let plot_data = [];
@@ -199,7 +199,7 @@ export default class DeckSidebar extends React.Component {
               }
               <hr style={{ clear: 'both' }} />
               {notEmpty && datasetName.endsWith("covid19") &&
-              <LocalHistory dark={dark}/> }
+              <LocalHistory data={historyData} dark={dark}/> }
               {data && data.length > 0 && datasetName.endsWith("19") &&
                 <MultiSelect
                   title={"Country|Region"}

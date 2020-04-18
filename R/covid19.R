@@ -14,20 +14,21 @@ if(is.factor(df$TotalCases)) {
   df$TotalCases = as.numeric(as.character(df$TotalCases))
 }
 is.na(df$TotalCases) = 0
-url = "https://github.com/layik/eAtlas/releases/download/0.0.1/LAs_centroids.Rds"
-lasRds = "LAs_centroids.Rds"
+# url = "https://github.com/layik/eAtlas/releases/download/0.0.1/LAs_centroids.Rds"
+# lasRds = "LAs_centroids.Rds"
+url = "https://github.com/layik/eAtlas/releases/download/0.0.1/utla-polygons.Rds"
+lasRds = "utla-polygons.Rds"
 if(!file.exists(file.path(folder, lasRds))) {
   download.file(url, destfile = file.path(folder, lasRds))
 }
 library(sf)
 las = readRDS(file.path(folder, lasRds))
 # las already centroids
-m = match(tolower(df$GSS_NM), 
-          tolower(las$ctyua17nm))
+m = match(df$GSS_CD, las$ctyua19cd)
 # nrow(df) - length(las) # 139
 # nrow(df) # 150 names
 # length(which(is.na(m)))
-df = df[df$GSS_NM %in% las$ctyua17nm, ]
+df = df[df$GSS_CD %in% las$ctyua19cd, ]
 m = m[!is.na(m)]
 stopifnot(!any(is.na(m)))
 sfc = st_geometry(las[m,])
@@ -116,7 +117,7 @@ names(las_historical) =
     unlist(lapply(1:(length(las_historical)-2), 
                   function(x)as.character(as.Date("2020-03-08")+x))))
 m = match(tolower(las_historical$name), 
-          tolower(las$ctyua17nm))
+          tolower(las$ctyua19nm))
 # las_historical$name(is.na(m))
 # [1] "Unconfirmed"                        
 # [2] "Cornwall and Isles of Scilly"       
@@ -124,7 +125,7 @@ m = match(tolower(las_historical$name),
 # [4] "Hackney and City of London"         
 # [5] "England"
 las_historical = las_historical[tolower(las_historical$name) %in% 
-                                  tolower(las$ctyua17nm),]
+                                  tolower(las$ctyua19nm),]
 m = m[!is.na(m)]
 stopifnot(!any(is.na(m)) && nrow(las_historical) == length(m))
 las_historical = st_as_sf(las_historical, 
