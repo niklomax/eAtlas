@@ -1,10 +1,7 @@
 import React from 'react';
-import { LineSeries } from 'react-vis';
 import { Table } from 'baseui/table';
 import { humanize } from '../utils';
-import SeriesPlot from './Showcases/SeriesPlot';
-import { propertyCountByProperty } from '../geojsonutils';
-import MultiLinePlot from './Showcases/MultiLinePlot';
+import { isString, isObject, isArray } from '../JSUtils';
 
 const WIDTH = 220;
 const BAR_HEIGHT = 80;
@@ -49,75 +46,7 @@ export default class Tooltip extends React.Component {
     const cluster = hoveredObject && hoveredObject.cluster 
     // {cluster: true, cluster_id: 8, point_count: 54, 
     // point_count_abbreviated: 54}
-
-    let list;
-    let severity_keys = [];
-    let crashes_data = [];
-    let severity_data = [];
-    let severity_data_separate = [];    
-    if (!type_feature && !cluster) {
-      list = hoveredObject.points.map(feature => {
-        const aKey = {}
-        if (feature.properties.hasOwnProperty('accident_severity')) {
-          aKey.severity = feature.properties.accident_severity;
-        }
-        if (feature.properties.hasOwnProperty('date')) {
-          aKey.year = feature.properties.date.split("/")[2];
-        }
-        return (aKey)
-      });
-      const map = new Map()
-      // aggregate severity and years
-      list.forEach(element => {
-        if (element.hasOwnProperty('severity')) {
-          if (map.get(element.severity)) {
-            map.set(element.severity, map.get(element.severity) + 1)
-          } else {
-            map.set(element.severity, 1)
-          }
-        }
-        if (element.hasOwnProperty('year')) {
-          if (map.get(element.year)) {
-            map.set(element.year, map.get(element.year) + 1)
-          } else {
-            map.set(element.year, 1)
-          }
-        }
-      });
-      // list severity and year counts
-      Array.from(map.keys()).forEach(key => {
-        // console.log(key, [ ...map.keys() ]);
-        if (parseInt(key)) { // TODO: replace with moment check - is it year?
-          crashes_data.push({ x: key, y: map.get(key) })
-        } else {
-          // {x: serious, y: 20}
-          // {x: slight: y: 21}
-          severity_data.push({ x: key, y: map.get(key) })
-        }
-      })
-      // separate the severity into [[],[]] arrays
-      severity_keys = Array.from(new Set(severity_data.map(e => e.x)));
-      const severity_by_year = propertyCountByProperty(hoveredObject.points,
-        "accident_severity", severity_keys, "date");
-      // now turn it into [[],[]]
-      //{2009: {Slight: 1}, 2010: {Slight: 3}, 2012: {Slight: 4}, 
-      // 2013: {Slight: 3}, 2014: {Serious: 1}, 2015: {Slight: 6}, 
-      // 2016: {Serious: 1, Slight: 2}, 2017: {Slight: 1}}
-      Object.keys(severity_by_year).forEach(y => {
-        severity_by_year[y] &&
-        Object.keys(severity_by_year[y]).forEach(kk => {
-          // get index of kk
-          const index = severity_keys.indexOf(kk);
-          if(!severity_data_separate[index]) {
-            severity_data_separate[index] = [];
-          }
-          // 2016: {Serious: 1, Slight: 2}
-          severity_data_separate[index].push({
-            x: +(y), y: severity_by_year[y][kk]
-          })
-        })
-      })
-    }
+    
     // console.log(crashes_data);
     
     const w = window.innerWidth;
@@ -144,39 +73,29 @@ export default class Tooltip extends React.Component {
             !cluster && (type_feature || hoveredObject.points.length <= 2) &&
             this._listPropsAndValues(hoveredObject)
           }
-          {
-            severity_data_separate.length > 1 ?
-            <MultiLinePlot
-              data={[...severity_data_separate, crashes_data]}
-              legend={[...severity_keys, 'Total']}
-              title="Crashes" noYAxis={true}
-              plotStyle={{ height: 100, marginBottom: 50 }}
-            /> :
-            <SeriesPlot title={severity_keys.length === 1 && severity_keys[0]} 
-            data= {crashes_data} type= {LineSeries} />
-          }
         </div>
       </div >
     return (tooltip)
   }
 
-  _listPropsAndValues(hoveredObject) {
+  _listPropsAndValues(hoveredObject) {    
     let DATA = []
     const props = hoveredObject.properties;
-    if(props) {
+    if(props) {      
       DATA = Object.keys(props)
       .map(p => {
-        return([humanize(p), props[p]])
+        return([humanize(p), isObject(props[p]) || isArray(props[p]) ? "[Object]" :  props[p]])
       })
     } else { // two points passed go through first one
-      DATA = Object.keys(hoveredObject.points[0].properties)
+      const ps = hoveredObject.points;
+      DATA = Object.keys(ps[0].properties)
       .map(p => {
         let points = [
           humanize(p), 
-          hoveredObject.points[0].properties[p],
+          isObject(ps[0].properties[p]) ? "[Object]" : ps[0].properties[p],
         ]
-        if(hoveredObject.points[1]) {
-          points.push(hoveredObject.points[1].properties[p])
+        if(ps[1]) {
+          points.push(isObject(ps[1].properties[p]) ? "[Object]" : ps[1].properties[p])
         }
         return(points)
       })

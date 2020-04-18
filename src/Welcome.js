@@ -40,6 +40,7 @@ import './App.css';
 import Tooltip from './components/Tooltip';
 import { sfType } from './geojsonutils';
 import { isNumber, isArray } from './JSUtils';
+import { generateMultipolygonGeojsonFrom } from './components/covid/utils';
 
 const osmtiles = {
   "version": 8,
@@ -62,7 +63,7 @@ const osmtiles = {
   }]
 };
 const URL = (process.env.NODE_ENV === 'development' ? Constants.DEV_URL : Constants.PRD_URL);
-const defualtURL = "/api/covid19";
+const defualtURL = "https://c19pub.azureedge.net/utlas.geojson";
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
@@ -107,8 +108,7 @@ export default class Welcome extends React.Component {
     }
 
     this.state = {
-      layerStyle: 'scatterplot',
-      column: 'TotalCases',
+      column: 'totalCases',
       loading: true,
       layers: [],
       backgroundImage: gradient.backgroundImage,
@@ -147,18 +147,42 @@ export default class Welcome extends React.Component {
       // TODO: decide which is better.
       // URL + "/api/url?q=" + aURL : // get the server to parse it 
       aURL : // do not get the server to parse it 
-      URL + defualtURL;
+      defualtURL;
     
-    fetchData(fullURL, (data, error) => {
+    fetchData(fullURL, (data, error) => {      
       if (!error) {
-        // this._updateURL(viewport)
-        this.setState({
-          loading: false,
-          data: data,
-          alert: customError || null
+        getLatestBlobFromPHE((blob) => {
+          fetchData(`https://c19pub.azureedge.net/${blob}`, (phe, e) => {        
+            //update geojson
+            console.log(phe);
+            const gj = {
+              type: 'FeatureCollection',
+              features: data.features
+            };
+            if(!e) {
+              data.features.forEach((f, i) => {
+                Object.keys(phe.utlas).forEach(la => {
+                  if(f.properties.ctyua19cd === la) {
+                    gj.features[i].properties = phe.utlas[la]
+                    gj.features[i].properties.name = 
+                    phe.utlas[la].name.value;
+                    gj.features[i].properties.totalCases = 
+                    phe.utlas[la].totalCases.value;
+                  }
+                })
+              })
+              // console.log(gj);
+              this.setState({
+                historyData: phe,
+                loading: false,
+                data: gj,
+                alert: customError || null
+              })
+              this._fitViewport(gj)
+              this._generateLayer()
+            }
+          })
         })
-        this._fitViewport(data)
-        this._generateLayer()
       } else {
         this.setState({
           loading: false,
@@ -168,39 +192,19 @@ export default class Welcome extends React.Component {
       }
     })
 
-    fetchData(URL + "/api/covid19d", (daily, error) => {
+    fetchData(URL + "/api/covid19t", (json, error) => {
       if(!error) {
-        fetchData(URL + "/api/covid19t", (json, error) => {
-          if(!error) {
-            const asObject = {};
-            json.forEach(e => asObject[e.date] = e.number)
-            this.setState({
-              daily,
-              tests: daily.map(e => ({x: e.DateVal, y: asObject[e.DateVal] || 0}))
-            })
-          }
+        this.setState({
+          tests: json.map(e => ({x: e.date, y: e.number || 0}))
         })
       }
     })
+
     fetchData(URL + "/api/covid19w", (d, e) => {
       if(!e) {
         this.setState({world: d.features})
       }
     })
-    getLatestBlobFromPHE((blob) => {
-      fetchData(`https://c19pub.azureedge.net/${blob}`, (data, e) => {        
-        console.log(data);
-        
-        if(!e) {
-          this.setState({historyData: data})
-        }
-      })
-    })
-    // fetchData(URL + "/api/covid19h", (data, error) => {
-    //   if (!error) {
-    //     this.setState({historyData: data})
-    //   }
-    // });
   }
 
   /**
@@ -286,8 +290,8 @@ export default class Welcome extends React.Component {
       (filter && filter.what === 'column' && filter.selected) || column || 1;
     if (layerStyle === 'heatmap') {
       options.getPosition = d => d.geometry.coordinates
-      options.getWeight = d => d.properties.TotalCases ? 
-      d.properties.TotalCases : d.properties.cases
+      options.getWeight = d => d.properties.totalCases ? 
+      d.properties.totalCases : d.properties.cases
     }
     if (geomType === 'linestring') {
       layerStyle = "line"
@@ -335,22 +339,14 @@ export default class Welcome extends React.Component {
     const cols = Object.keys(data && data[0] && 
       data[0].properties);
     if (geomType === "polygon" || geomType === "multipolygon") {
-      // TODO: remove SPENSER
-      const SPENSER = isArray(cols) && cols.length > 0 && 
-      cols[1] === 'GEOGRAPHY_CODE';
-      if (SPENSER) {
-        options.getElevation = d => (isNumber(d.properties[column]) &&
-          column !== 'YEAR' && d.properties[column]) || null
-      }
-      // TODO: allow user to specify column.
       options.getFillColor = (d) =>
-        colorScale(d, data, column ? column : SPENSER ? 1 : 0)
+        colorScale(d, data, column ? column : 0)
     }
-    if(geomType === "point" && cols.includes("TotalCases")) {
+    if(geomType === "point" && cols.includes("totalCases")) {
       // options.getPosition = d => d.geometry.coordinates;
       // options.getFillColor = d => colorScale(d, data, 1) //2nd prop
-      options.getRadius = d => +(d.properties.TotalCases) * 5
-      options.getElevationValue = p => +(p[0].properties.TotalCases)
+      options.getRadius = d => +(d.properties.totalCases) * 5
+      options.getElevationValue = p => +(p[0].properties.totalCases)
       // scatterplot
       options.getLineWidth = 200
       options.stroked = true

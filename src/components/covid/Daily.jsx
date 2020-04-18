@@ -4,41 +4,73 @@ import { Slider } from 'baseui/slider';
 import { daysDiff } from './utils';
 import MultiLinePlot from '../Showcases/MultiLinePlot';
 
-export default (props) => {
+export default React.memo((props) => {
   const { data, dark, tests } = props;  
   if(!data || data.length <= 2 ) return(null)
-  const days = daysDiff(data[0].DateVal, data[data.length-1].DateVal)
+  const daily = data.dailyTotalConfirmedCases;
+  const days = daily.length-1; //daysDiff(daily[0].date, daily[daily.length-1].date)
   const [start, setStart] = useState(20);
   const [end, setEnd] = useState(days + 1);
   const [value, setValue] = useState([days - 30, days]);
   const [increase, setIncrease] = useState([22]);
 
-  let sliced = data.slice(0, days);
+  let sliced = daily.slice(0, days);
   let testsSliced = tests.slice(0, days)
   if(end - start > 2) {
-    sliced = data.slice(start, end);
+    sliced = daily.slice(start, end);
     testsSliced = tests.slice(start, end);
   }
   const slicedMulti = [[],[],[],[]];
   for(let i = 0; i < sliced.length; i++) {
     slicedMulti[0][i] = {
-      x: sliced[i].DateVal,
-      y: sliced[i].CumCases
+      x: sliced[i].date,
+      y: sliced[i].value
     }
-    slicedMulti[1][i] = {
-      x: sliced[i].DateVal,
-      y: sliced[i].CMODateCount
+    data.dailyConfirmedCases.forEach(e => {
+      if(e.date === sliced[i].date) {
+        slicedMulti[1][i] = {
+          x: e.date,
+          y: e.value
+        }
+      }
+    })
+    if(!slicedMulti[1][i]) {
+      slicedMulti[1][i] = {
+        x: sliced[i].date,
+        y: 0
+      }
     }
-    slicedMulti[2][i] = {
-      x: sliced[i].DateVal,
-      y: sliced[i].CumDeaths || 0
+    data.dailyTotalDeaths.forEach(e => {
+      if(e.date === sliced[i].date) {
+        slicedMulti[2][i] = {
+          x: e.date,
+          y: e.value
+        }
+      }
+    })
+    if(!slicedMulti[2][i]) {
+      slicedMulti[2][i] = {
+        x: sliced[i].date,
+        y: 0
+      }
     }
-    slicedMulti[3][i] = {
-      x: sliced[i].DateVal,
-      y: sliced[i].DailyDeaths || 0
+    data.dailyDeaths.forEach(e => {
+      if(e.date === sliced[i].date) {
+        slicedMulti[3][i] = {
+          x: e.date,
+          y: e.value
+        }
+      }
+    })
+    if(!slicedMulti[3][i]) {
+      slicedMulti[3][i] = {
+        x: sliced[i].date,
+        y: 0
+      }
     }
   }
-
+  console.log(testsSliced);
+  
   const expGrowth = [slicedMulti[0][0]];
   for (let i = 1; i < slicedMulti[0].length; i++) {
     const y = +(expGrowth[i - 1].y)
@@ -70,7 +102,7 @@ export default (props) => {
         title={"CasesVsTests÷10"}
         plotStyle={{ height: 200, marginBottom:60 }} noLimit={true}
       />
-      {data[0].DateVal + " to " + data[days].DateVal}
+      {daily[0].date + " to " + daily[days].date}
       <Slider
         min={0} max={days}
         value={value}
@@ -94,4 +126,4 @@ export default (props) => {
       />
     </>
   )
-}
+})

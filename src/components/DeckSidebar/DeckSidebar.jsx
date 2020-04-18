@@ -72,9 +72,9 @@ export default class DeckSidebar extends React.Component {
    * Partly because we like to load from a URL.
    */
   render() {
-    const { elevation, radius, year, datasetName,
+    const { year, datasetName,
       subsetBoundsChange, multiVarSelect, barChartVariable } = this.state;
-    const { onChangeRadius, onChangeElevation,
+    const {
       onSelectCallback, data, colourCallback, daily, tests, historyData,
       toggleSubsetBoundsChange, urlCallback, alert,
       onlocationChange, column, dark, toggleOpen, toggleHexPlot } = this.props;
@@ -132,14 +132,15 @@ export default class DeckSidebar extends React.Component {
               background: dark ? '#29323C' : '#eee'
             }}
             className="side-pane-header">
-            <h2>
+            <h4>
             {
               //if specific region shown, show its count
               multiVarSelect.name && multiVarSelect.name.size === 1 ?
                   data[0].properties.TotalCases + " cases"
                 :
                 (historyData && historyData.overview) ?
-                historyData.overview.K02000001.totalCases.value + " cases"
+                historyData.overview.K02000001.totalCases.value + " cases, " +
+                historyData.overview.K02000001.deaths.value + " deaths"
                 :
                 data && data.length ?
                     data && data.length && data[0].properties.cases &&
@@ -148,7 +149,7 @@ export default class DeckSidebar extends React.Component {
                         +(t.properties.cases) + +(next.properties.cases)) + " cases"
                     : "Nothing to show"
             }
-            </h2>
+            </h4>
           </div>
           <div>
             {historyData && historyData.overview && 
@@ -194,33 +195,26 @@ export default class DeckSidebar extends React.Component {
                   }, dark))
               }
               <hr style={{ clear: 'both' }} />
-              {notEmpty && datasetName.endsWith("covid19") &&
-              <LocalHistory data={historyData} dark={dark}/> }
-              {data && data.length > 0 && datasetName.endsWith("19") &&
-                <MultiSelect
-                  title={"Country|Region"}
-                  single={true}
-                  values={regions.map(e => ({ id: e, value: e }))}
-                  onSelectCallback={(selected) => {
-                    // array of seingle {id: , value: } object
-                    if (selected[0]) {
-                      multiVarSelect['name'] = new Set([selected[0].id])
-                    } else {
-                      if (multiVarSelect.name) delete multiVarSelect.name;
-                    }
-                    this.setState({
-                      multiVarSelect
-                    })
-                    typeof onSelectCallback === 'function' &&
-                      onSelectCallback({
-                        what: 'multi',
-                        selected: multiVarSelect
-                      });
-                  }}
-                />
-              }
-              {daily && tests && datasetName.endsWith("covid19") &&
-                <Daily data={daily} tests={tests} dark={dark} />}
+              {notEmpty &&
+              <LocalHistory data={historyData} dark={dark} 
+              onSelectCallback={(selected) => {
+                // array of seingle {id: , value: } object
+                if (selected[0]) {
+                  multiVarSelect['name'] = new Set([selected[0].id])
+                } else {
+                  if (multiVarSelect.name) delete multiVarSelect.name;
+                }
+                this.setState({
+                  multiVarSelect
+                })
+                typeof onSelectCallback === 'function' &&
+                  onSelectCallback({
+                    what: 'multi',
+                    selected: multiVarSelect
+                  });
+              }}/> }
+              {historyData && tests && !datasetName.endsWith("covid19w") &&
+                <Daily data={historyData.countries.E92000001} tests={tests} dark={dark} />}
               {notEmpty && datasetName.endsWith("covid19w") &&
                 <WorldDaily data={data} dark={dark} 
                   // onSelectCallback={(selected) => {

@@ -1,3 +1,5 @@
+import * as helpers from '@turf/helpers';
+
 import { isArray } from "../../JSUtils";
 
 const countryHistory = (data, by = "cases", min = 200, max=500, 
@@ -59,7 +61,32 @@ const daysDiff = (s, e) => {
   return diff;
 }
 
+const generateMultipolygonGeojsonFrom = (geometries, properties, callback) => {  
+  if(!geometries || !properties || !isArray(geometries) ||
+  !isArray(properties)) return;
+  if(geometries.length !== properties.length) {
+    typeof callback === 'function' &&
+    callback(undefined, "geometries and properties must be equal.")
+  }  
+  let collection = [];
+  //
+  for (let index = 0; index < geometries.length; index++) {
+    let polygon = geometries[index]; //just in case too large for forEach.    
+    const line = helpers.multiPolygon(
+      polygon
+      , //properties next
+      properties[index]
+    )        
+    collection.push(line);       
+  }  
+  collection = helpers.featureCollection(collection);
+  // console.log(collection);
+  
+  typeof callback === 'function' &&
+    callback(collection)
+}
 export {
+  generateMultipolygonGeojsonFrom,
   countryHistory,
   breakdown,
   daysDiff

@@ -83,14 +83,14 @@ const fetchData = (url, callback) => {
  */
 const xyObjectByProperty = (data, property, noNulls = true) => {
   if (!data || !property) return;
-  //data = [{...data = 12/12/12}]       
+  //data = [{...data = 12/12/12}]   
   const map = new Map()
   data.forEach(feature => {
     let value = feature.properties[property];
     if (typeof (value) === 'string' && value.split("/")[2]) {
       value = value.split("/")[2]
     }
-    if (noNulls && value !== null) { // remove nulls here
+    if (noNulls && value) { // remove nulls here      
       if (map.get(value)) {
         map.set(value, map.get(value) + 1)
       } else {

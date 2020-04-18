@@ -20,7 +20,6 @@ export default React.memo((props) => {
   if (!filteredHistory && props.data) {        
     initialState(props.data, setData, setFilteredHistory);
   }
-  // console.log(avg);
 
   if (filteredHistory) {
     //list history
@@ -103,11 +102,10 @@ function initialState(data, setData, setFilteredHistory) {
     const cc = data.utlas[e].dailyTotalConfirmedCases;
     if(cc && cc.length > m) {
       m = cc.length; utla = data.utlas[e];
-    }
-    lasHistory[data.utlas[e].name.value] = 
+    }    
+    lasHistory[data.utlas[e].name] = 
     data.utlas[e].dailyTotalConfirmedCases.map(v => ({x: v.date, y: v.value}))
   })
-  console.log(lasHistory);
   const las = Object.keys(lasHistory);
 
   utla.dailyTotalConfirmedCases.map(v => {
@@ -117,7 +115,7 @@ function initialState(data, setData, setFilteredHistory) {
     Object.keys(data.utlas).map(e => {
       const cc = data.utlas[e].dailyTotalConfirmedCases;
       cc.map(ov => {
-        if(utla.name.value !== data.utlas[e].name.value) {
+        if(utla.name !== data.utlas[e].name) {
           if(ov.date === v.date) {
             y += ov.value
           }
