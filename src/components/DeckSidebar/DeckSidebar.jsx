@@ -138,7 +138,7 @@ export default class DeckSidebar extends React.Component {
               multiVarSelect.name && multiVarSelect.name.size === 1 ?
                   data[0].properties.TotalCases + " cases"
                 :
-                (historyData && historyData.overview) ?
+                (historyData && historyData.overview && !datasetName.endsWith("covid19w")) ?
                 historyData.overview.K02000001.totalCases.value + " cases, " +
                 historyData.overview.K02000001.deaths.value + " deaths"
                 :
@@ -152,7 +152,7 @@ export default class DeckSidebar extends React.Component {
             </h4>
           </div>
           <div>
-            {historyData && historyData.overview && 
+            {historyData && historyData.overview && !datasetName.endsWith("covid19w") && 
             `updated: ${new Date(historyData.lastUpdatedAt).toLocaleDateString()}`}
             <br />
             <SwitchData onSelectCallback={(url) => {
@@ -195,12 +195,12 @@ export default class DeckSidebar extends React.Component {
                   }, dark))
               }
               <hr style={{ clear: 'both' }} />
-              {notEmpty &&
+              {historyData && !datasetName.endsWith("covid19w") &&
               <LocalHistory data={historyData} dark={dark} 
               onSelectCallback={(selected) => {
                 // array of seingle {id: , value: } object
                 if (selected[0]) {
-                  multiVarSelect['name'] = new Set([selected[0].id])
+                  multiVarSelect['name'] = new Set(selected.map(e => e.id))
                 } else {
                   if (multiVarSelect.name) delete multiVarSelect.name;
                 }

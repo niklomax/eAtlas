@@ -32,22 +32,6 @@ swagger <- function(req, res){
   plumber::include_html(fname, res)
 }
 
-source("R/covid19.R")
-#' serve covid19
-#' @get /api/covid19
-get_covid19 <- function(res) {
-  res$body <- covid19
-  res
-}
-
-allcsv = read.csv("data/coronavirus-cases.csv")
-#' serve all
-#' @serializer unboxedJSON
-#' @get /api/covid19h
-get_las_historical <- function() {
-  allcsv
-}
-
 #' serve covid19
 #' @get /api/covid19w
 get_covid19w <- function(res) {
@@ -55,19 +39,12 @@ get_covid19w <- function(res) {
   res
 }
 
-
+source("R/covid19.R")
 #' serve covid19-regions
 #' @get /api/covid19r
 get_covid19r <- function(res) {
   res$body <- covid19_regions
   res
-}
-
-#' serve daily cases
-#' @serializer unboxedJSON
-#' @get /api/covid19d
-get_covid19r <- function(res) {
-  daily
 }
 
 ### tests

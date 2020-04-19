@@ -69,7 +69,7 @@ export default React.memo((props) => {
       }
     }
   }
-  console.log(testsSliced);
+  // console.log(testsSliced);
   
   const expGrowth = [slicedMulti[0][0]];
   for (let i = 1; i < slicedMulti[0].length; i++) {

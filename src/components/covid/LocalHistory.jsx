@@ -16,7 +16,7 @@ export default React.memo((props) => {
     useState({ las: null, avg: null, lasHistory: null });
   const [filteredHistory, setFilteredHistory] = useState(null);
 
-  const { dark } = props;
+  const { dark, onSelectCallback } = props;
   if (!filteredHistory && props.data) {        
     initialState(props.data, setData, setFilteredHistory);
   }
@@ -51,12 +51,14 @@ export default React.memo((props) => {
             } else {
               setFilteredHistory(lasHistory);
             }
+            typeof onSelectCallback === 'function' &&
+            onSelectCallback(selected)
           }}
         // single={true}
         />
         {/* <Slider
-            min={radio === "2" ? 1 : 0} 
-            max={radio === "1" ? 11000 : 1000} step={50}
+            min={1} 
+            max={}
             value={minMax}
             onChange={({ value }) => {
               if (value && value[0] < value[1]) {
