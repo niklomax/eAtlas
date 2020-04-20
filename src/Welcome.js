@@ -40,7 +40,7 @@ import './App.css';
 import Tooltip from './components/Tooltip';
 import { sfType } from './geojsonutils';
 import { isNumber, isArray } from './JSUtils';
-import { generateMultipolygonGeojsonFrom } from './components/covid/utils';
+import { assembleGeojsonFrom } from './components/covid/utils';
 
 const osmtiles = {
   "version": 8,
@@ -149,29 +149,27 @@ export default class Welcome extends React.Component {
       aURL : // do not get the server to parse it 
       defualtURL;
     
-    fetchData(fullURL, (data, error) => {      
+    fetchData(fullURL, (data, error) => {
+      if(fullURL.endsWith("covid19w")) {
+        fetchData(fullURL, (d, e) => {          
+          if(!e) {
+            this.setState({
+              loading: false,
+              data: data,
+            })
+            this._fitViewport(data)
+            this._generateLayer()
+          }
+        })
+        return
+      }     
       if (!error) {
         getLatestBlobFromPHE((blob) => {
           fetchData(`https://c19pub.azureedge.net/${blob}`, (phe, e) => {        
             //update geojson
-            console.log(phe);
-            const gj = {
-              type: 'FeatureCollection',
-              features: data.features
-            };
             if(!e) {
-              data.features.forEach((f, i) => {
-                Object.keys(phe.utlas).forEach(la => {
-                  if(f.properties.ctyua19cd === la) {
-                    gj.features[i].properties = phe.utlas[la]
-                    gj.features[i].properties.name = 
-                    phe.utlas[la].name.value;
-                    gj.features[i].properties.totalCases = 
-                    phe.utlas[la].totalCases.value;
-                  }
-                })
-              })
               // console.log(gj);
+              const gj = assembleGeojsonFrom(data,phe.utlas);              
               this.setState({
                 historyData: phe,
                 loading: false,
@@ -197,12 +195,6 @@ export default class Welcome extends React.Component {
         this.setState({
           tests: json.map(e => ({x: e.date, y: e.number || 0}))
         })
-      }
-    })
-
-    fetchData(URL + "/api/covid19w", (d, e) => {
-      if(!e) {
-        this.setState({world: d.features})
       }
     })
   }
@@ -234,6 +226,13 @@ export default class Welcome extends React.Component {
       this.state.column;
 
     if (!data) return;
+    if (filter && filter.selected && filter.hint) {
+      const gj = assembleGeojsonFrom(
+        this.state.data, 
+        this.state.historyData.utlas, filter.hint);
+      // console.log(gj.features[0].properties.totalCases);
+      data = gj.features;
+    }
     if (filter && filter.what === "%") {
       data = data.slice(0, filter.selected / 100 * data.length)
     }
@@ -520,7 +519,6 @@ export default class Welcome extends React.Component {
         </MapGL>
         <DeckSidebarContainer
           historyData={this.state.historyData}
-          world={this.state.world}
           tests={this.state.tests}
           daily={this.state.daily}
           dark={this.props.dark}

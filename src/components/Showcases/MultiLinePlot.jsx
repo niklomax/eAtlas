@@ -29,7 +29,7 @@ export default function MultiLinePlot(options) {
   const limit = 10;
 
   const { plotStyle, title, noXAxis, noYAxis,
-    onValueClick, data, legend, colors, noLegend } = options;
+    onValueClick, data, legend, colors, noLegend, hintXValue } = options;
   return options.data && options.data.length > 0 &&
     // https://github.com/uber/react-vis/issues/584#issuecomment-401693372
     <div className="unselectable" 
@@ -82,6 +82,9 @@ export default function MultiLinePlot(options) {
             onValueClick={onValueClick}
             onNearestX={(_, { index }) => {
               setHint(data.map(d => d[index]))
+              // console.log(data[0][index].x);
+              typeof hintXValue === 'function' &&
+              hintXValue(data[0][index].x)
             }}
             style={{ fill: 'none' }}
             data={line} 

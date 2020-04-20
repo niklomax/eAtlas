@@ -85,8 +85,43 @@ const generateMultipolygonGeojsonFrom = (geometries, properties, callback) => {
   typeof callback === 'function' &&
     callback(collection)
 }
+
+const assembleGeojsonFrom = (geojson, utlas, date) => {
+  if(!geojson || !utlas || !geojson.features ||
+    !isArray(geojson.features) ||
+    !geojson.features.length) return;
+  const gj = {
+    type: 'FeatureCollection',
+    features: []
+  };
+  geojson.features.forEach((f, i) => {
+    Object.keys(utlas).forEach(la => {
+      if(f.properties.ctyua19cd === la) {
+        let totalCases = utlas[la].totalCases.value;
+        if(date) {
+          utlas[la].dailyTotalConfirmedCases.forEach(e => {   
+            if(e.date === date) {
+              totalCases = e.value
+            }
+          })
+        }
+        const feature = {type: "Feature"};
+        // gj.features[i].properties = utlas[la];
+        feature.geometry = f.geometry;
+        feature.properties = {
+          ctyua19cd: la,
+          name: utlas[la].name.value,
+          totalCases: totalCases
+        }
+        gj.features.push(feature);
+      }
+    })
+  })
+  return(gj);
+}
 export {
   generateMultipolygonGeojsonFrom,
+  assembleGeojsonFrom,
   countryHistory,
   breakdown,
   daysDiff

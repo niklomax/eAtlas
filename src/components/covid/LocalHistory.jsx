@@ -16,7 +16,7 @@ export default React.memo((props) => {
     useState({ las: null, avg: null, lasHistory: null });
   const [filteredHistory, setFilteredHistory] = useState(null);
 
-  const { dark, onSelectCallback } = props;
+  const { dark, onSelectCallback, hintXValue } = props;
   if (!filteredHistory && props.data) {        
     initialState(props.data, setData, setFilteredHistory);
   }
@@ -72,7 +72,7 @@ export default React.memo((props) => {
             dark={dark}
             data={keys
               .map(e => filteredHistory[e]
-                .slice(filteredHistory[e].length - 30, filteredHistory[e].length))}
+                .slice(filteredHistory[e].length - 35, filteredHistory[e].length))}
             legend={keys}
             title={"England or chosen vs Average"}
             plotStyle={{
@@ -85,6 +85,8 @@ export default React.memo((props) => {
               keys.map((e, i) => i === (keys.length - 1) ? '#f00' : '#777')
             }
             noLegend={keys.length > 10}
+            hintXValue={(xValue) => typeof hintXValue === 'function' &&
+            hintXValue(xValue)}
           />}
         <hr />
       </>
@@ -105,7 +107,7 @@ function initialState(data, setData, setFilteredHistory) {
     if(cc && cc.length > m) {
       m = cc.length; utla = data.utlas[e];
     }    
-    lasHistory[data.utlas[e].name] = 
+    lasHistory[data.utlas[e].name.value] = 
     data.utlas[e].dailyTotalConfirmedCases.map(v => ({x: v.date, y: v.value}))
   })
   const las = Object.keys(lasHistory);
@@ -117,7 +119,7 @@ function initialState(data, setData, setFilteredHistory) {
     Object.keys(data.utlas).map(e => {
       const cc = data.utlas[e].dailyTotalConfirmedCases;
       cc.map(ov => {
-        if(utla.name !== data.utlas[e].name) {
+        if(utla.name !== data.utlas[e].name.value) {
           if(ov.date === v.date) {
             y += ov.value
           }

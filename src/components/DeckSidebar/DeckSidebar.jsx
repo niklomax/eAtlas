@@ -27,9 +27,7 @@ import Daily from '../covid/Daily';
 import WorldDaily from '../covid/WorldDaily';
 import SwitchData from '../covid/SwitchData';
 
-import { DEV_URL, PRD_URL } from '../../Constants';
 import LocalHistory from '../covid/LocalHistory';
-const host = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
 
 export default class DeckSidebar extends React.Component {
   constructor(props) {
@@ -75,7 +73,7 @@ export default class DeckSidebar extends React.Component {
     const { year, datasetName,
       subsetBoundsChange, multiVarSelect, barChartVariable } = this.state;
     const {
-      onSelectCallback, data, colourCallback, daily, tests, historyData,
+      onSelectCallback, data, colourCallback, tests, historyData,
       toggleSubsetBoundsChange, urlCallback, alert,
       onlocationChange, column, dark, toggleOpen, toggleHexPlot } = this.props;
     let plot_data = [];
@@ -86,8 +84,6 @@ export default class DeckSidebar extends React.Component {
     let columnDomain = [];
     const columnData = notEmpty ?
       xyObjectByProperty(data, column || barChartVariable) : [];
-    const regions = data && data.length > 0 && datasetName.endsWith("19") ?
-      getPropertyValues(this.props.unfiltered, 'name') : [];
     const geomType = notEmpty && data[0].geometry.type.toLowerCase();
     // console.log(regions);
     if (notEmpty && column && (geomType === 'polygon' ||
@@ -136,7 +132,11 @@ export default class DeckSidebar extends React.Component {
             {
               //if specific region shown, show its count
               multiVarSelect.name && multiVarSelect.name.size === 1 ?
-                  data[0].properties.TotalCases + " cases"
+                  data[0].properties.totalCases + " cases"
+                : multiVarSelect.name && multiVarSelect.name.size > 1 ?
+                data.reduce((t, next) =>
+                      isNumber(t) ? t + +(next.properties.totalCases) :
+                        +(t.properties.totalCases) + +(next.properties.totalCases)) + " cases"
                 :
                 (historyData && historyData.overview && !datasetName.endsWith("covid19w")) ?
                 historyData.overview.K02000001.totalCases.value + " cases, " +
@@ -158,9 +158,9 @@ export default class DeckSidebar extends React.Component {
             <SwitchData onSelectCallback={(url) => {
               if(datasetName === url || 
                 datasetName.endsWith(url)) return;
-              resetState(host + url);
+              resetState(url);
               typeof (urlCallback) === 'function'
-                && urlCallback(host + url);
+                && urlCallback(url);
             }} />
             <Modal
               toggleOpen={() => typeof toggleOpen === 'function' && toggleOpen()}
@@ -212,6 +212,18 @@ export default class DeckSidebar extends React.Component {
                     what: 'multi',
                     selected: multiVarSelect
                   });
+              }} 
+              hintXValue={(xValue) => {
+                // update map on crosshair xvalue
+                if(typeof onSelectCallback === 'function' &&
+                xValue !== this.state.xValue) {
+                  onSelectCallback({
+                    what: 'multi',
+                    hint: xValue,
+                    selected: multiVarSelect
+                  });
+                  this.setState({xValue})
+                }
               }}/> }
               {historyData && tests && !datasetName.endsWith("covid19w") &&
                 <Daily data={historyData.countries.E92000001} tests={tests} dark={dark} />}
