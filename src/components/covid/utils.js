@@ -1,4 +1,5 @@
 import * as helpers from '@turf/helpers';
+import xmlToJSON from 'xmltojson';
 
 import { isArray } from "../../JSUtils";
 
@@ -119,8 +120,36 @@ const assembleGeojsonFrom = (geojson, utlas, date) => {
   })
   return(gj);
 }
+const getLatestBlobFromPHE = (callback) => {
+  fetch('https://publicdashacc.blob.core.windows.net/publicdata?restype=container&comp=list') 
+  .then((response) => response.text())
+  .then((response) => {
+    // console.log(response);
+    const jsonData = xmlToJSON.parseString(response);
+    const blobList = jsonData.EnumerationResults[0].Blobs[0].Blob;
+
+    const getBlobDate = b => new Date(b.Properties[0]['Last-Modified'][0]._text);
+    const mostRecentBlob = blobList.reduce((acc, cur) => {
+      if (!cur.Name[0]._text.startsWith('data_')) {
+        return acc;
+      }
+      if (!acc) {
+        return cur;
+      }
+      return (getBlobDate(acc) > getBlobDate(cur)) ? acc : cur;
+    }, null);
+    // console.log(mostRecentBlob.Name[0]._text);
+    typeof(callback) === 'function' &&
+    callback(mostRecentBlob.Name[0]._text);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+}
+ 
 export {
   generateMultipolygonGeojsonFrom,
+  getLatestBlobFromPHE,
   assembleGeojsonFrom,
   countryHistory,
   breakdown,

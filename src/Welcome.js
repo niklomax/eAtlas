@@ -29,7 +29,7 @@ import {
   getParamsFromSearch, getBbx,
   isMobile, colorScale,
   colorRanges,
-  convertRange, getMin, getMax, isURL, getLatestBlobFromPHE
+  convertRange, getMin, getMax, isURL
 } from './utils';
 import Constants from './Constants';
 import DeckSidebarContainer from
@@ -40,7 +40,7 @@ import './App.css';
 import Tooltip from './components/Tooltip';
 import { sfType } from './geojsonutils';
 import { isNumber, isArray } from './JSUtils';
-import { assembleGeojsonFrom } from './components/covid/utils';
+import { assembleGeojsonFrom, getLatestBlobFromPHE } from './components/covid/utils';
 
 const osmtiles = {
   "version": 8,
