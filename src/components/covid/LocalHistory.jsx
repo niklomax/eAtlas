@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // import { format } from 'd3-format';
-// import { Checkbox } from 'baseui/checkbox';
+import { Checkbox } from 'baseui/checkbox';
 // import { RadioGroup, Radio } from "baseui/radio";
 // import { VerticalBarSeries } from 'react-vis';
 // import { Slider } from 'baseui/slider';
@@ -10,31 +10,34 @@ import MultiLinePlot from '../Showcases/MultiLinePlot';
 import MultiSelect from '../MultiSelect';
 import './style.css';
 
-export default React.memo((props) => {  
+export default React.memo((props) => {
   const [minMax, setMinMax] = useState([200, 500]);
-  const [{ las, avg, lasHistory }, setData] =
-    useState({ las: null, avg: null, lasHistory: null });
+  const [checked, setChecked] = useState(false);
+  const [{ geo, avg, geoHistory }, setData] =
+    useState({ geo: null, avg: null, geoHistory: null });
   const [filteredHistory, setFilteredHistory] = useState(null);
 
   const { dark, onSelectCallback, hintXValue, type } = props;
-  
+
   React.useEffect(() => {
     initialState(props.data, setData, setFilteredHistory, type);
   }, [type])
 
   if (filteredHistory) {
     //list history
-    const keys = Object.keys(filteredHistory);
-    filteredHistory.avg = avg;
-    keys.push("avg")
+    let keys = Object.keys(filteredHistory);    
+    if (!keys.includes('avg')) {
+      filteredHistory.avg = avg;
+      keys.push("avg")
+    }
 
     return (
       <>
-        {las.length > 10 && <MultiSelect
+        {geo.length > 10 && <MultiSelect
           dark={dark}
           title="Compare"
           values={
-            (las && las.map(e =>
+            (geo && geo.map(e =>
               ({ id: e, value: e }))) || []
           }
           onSelectCallback={(selected) => {
@@ -42,13 +45,13 @@ export default React.memo((props) => {
             // setList([...selected.map(e => e.id)]);
             if (selected.length) {
               const newFilter = {}
-              selected.forEach(e => newFilter[e.id] = lasHistory[e.id]);
+              selected.forEach(e => newFilter[e.id] = geoHistory[e.id]);
               setFilteredHistory(newFilter)
             } else {
-              setFilteredHistory(lasHistory);
+              setFilteredHistory(geoHistory);
             }
             typeof onSelectCallback === 'function' &&
-            onSelectCallback(selected)
+              onSelectCallback(selected)
           }}
         // single={true}
         />}
@@ -62,28 +65,46 @@ export default React.memo((props) => {
               }
             }}
           /> */}
-
         {
-          <MultiLinePlot
-            dark={dark}
-            data={keys
-              .map(e => filteredHistory[e]
-                .slice(filteredHistory[e].length - 35, filteredHistory[e].length))}
-            legend={keys}
-            title={type}
-            plotStyle={{
-              // width: W, 
-              marginBottom: 60
+          type == "countries" &&
+          <Checkbox
+            checked={checked}
+            onChange={e => {
+              setChecked(e.target.checked)
+              if(e.target.checked) {
+                const newFilter = {}
+                Object.keys(geoHistory).forEach(e => {
+                  if(e !== "England") {
+                    newFilter[e] = geoHistory[e];
+                  }
+                });
+                setFilteredHistory(newFilter)
+              } else {
+                setFilteredHistory(geoHistory);
+              }
             }}
-            noLimit={true}
-            colors={keys.length <= 10 ?
-              [...schemeTableau10.slice(0, keys.length - 1), "#f00"] :
-              keys.map((e, i) => i === (keys.length - 1) ? '#f00' : '#777')
-            }
-            noLegend={keys.length > 10}
-            hintXValue={(xValue) => typeof hintXValue === 'function' &&
+          >Hide England</Checkbox>
+        }
+        <MultiLinePlot
+          dark={dark}
+          data={keys
+            .map(e => filteredHistory[e]
+              .slice(filteredHistory[e].length - 35, filteredHistory[e].length))}
+          legend={keys}
+          title={type + ": " + 'dailyTotalCases' + " vs avg."}
+          plotStyle={{
+            // width: W, 
+            marginBottom: 60
+          }}
+          noLimit={true}
+          colors={keys.length <= 10 ?
+            [...schemeTableau10.slice(0, keys.length - 1), "#f00"] :
+            keys.map((e, i) => i === (keys.length - 1) ? '#f00' : '#777')
+          }
+          noLegend={keys.length > 10}
+          hintXValue={(xValue) => typeof hintXValue === 'function' &&
             type === "utlas" && hintXValue(xValue)}
-          />}
+        />
         <hr />
       </>
     );
@@ -92,22 +113,22 @@ export default React.memo((props) => {
   }
 });
 
-function initialState(data, setData, setFilteredHistory, type = "utlas") {  
-  const lasHistory = {};
-  const measure = type === "countries" ? 
-  'dailyTotalDeaths' : 'dailyTotalConfirmedCases';
+function initialState(data, setData, setFilteredHistory, type = "utlas") {
+  const geoHistory = {};
+  const measure = type === "countries" ?
+    'dailyTotalDeaths' : 'dailyTotalConfirmedCases';
   //add average
   const avg = []; let m = 0, utla;
   // find longest  
   Object.keys(data[type]).map(e => {
     const cc = data[type][e].dailyTotalConfirmedCases;
-    if(cc && cc.length > m) {
+    if (cc && cc.length > m) {
       m = cc.length; utla = data[type][e];
-    }    
-    lasHistory[data[type][e].name.value] = 
-    data[type][e][measure].map(v => ({x: v.date, y: v.value}))
+    }
+    geoHistory[data[type][e].name.value] =
+      data[type][e][measure].map(v => ({ x: v.date, y: v.value }))
   })
-  const las = Object.keys(lasHistory);
+  const geo = Object.keys(geoHistory);
 
   utla[measure].map(v => {
     //e.date, e.value
@@ -116,16 +137,16 @@ function initialState(data, setData, setFilteredHistory, type = "utlas") {
     Object.keys(data[type]).map(e => {
       const cc = data[type][e][measure];
       cc.map(ov => {
-        if(utla.name !== data[type][e].name.value) {
-          if(ov.date === v.date) {
+        if (utla.name !== data[type][e].name.value) {
+          if (ov.date === v.date) {
             y += ov.value
           }
         }
       })
     })
-    avg.push({x: v.date, y: Math.floor(y / Object.keys(data[type]).length)})
+    avg.push({ x: v.date, y: Math.floor(y / Object.keys(data[type]).length) })
   })
-  
-  setData({ las, avg, lasHistory });
-  setFilteredHistory(lasHistory);
+
+  setData({ geo, avg, geoHistory });
+  setFilteredHistory(geoHistory);
 }

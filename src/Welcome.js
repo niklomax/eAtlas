@@ -564,9 +564,6 @@ export default class Welcome extends React.Component {
                   .replace(".geojson", "")
                   const gj = assembleGeojsonFrom(d, 
                     this.state.historyData[type]);
-                  console.log(d);
-                  console.log(this.state.historyData[type]);
-                  
                   this.setState({
                     loading: false,
                     data: gj,

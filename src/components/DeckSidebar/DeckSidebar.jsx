@@ -86,6 +86,8 @@ export default class DeckSidebar extends React.Component {
       xyObjectByProperty(data, column || barChartVariable) : [];
     const geomType = notEmpty && data[0].geometry.type.toLowerCase();
     // console.log(regions);
+    const type = datasetName.split("/")[datasetName.split("/").length-1]
+    .replace(".geojson", "");
     if (notEmpty && column && (geomType === 'polygon' ||
       geomType === 'multipolygon' || "linestring") &&
       isNumber(data[0].properties[column])) {
@@ -100,7 +102,7 @@ export default class DeckSidebar extends React.Component {
         generateLegend(
           {
             domain: columnDomain,
-            title: humanize(column)
+            title: 'Daily cases'
           }
         )
       );
@@ -153,7 +155,11 @@ export default class DeckSidebar extends React.Component {
           </div>
           <div>
             {historyData && historyData.overview && !datasetName.endsWith("covid19w") && 
-            `updated: ${new Date(historyData.lastUpdatedAt).toLocaleDateString()}`}
+            `updated: ${new Date(historyData.lastUpdatedAt).toLocaleDateString()}, `}
+            {/* data */}
+            data from {datasetName.endsWith("covid19w") ? 
+            <a href="https://www.ecdc.europa.eu/en/geographical-distribution-2019-ncov-cases">ECDC</a> :
+            <a href="https://coronavirus.data.gov.uk/">PHE</a>} 
             <br />
             <SwitchData onSelectCallback={(url) => {
               if(datasetName === url || 
@@ -197,8 +203,7 @@ export default class DeckSidebar extends React.Component {
               <hr style={{ clear: 'both' }} />
               {historyData && !datasetName.endsWith("covid19w") &&
               <LocalHistory data={historyData} dark={dark} 
-              type={datasetName.split("/")[datasetName.split("/").length-1]
-              .replace(".geojson", "")}
+              type={type}
               onSelectCallback={(selected) => {
                 // array of seingle {id: , value: } object
                 if (selected[0]) {
