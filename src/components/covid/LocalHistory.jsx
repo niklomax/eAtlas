@@ -16,25 +16,21 @@ export default React.memo((props) => {
     useState({ las: null, avg: null, lasHistory: null });
   const [filteredHistory, setFilteredHistory] = useState(null);
 
-  const { dark, onSelectCallback, hintXValue } = props;
-  if (!filteredHistory && props.data) {        
-    initialState(props.data, setData, setFilteredHistory);
-  }
+  const { dark, onSelectCallback, hintXValue, type } = props;
+  
+  React.useEffect(() => {
+    initialState(props.data, setData, setFilteredHistory, type);
+  }, [type])
 
   if (filteredHistory) {
     //list history
-    // console.log(list);    
     const keys = Object.keys(filteredHistory);
-    // console.log(keys[0]);
-
     filteredHistory.avg = avg;
     keys.push("avg")
-    // console.log(filteredHistory);
-    // console.log(schemeCategory10)
 
     return (
       <>
-        <MultiSelect
+        {las.length > 10 && <MultiSelect
           dark={dark}
           title="Compare"
           values={
@@ -55,7 +51,7 @@ export default React.memo((props) => {
             onSelectCallback(selected)
           }}
         // single={true}
-        />
+        />}
         {/* <Slider
             min={1} 
             max={}
@@ -74,7 +70,7 @@ export default React.memo((props) => {
               .map(e => filteredHistory[e]
                 .slice(filteredHistory[e].length - 35, filteredHistory[e].length))}
             legend={keys}
-            title={"England or chosen vs Average"}
+            title={type}
             plotStyle={{
               // width: W, 
               marginBottom: 60
@@ -86,7 +82,7 @@ export default React.memo((props) => {
             }
             noLegend={keys.length > 10}
             hintXValue={(xValue) => typeof hintXValue === 'function' &&
-            hintXValue(xValue)}
+            type === "utlas" && hintXValue(xValue)}
           />}
         <hr />
       </>
@@ -96,37 +92,38 @@ export default React.memo((props) => {
   }
 });
 
-function initialState(data, setData, setFilteredHistory) {
+function initialState(data, setData, setFilteredHistory, type = "utlas") {  
   const lasHistory = {};
-
+  const measure = type === "countries" ? 
+  'dailyTotalDeaths' : 'dailyTotalConfirmedCases';
   //add average
   const avg = []; let m = 0, utla;
   // find longest  
-  Object.keys(data.utlas).map(e => {
-    const cc = data.utlas[e].dailyTotalConfirmedCases;
+  Object.keys(data[type]).map(e => {
+    const cc = data[type][e].dailyTotalConfirmedCases;
     if(cc && cc.length > m) {
-      m = cc.length; utla = data.utlas[e];
+      m = cc.length; utla = data[type][e];
     }    
-    lasHistory[data.utlas[e].name.value] = 
-    data.utlas[e].dailyTotalConfirmedCases.map(v => ({x: v.date, y: v.value}))
+    lasHistory[data[type][e].name.value] = 
+    data[type][e][measure].map(v => ({x: v.date, y: v.value}))
   })
   const las = Object.keys(lasHistory);
 
-  utla.dailyTotalConfirmedCases.map(v => {
+  utla[measure].map(v => {
     //e.date, e.value
     let y = v.value;
     //go through the rest and add values of same dates
-    Object.keys(data.utlas).map(e => {
-      const cc = data.utlas[e].dailyTotalConfirmedCases;
+    Object.keys(data[type]).map(e => {
+      const cc = data[type][e][measure];
       cc.map(ov => {
-        if(utla.name !== data.utlas[e].name.value) {
+        if(utla.name !== data[type][e].name.value) {
           if(ov.date === v.date) {
             y += ov.value
           }
         }
       })
     })
-    avg.push({x: v.date, y: Math.floor(y / Object.keys(data.utlas).length)})
+    avg.push({x: v.date, y: Math.floor(y / Object.keys(data[type]).length)})
   })
   
   setData({ las, avg, lasHistory });

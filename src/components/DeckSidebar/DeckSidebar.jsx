@@ -44,7 +44,7 @@ export default class DeckSidebar extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { data, alert, loading, daily, tests, historyData } = this.props;
+    const { data, alert, loading, datasetName, tests, historyData } = this.props;
     const { elevation, radius, reset,
       barChartVariable } = this.state;
     // avoid rerender as directly
@@ -54,7 +54,7 @@ export default class DeckSidebar extends React.Component {
       alert !== nextProps.alert ||
       loading !== nextProps.loading ||
       barChartVariable !== nextState.barChartVariable ||
-      daily !== nextProps.daily ||
+      datasetName !== nextProps.datasetName ||
       tests !== nextProps.tests||
       historyData !== nextProps.historyData) return true;
     //TODO:  a more functional way is needed        
@@ -197,6 +197,8 @@ export default class DeckSidebar extends React.Component {
               <hr style={{ clear: 'both' }} />
               {historyData && !datasetName.endsWith("covid19w") &&
               <LocalHistory data={historyData} dark={dark} 
+              type={datasetName.split("/")[datasetName.split("/").length-1]
+              .replace(".geojson", "")}
               onSelectCallback={(selected) => {
                 // array of seingle {id: , value: } object
                 if (selected[0]) {

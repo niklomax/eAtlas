@@ -121,7 +121,8 @@ export default class Welcome extends React.Component {
       lastViewPortChange: new Date(),
       colourName: 'inverseDefault',
       iconLimit: 500,
-      legend: false
+      legend: false,
+      datasetName: defualtURL
     }
     this._generateLayer = this._generateLayer.bind(this)
     this._renderTooltip = this._renderTooltip.bind(this);
@@ -149,20 +150,7 @@ export default class Welcome extends React.Component {
       aURL : // do not get the server to parse it 
       defualtURL;
     
-    fetchData(fullURL, (data, error) => {
-      if(fullURL.endsWith("covid19w")) {
-        fetchData(fullURL, (d, e) => {          
-          if(!e) {
-            this.setState({
-              loading: false,
-              data: data,
-            })
-            this._fitViewport(data)
-            this._generateLayer()
-          }
-        })
-        return
-      }     
+    fetchData(fullURL, (data, error) => {   
       if (!error) {
         getLatestBlobFromPHE((blob) => {
           fetchData(`https://c19pub.azureedge.net/${blob}`, (phe, e) => {        
@@ -556,7 +544,38 @@ export default class Welcome extends React.Component {
                 this._fetchAndUpdateState(undefined, { content: error.message });
               }
             } else {
-              this._fetchAndUpdateState(url_returned);
+              if(url_returned.endsWith("covid19w")) {
+                fetchData(url_returned, (data, e) => {          
+                  if(!e) {
+                    this.setState({
+                      loading: false,
+                      data: data,
+                      datasetName: url_returned
+                    })
+                    this._fitViewport(data)
+                    this._generateLayer()
+                  }
+                })
+                return
+              }  
+              fetchData(url_returned, (d, e) => {                
+                if(!e) {
+                  const type = url_returned.split("/")[url_returned.split("/").length-1]
+                  .replace(".geojson", "")
+                  const gj = assembleGeojsonFrom(d, 
+                    this.state.historyData[type]);
+                  console.log(d);
+                  console.log(this.state.historyData[type]);
+                  
+                  this.setState({
+                    loading: false,
+                    data: gj,
+                    datasetName: url_returned
+                  })
+                  this._fitViewport(gj)
+                  this._generateLayer()
+                }
+              })
             }
           }}
           column={this.state.column}
@@ -574,7 +593,7 @@ export default class Welcome extends React.Component {
             this._fitViewport(bboxLonLat)
           }}
           showLegend={(legend) => this.setState({ legend })}
-          datasetName={defualtURL}
+          datasetName={this.state.datasetName}
         />
 				<div className="uol-wrapper">
 					<p>© {new Date().getFullYear} University of Leeds, Leeds, LS2 9JT</p>

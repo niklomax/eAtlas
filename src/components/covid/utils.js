@@ -87,8 +87,8 @@ const generateMultipolygonGeojsonFrom = (geometries, properties, callback) => {
     callback(collection)
 }
 
-const assembleGeojsonFrom = (geojson, utlas, date) => {
-  if(!geojson || !utlas || !geojson.features ||
+const assembleGeojsonFrom = (geojson, phe, date) => {
+  if(!geojson || !phe || !geojson.features ||
     !isArray(geojson.features) ||
     !geojson.features.length) return;
   const gj = {
@@ -96,22 +96,24 @@ const assembleGeojsonFrom = (geojson, utlas, date) => {
     features: []
   };
   geojson.features.forEach((f, i) => {
-    Object.keys(utlas).forEach(la => {
-      if(f.properties.ctyua19cd === la) {
-        let totalCases = utlas[la].totalCases.value;
+    Object.keys(phe).forEach(each => {
+      if(f.properties.ctyua19cd === each || 
+        f.properties.ctry19cd === each ||
+        f.properties.rgn18cd === each) {
+        let totalCases = phe[each].totalCases.value;
         if(date) {
-          utlas[la].dailyTotalConfirmedCases.forEach(e => {   
+          phe[each].dailyTotalConfirmedCases.forEach(e => {   
             if(e.date === date) {
               totalCases = e.value
             }
           })
         }
         const feature = {type: "Feature"};
-        // gj.features[i].properties = utlas[la];
+        // gj.features[i].properties = phe[each];
         feature.geometry = f.geometry;
         feature.properties = {
-          ctyua19cd: la,
-          name: utlas[la].name.value,
+          ctyua19cd: each,
+          name: phe[each].name.value,
           totalCases: totalCases
         }
         gj.features.push(feature);
