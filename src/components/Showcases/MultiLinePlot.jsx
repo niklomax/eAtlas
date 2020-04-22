@@ -47,7 +47,11 @@ export default function MultiLinePlot(options) {
         animation={{ duration: 1 }}
         height={(plotStyle && plotStyle.height) || W}
         width={(plotStyle && plotStyle.width) || W}
-        onMouseLeave={() => { setHint(false) }}
+        onMouseLeave={() => { 
+          setHint(false);
+          typeof hintXValue === 'function' &&
+              hintXValue(false)
+        }}
       >
         {!noXAxis && // if provided dont
           <XAxis

@@ -157,7 +157,7 @@ export default class Welcome extends React.Component {
             //update geojson
             if(!e) {
               // console.log(gj);
-              const gj = assembleGeojsonFrom(data,phe.utlas);              
+              const gj = assembleGeojsonFrom(data, phe, undefined, "utlas");              
               this.setState({
                 historyData: phe,
                 loading: false,
@@ -209,16 +209,17 @@ export default class Welcome extends React.Component {
       return;
     }
     let data = this.state.data && this.state.data.features
-    const { colourName, iconLimit } = this.state;
+    const { colourName, iconLimit, datasetName } = this.state;
     let column = (filter && filter.what === 'column' && filter.selected) ||
       this.state.column;
 
     if (!data) return;
     if (filter && filter.selected && filter.hint) {
+      const type = datasetName.split("/")[datasetName.split("/").length-1]
+                  .replace(".geojson", "")
       const gj = assembleGeojsonFrom(
         this.state.data, 
-        this.state.historyData.utlas, filter.hint);
-      // console.log(gj.features[0].properties.totalCases);
+        this.state.historyData, filter.hint, type);
       data = gj.features;
     }
     if (filter && filter.what === "%") {
@@ -563,7 +564,7 @@ export default class Welcome extends React.Component {
                   const type = url_returned.split("/")[url_returned.split("/").length-1]
                   .replace(".geojson", "")
                   const gj = assembleGeojsonFrom(d, 
-                    this.state.historyData[type]);
+                    this.state.historyData, undefined, type);
                   this.setState({
                     loading: false,
                     data: gj,

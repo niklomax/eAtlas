@@ -103,7 +103,7 @@ export default React.memo((props) => {
           }
           noLegend={keys.length > 10}
           hintXValue={(xValue) => typeof hintXValue === 'function' &&
-            type === "utlas" && hintXValue(xValue)}
+            hintXValue(xValue)}
         />
         <hr />
       </>

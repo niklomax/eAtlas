@@ -87,7 +87,7 @@ const generateMultipolygonGeojsonFrom = (geometries, properties, callback) => {
     callback(collection)
 }
 
-const assembleGeojsonFrom = (geojson, phe, date) => {
+const assembleGeojsonFrom = (geojson, phe, date, type = "utlas") => {
   if(!geojson || !phe || !geojson.features ||
     !isArray(geojson.features) ||
     !geojson.features.length) return;
@@ -95,14 +95,16 @@ const assembleGeojsonFrom = (geojson, phe, date) => {
     type: 'FeatureCollection',
     features: []
   };
+  const measure = type === "countries" ?
+    'dailyTotalDeaths' : 'dailyTotalConfirmedCases';
   geojson.features.forEach((f, i) => {
-    Object.keys(phe).forEach(each => {
+    Object.keys(phe[type]).forEach(each => {
       if(f.properties.ctyua19cd === each || 
         f.properties.ctry19cd === each ||
         f.properties.rgn18cd === each) {
-        let totalCases = phe[each].totalCases.value;
+        let totalCases = phe[type][each].totalCases.value;
         if(date) {
-          phe[each].dailyTotalConfirmedCases.forEach(e => {   
+          phe[type][each][measure].forEach(e => {   
             if(e.date === date) {
               totalCases = e.value
             }
@@ -113,8 +115,11 @@ const assembleGeojsonFrom = (geojson, phe, date) => {
         feature.geometry = f.geometry;
         feature.properties = {
           ctyua19cd: each,
-          name: phe[each].name.value,
+          name: phe[type][each].name.value,
           totalCases: totalCases
+        }
+        if(date) {
+          feature.properties.date = date;
         }
         gj.features.push(feature);
       }
