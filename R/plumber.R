@@ -5,7 +5,7 @@ if(is.null(curl::nslookup("r-project.org", error = FALSE))) {
     "Please re-run when you are connected."
   ))
 }
-packages <- c("sf", "geojsonsf", "osmdata", "curl", "readxl")
+packages <- c("sf", "geojsonsf", "osmdata", "curl")
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   install.packages(setdiff(packages, rownames(installed.packages())),repos='http://cran.us.r-project.org')
 }

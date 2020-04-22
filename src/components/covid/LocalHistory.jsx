@@ -26,7 +26,7 @@ export default React.memo((props) => {
   if (filteredHistory) {
     //list history
     let keys = Object.keys(filteredHistory);    
-    if (!keys.includes('avg')) {
+    if (!keys.includes('avg') && type !== "countries" && !checked) {
       filteredHistory.avg = avg;
       keys.push("avg")
     }
@@ -65,8 +65,29 @@ export default React.memo((props) => {
               }
             }}
           /> */}
+        <MultiLinePlot
+          dark={dark}
+          data={keys
+            .map(e => filteredHistory[e]
+              .slice(filteredHistory[e].length - 35, filteredHistory[e].length))}
+          legend={keys}
+          title={type + ": " + 'dailyTotalCases' + 
+          (type !== "countries" && " vs avg.")}
+          plotStyle={{
+            // width: W, 
+            marginBottom: 60
+          }}
+          noLimit={true}
+          colors={keys.length <= 10 ?
+            [...schemeTableau10.slice(0, keys.length - 1), "#f00"] :
+            keys.map((e, i) => i === (keys.length - 1) ? '#f00' : '#777')
+          }
+          noLegend={keys.length > 10}
+          hintXValue={(xValue) => typeof hintXValue === 'function' &&
+            hintXValue(xValue)}
+        />
         {
-          type == "countries" &&
+          type === "countries" &&
           <Checkbox
             checked={checked}
             onChange={e => {
@@ -85,26 +106,6 @@ export default React.memo((props) => {
             }}
           >Hide England</Checkbox>
         }
-        <MultiLinePlot
-          dark={dark}
-          data={keys
-            .map(e => filteredHistory[e]
-              .slice(filteredHistory[e].length - 35, filteredHistory[e].length))}
-          legend={keys}
-          title={type + ": " + 'dailyTotalCases' + " vs avg."}
-          plotStyle={{
-            // width: W, 
-            marginBottom: 60
-          }}
-          noLimit={true}
-          colors={keys.length <= 10 ?
-            [...schemeTableau10.slice(0, keys.length - 1), "#f00"] :
-            keys.map((e, i) => i === (keys.length - 1) ? '#f00' : '#777')
-          }
-          noLegend={keys.length > 10}
-          hintXValue={(xValue) => typeof hintXValue === 'function' &&
-            hintXValue(xValue)}
-        />
         <hr />
       </>
     );

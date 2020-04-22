@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import { Slider } from 'baseui/slider';
-import { daysDiff } from './utils';
 import MultiLinePlot from '../Showcases/MultiLinePlot';
 
 export default React.memo((props) => {
@@ -87,7 +86,7 @@ export default React.memo((props) => {
         data={
           [slicedMulti[1], slicedMulti[2], slicedMulti[3]]
         } legend={["DailyCases", "Death", "DailyDeaths"]}
-        title={"DailyVsDeaths"} noXAxis={true}
+        title={"DailyVsDeaths (England)"} noXAxis={true}
         plotStyle={{ height: 200, marginBottom: 10 }}
       />
       

@@ -6,6 +6,7 @@ import {
 import { format } from 'd3-format';
 
 import { shortenName } from '../../utils';
+import { isNumber } from '../../JSUtils';
 
 const W = 250;
 
@@ -57,16 +58,7 @@ export default function MultiLinePlot(options) {
           <XAxis
             tickSize={0}
             tickFormat={v => shortenName(v, 10)}
-            tickValues={
-              (data[0].length > limit)
-                ? data[0]
-                  .filter((item, idx) => {
-                    if ((idx % Math.floor(data[0].length / limit)) === 0) {
-                      return item.x
-                    }
-                  }).map(item => (item.x))
-                : data[0].map(item => (item.x))
-            }
+            tickValues={[data[0][0].x.replace("2020-", ""), data[0][data[0].length-1].x]}
             tickLabelAngle={-65} 
             style={{
               line: { strokeWidth: 0 },
@@ -96,17 +88,17 @@ export default function MultiLinePlot(options) {
         {hint && 
         <Crosshair
           values={hint}
-          className='test-class-name'
         > 
           <div style={{
-              maxHeight: plotStyle.height || W, 
-              overflowY: 'auto',
               color: options.dark ? '#fff' : '#000'
             }}>
             <b>{hint[0] && hint[0].x}</b><br/>
             {
+              legend.length < 11 ? 
               legend.map((e, i) => e + ": " + 
-              ((hint[i] && hint[i].y) || "") + " ")
+              ((hint[i] && hint[i].y) || "") + " ") :
+              "Total: " + hint.reduce((total, next) => isNumber(total) ?
+              total + (next ? next.y : 0) : (total ? total.y : 0) + (next ? next.y : 0))
             }
           </div>
         </Crosshair>}

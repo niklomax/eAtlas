@@ -491,7 +491,7 @@ function hexToRgb(hex) {
  * @param {*} p index/name of column to generate color scale with
  * @param {Number} alpha value to add to colour pallete
  */
-const colorScale = (d, features, p = 0, alpha = 180) => {
+const colorScale = (d, features, p = 0, alpha = 180, interpolate = interpolateOrRd) => {
   if (!d || !features || features.length === 0) return null;
   const x = isNumber(p) ? Object.keys(d.properties)[p] : p;
   let domainIsNumeric = true;
@@ -516,7 +516,7 @@ const colorScale = (d, features, p = 0, alpha = 180) => {
     p === 'Mean.Travel.Time..Seconds.' ?
     Math.floor(d.properties[x] / 300) : d.properties[x])
   // console.log(domain, index)
-  let col = interpolateOrRd(index / domain.length);
+  let col = interpolate(index / domain.length);
   col = col.substring(4, col.length - 1)
     .replace(/ /g, '')
     .split(',').map(x => +x); // deck.gl 8 int not strings

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Tabs, Tab, FormGroup, InputGroup,
-  FormControl, Glyphicon, Checkbox
+  FormControl, Glyphicon
 } from 'react-bootstrap';
 
 import './DeckSidebar.css';
@@ -13,7 +13,7 @@ import {
 } from '../../utils';
 import Variables from '../Variables';
 import RBAlert from '../RBAlert';
-import { propertyCount, getPropertyValues } from '../../geojsonutils';
+import { propertyCount } from '../../geojsonutils';
 import { LAYERSTYLES, LIDA } from '../../Constants';
 import ColorPicker from '../ColourPicker';
 import Modal from '../Modal';
@@ -70,12 +70,12 @@ export default class DeckSidebar extends React.Component {
    * Partly because we like to load from a URL.
    */
   render() {
-    const { year, datasetName,
-      subsetBoundsChange, multiVarSelect, barChartVariable } = this.state;
+    const { year, datasetName, 
+      multiVarSelect, barChartVariable } = this.state;
     const {
       onSelectCallback, data, colourCallback, tests, historyData,
-      toggleSubsetBoundsChange, urlCallback, alert,
-      onlocationChange, column, dark, toggleOpen, toggleHexPlot } = this.props;
+      urlCallback, alert, onlocationChange, column, dark, 
+      toggleOpen } = this.props;
     let plot_data = [];
     let plot_data_multi = [[], []];
     const notEmpty = data && data.length > 1;
@@ -299,18 +299,6 @@ export default class DeckSidebar extends React.Component {
                       })
                     }
                   />
-                  <Checkbox
-                    onChange={() => toggleHexPlot && toggleHexPlot()}
-                  >Hex Plot</Checkbox>
-                  <Checkbox
-                    onChange={() => {
-                      this.setState({ subsetBoundsChange: !subsetBoundsChange })
-                      if (toggleSubsetBoundsChange && typeof (toggleSubsetBoundsChange) === 'function') {
-                        toggleSubsetBoundsChange(!subsetBoundsChange) //starts with false
-                      }
-                    }}
-                  >Subset by map boundary</Checkbox>
-
                 </Tab>
                 {/* <Tab eventKey="3" title={
                   <i style={{ fontSize: '2rem' }}

@@ -65,10 +65,9 @@ RUN apt-get update \
     git
 
 RUN apt-get install -y --no-install-recommends \ 
-    r-cran-devtools r-cran-sf r-cran-plumber r-cran-osmdata r-cran-readxl
+    r-cran-sf r-cran-plumber
 
 RUN R -e 'install.packages(c("geojsonsf", dependencies=T))'
-# RUN R -e 'devtools::install_github("ATFutures/geoplumber")'
 
 # add node/npm
 RUN apt-get -y install curl gnupg
