@@ -1,1 +1,0 @@
-# LIDA COVID19

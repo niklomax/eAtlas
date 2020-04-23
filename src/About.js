@@ -13,7 +13,7 @@ import { LIDA } from './Constants';
 class About extends Component {
   state = { markdown: null }
   componentDidMount() {
-    const readmePath = require("./notes.md");
+    const readmePath = require("./about.md");
 
     fetch(readmePath)
       .then(response => {
@@ -25,22 +25,19 @@ class About extends Component {
         })
       })
   }
-  
+
   render() {
-    console.log("fiq");
     const { markdown } = this.state;
 
     return (
       <section style={{
         color: this.props.dark ? "white" : "black",
         padding: '5%',
-        textAlign: 'center',
-        height: '100%'
+        textAlign: 'justfied',
       }}>
-        <article 
-          style={{height: '100%'}}
+        <article
           dangerouslySetInnerHTML={{ __html: markdown }}></article>
-        <img src={LIDA} alt="LIDA logo" />
+        {/* <img src={LIDA} alt="LIDA logo" /> */}
       </section>
     )
   }

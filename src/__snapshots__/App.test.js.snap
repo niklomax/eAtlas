@@ -1,212 +1,78 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`App - should create snapshot 1`] = `
-<main>
+<main
+  style={
+    Object {
+      "background": "#242730",
+    }
+  }
+>
   <nav
-    className="navbar navbar-default"
+    className="navbar navbar-inverse"
   >
     <div
       className="container"
     >
-      <div
-        className="navbar-header"
+      <ul
+        className="nav navbar-nav navbar-right"
+        role={null}
       >
         <a
-          className="navbar-brand"
           href="/"
           onClick={[Function]}
+          onSelect={[Function]}
         >
-          <svg
-            className="logo"
-            version="1.1"
-            viewBox="0 0 1025 428"
-            xlink="http://www.w3.org/1999/xlink"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g
-              fill="none"
-              fillRule="evenodd"
-              id="Page-1"
-              stroke="none"
-              strokeWidth="1"
-            >
-              <g
-                fill="#000000"
-                id="ATI_logo_black_ATI_logo_black_W1024px"
-              >
-                <g
-                  data-svg-origin="0.8190000057220459 0.7929999828338623"
-                  id="logo-line-1"
-                  style={
-                    Object {
-                      "opacity": 1,
-                      "visibility": "inherit",
-                      "zIndex": 0,
-                    }
-                  }
-                  transform="matrix(1,0,0,1,0,0)"
-                >
-                  <path
-                    d="M273.346,71.521 L233.737,71.521 C235.771,58.945 242.738,52.485 253.966,52.485 C265.183,52.485 272.837,60.128 273.346,71.521 M299.694,83.932 C299.694,52.816 282.185,33.27 254.131,33.27 C226.425,33.27 207.72,52.816 207.72,81.718 C207.72,111.985 226.08,131.363 254.983,131.363 C277.938,131.363 293.744,120.479 299.529,100.424 L272.495,100.424 C269.775,107.735 263.987,111.475 255.493,111.475 C242.573,111.475 234.588,103.654 233.902,90.05 L299.529,90.05 C299.694,87.327 299.694,84.948 299.694,83.932"
-                    id="Fill-13"
-                  />
-                  <path
-                    d="M117.531,128.642 L143.027,128.642 L143.027,83.08 C143.027,63.192 148.647,53.667 160.371,53.667 C171.081,53.667 175.162,59.62 175.162,74.751 L175.162,128.642 L200.658,128.642 L200.658,72.031 C200.658,57.749 198.622,50.437 193.181,44.156 C187.738,37.861 178.392,33.78 169.209,33.78 C159.354,33.78 149.664,38.713 143.027,47.042 L143.027,0.793 L117.531,0.793 L117.531,128.642"
-                    id="Fill-12"
-                  />
-                  <polyline
-                    id="Fill-11"
-                    points="55.645 0.796 0.819 0.796 0.819 23.242 42.3 23.242 42.3 128.632 69.158 128.632 69.158 23.242 110.474 23.242 110.474 0.796 55.645 0.796"
-                  />
-                </g>
-                <g
-                  data-svg-origin="0.9760000109672546 0.0860000029206276"
-                  id="logo-line-2"
-                  style={
-                    Object {
-                      "opacity": 1,
-                      "visibility": "inherit",
-                      "zIndex": 0,
-                    }
-                  }
-                  transform="matrix(1,0,0,1,169,149)"
-                >
-                  <path
-                    d="M831.16,79.656 C831.16,94.445 823.69,104.3 812.635,104.3 C801.586,104.3 794.45,94.279 794.45,78.804 C794.45,63.671 801.928,53.308 812.814,53.308 C824.03,53.308 831.16,63.506 831.16,79.656 M855.82,108.724 L855.82,35.289 L832.87,35.289 L832.87,46.848 C825.9,37.158 818.078,33.076 807.029,33.076 C784.253,33.076 768.268,52.112 768.268,78.97 C768.268,106.169 783.222,124.202 805.668,124.202 C817.571,124.202 825.05,120.451 831.85,111.281 L831.85,120.972 C831.85,137.794 826.24,145.106 813.486,145.106 C804.306,145.106 798.025,140.515 797.504,133.382 L772.173,133.382 C773.877,152.076 789.175,163.125 813.145,163.125 C835.42,163.125 849.19,154.121 853.95,136.268 C855.65,129.631 855.82,127.087 855.82,108.724"
-                    id="Fill-22"
-                  />
-                  <path
-                    d="M701.193,35.283 L676.88,35.283 L676.88,127.932 L702.389,127.932 L702.389,79.994 C702.389,61.465 707.819,52.792 719.557,52.792 C724.997,52.792 729.589,55.349 732.133,59.417 C733.836,62.482 734.346,65.547 734.346,73.534 L734.346,127.932 L759.842,127.932 L759.842,75.402 C759.842,58.91 758.825,52.957 755.085,47.007 C749.476,38.168 739.951,33.249 728.227,33.249 C716.834,33.249 707.144,38.168 701.193,46.841 L701.193,35.283"
-                    id="Fill-21"
-                  />
-                  <path
-                    d="M637.104,24.567 L662.601,24.567 L662.601,0.088 L637.104,0.088 L637.104,24.567 Z M637.104,127.938 L662.601,127.938 L662.601,35.285 L637.104,35.285 L637.104,127.938 Z"
-                    id="Fill-20"
-                  />
-                  <path
-                    d="M569.69,127.936 L595.186,127.936 L595.186,86.965 C595.186,64.189 601.991,55.339 619.334,55.339 C622.055,55.339 623.747,55.515 626.467,56.191 L626.467,34.09 C624.089,33.238 622.564,33.073 619.676,33.073 C608.106,33.073 598.926,38.172 594.004,47.352 L594.004,35.286 L569.69,35.286 L569.69,127.936"
-                    id="Fill-19"
-                  />
-                  <path
-                    d="M532.476,127.936 L556.789,127.936 L556.789,35.286 L531.28,35.286 L531.28,83.225 C531.28,93.259 530.442,98.358 527.884,102.44 C524.822,107.538 519.721,110.424 514.112,110.424 C508.672,110.424 504.08,108.048 501.536,103.798 C499.833,100.737 499.323,97.672 499.323,89.685 L499.323,35.286 L473.827,35.286 L473.827,87.816 C473.827,104.308 474.847,110.259 478.584,116.212 C484.193,125.05 493.883,129.97 505.442,129.97 C516.67,129.97 526.36,125.05 532.476,116.377 L532.476,127.936"
-                    id="Fill-18"
-                  />
-                  <polyline
-                    id="Fill-17"
-                    points="425.87 127.936 452.728 127.936 452.728 22.531 494.041 22.531 494.041 0.086 384.389 0.086 384.389 22.531 425.87 22.531 425.87 127.936"
-                  />
-                  <path
-                    d="M287.694,35.283 L263.38,35.283 L263.38,127.932 L288.89,127.932 L288.89,79.994 C288.89,61.465 294.319,52.792 306.057,52.792 C311.498,52.792 316.089,55.349 318.633,59.417 C320.336,62.482 320.846,65.547 320.846,73.534 L320.846,127.932 L346.342,127.932 L346.342,75.402 C346.342,58.91 345.325,52.957 341.585,47.007 C335.977,38.168 326.452,33.249 314.728,33.249 C303.334,33.249 293.644,38.168 287.694,46.841 L287.694,35.283"
-                    id="Fill-16"
-                  />
-                  <path
-                    d="M226.718,85.77 C226.718,102.428 219.24,111.952 206.144,111.952 C197.991,111.952 192.206,107.364 192.206,101.08 C192.206,93.934 198.501,90.362 214.472,87.818 L223.322,86.456 C223.653,86.28 224.849,86.115 226.718,85.77 M250.687,87.473 C250.852,80.671 250.852,76.59 250.852,74.553 C250.852,57.388 248.818,50.077 241.851,43.272 C235.046,36.305 224.339,32.565 210.912,32.565 C186.088,32.565 170.448,44.468 169.254,64.356 L195.436,64.356 C195.944,55.175 201.221,50.584 211.419,50.584 C221.961,50.584 226.552,56.192 226.718,69.278 C215.5,69.964 200.37,72.177 192.041,74.388 C174.353,78.635 165.68,87.818 165.68,101.92 C165.68,118.413 179.451,129.971 199.353,129.971 C214.307,129.971 223.653,125.049 230.457,113.656 L230.457,117.396 C230.457,120.967 230.623,122.839 231.309,127.937 L253.244,127.937 C251.373,120.116 250.687,110.935 250.687,96.147 L250.687,87.473"
-                    id="Fill-15"
-                  />
-                  <polygon
-                    id="Fill-14"
-                    points="130.939 127.937 156.435 127.937 156.435 0.087 130.939 0.087"
-                  />
-                  <path
-                    d="M79.347,73.37 L45.508,73.37 L62.51,20.319 L79.347,73.37 Z M125.075,127.937 L80.529,0.087 L45.343,0.087 L0.976,127.937 L28.341,127.937 L38.541,96.311 L86.659,96.311 L97.024,127.937 L125.075,127.937 Z"
-                    id="Fill-1"
-                  />
-                </g>
-                <g
-                  data-svg-origin="0.7670000195503235 0.34700000286102295"
-                  id="logo-line-3"
-                  style={
-                    Object {
-                      "opacity": 1,
-                      "visibility": "inherit",
-                      "zIndex": 0,
-                    }
-                  }
-                  transform="matrix(1,0,0,1,24,297)"
-                >
-                  <path
-                    d="M592.476,71.073 L552.866,71.073 C554.9,58.497 561.868,52.037 573.096,52.037 C584.313,52.037 591.966,59.68 592.476,71.073 M618.824,83.484 C618.824,52.368 601.315,32.822 573.261,32.822 C545.552,32.822 526.849,52.368 526.849,81.273 C526.849,111.537 545.21,130.915 574.113,130.915 C597.068,130.915 612.874,120.031 618.659,99.976 L591.625,99.976 C588.902,107.29 583.117,111.028 574.623,111.028 C561.702,111.028 553.718,103.206 553.032,89.602 L618.659,89.602 C618.824,86.879 618.824,84.501 618.824,83.484"
-                    id="Fill-10"
-                  />
-                  <path
-                    d="M521.303,35.543 L506.348,35.543 L506.348,13.1 L480.839,13.1 L480.839,35.543 L467.246,35.543 L467.246,54.758 L480.839,54.758 L480.839,97.256 C480.839,109.501 481.858,114.765 485.43,120.029 C490.187,127.175 497.168,130.24 508.548,130.24 C513.826,130.24 516.546,129.898 521.303,128.702 L521.303,109.666 C518.238,110.008 517.221,110.173 516.039,110.173 C509.058,110.173 506.348,106.271 506.348,96.236 L506.348,54.758 L521.303,54.758 L521.303,35.543"
-                    id="Fill-9"
-                  />
-                  <path
-                    d="M434.281,128.196 L458.595,128.196 L458.595,35.546 L433.085,35.546 L433.085,83.485 C433.085,93.52 432.247,98.618 429.69,102.7 C426.625,107.799 421.527,110.684 415.918,110.684 C410.478,110.684 405.886,108.308 403.342,104.061 C401.639,100.997 401.129,97.932 401.129,89.945 L401.129,35.546 L375.633,35.546 L375.633,88.076 C375.633,104.568 376.65,110.519 380.39,116.472 C385.998,125.31 395.689,130.23 407.247,130.23 C418.476,130.23 428.163,125.31 434.281,116.637 L434.281,128.196"
-                    id="Fill-8"
-                  />
-                  <path
-                    d="M364.433,35.543 L349.479,35.543 L349.479,13.1 L323.969,13.1 L323.969,35.543 L310.376,35.543 L310.376,54.758 L323.969,54.758 L323.969,97.256 C323.969,109.501 324.989,114.765 328.56,120.029 C333.317,127.175 340.298,130.24 351.678,130.24 C356.956,130.24 359.676,129.898 364.433,128.702 L364.433,109.666 C361.368,110.008 360.351,110.173 359.169,110.173 C352.188,110.173 349.479,106.271 349.479,96.236 L349.479,54.758 L364.433,54.758 L364.433,35.543"
-                    id="Fill-7"
-                  />
-                  <path
-                    d="M288.764,0.347 L276.009,0.347 L276.009,24.823 L301.519,24.823 L301.519,0.347 L288.764,0.347 Z M288.764,35.533 L276.009,35.533 L276.009,128.197 L301.519,128.197 L301.519,35.533 L288.764,35.533 Z"
-                    id="Fill-6"
-                  />
-                  <path
-                    d="M265.918,35.543 L250.964,35.543 L250.964,13.1 L225.454,13.1 L225.454,35.543 L211.862,35.543 L211.862,54.758 L225.454,54.758 L225.454,97.256 C225.454,109.501 226.474,114.765 230.046,120.029 C234.803,127.175 241.784,130.24 253.164,130.24 C258.441,130.24 261.162,129.898 265.918,128.702 L265.918,109.666 C262.854,110.008 261.837,110.173 260.654,110.173 C253.673,110.173 250.964,106.271 250.964,96.236 L250.964,54.758 L265.918,54.758 L265.918,35.543"
-                    id="Fill-5"
-                  />
-                  <path
-                    d="M207.476,65.123 C207.641,44.891 193.194,32.825 168.373,32.825 C144.404,32.825 129.105,44.384 129.105,62.238 C129.105,69.029 131.991,75.83 137.092,80.422 C142.877,85.697 148.993,88.076 165.995,91.65 C178.57,94.359 183.162,97.421 183.162,103.209 C183.162,108.638 177.553,112.213 169.059,112.213 C158.341,112.213 152.732,107.111 152.909,97.256 L126.892,97.256 C127.236,118.849 142.367,130.918 168.883,130.918 C194.048,130.918 209.689,119.357 209.689,100.83 C209.689,86.714 201.36,78.209 182.997,73.452 L164.633,68.698 C157.666,66.826 154.601,64.272 154.601,60.19 C154.601,54.581 159.369,51.186 167.356,51.186 C177.719,51.186 181.98,55.091 182.487,65.123 L207.476,65.123"
-                    id="Fill-4"
-                  />
-                  <path
-                    d="M61.442,35.543 L37.128,35.543 L37.128,128.192 L62.638,128.192 L62.638,80.254 C62.638,61.725 68.068,53.055 79.806,53.055 C85.246,53.055 89.838,55.609 92.381,59.68 C94.085,62.742 94.594,65.807 94.594,73.794 L94.594,128.192 L120.091,128.192 L120.091,75.662 C120.091,59.17 119.074,53.22 115.334,47.267 C109.725,38.428 100.2,33.509 88.476,33.509 C77.083,33.509 67.392,38.428 61.442,47.102 L61.442,35.543"
-                    id="Fill-3"
-                  />
-                  <polyline
-                    id="Fill-2"
-                    points="13.508 0.347 0.767 0.347 0.767 128.197 26.249 128.197 26.249 0.347 13.508 0.347"
-                  />
-                </g>
-              </g>
-            </g>
-          </svg>
+          <img
+            className="logo-standard"
+            src="https://lida.leeds.ac.uk/wp-content/themes/lida/resources/images/uol-logo.png"
+            style={
+              Object {
+                "height": "46px",
+                "maxHeight": "46px",
+              }
+            }
+          />
+          <img
+            className="logo-mobile"
+            src="https://lida.leeds.ac.uk/wp-content/themes/lida/resources/images/uol-logo-sml.png"
+            style={
+              Object {
+                "height": "46",
+                "maxHeight": "46",
+              }
+            }
+          />
         </a>
-        <button
-          className="navbar-toggle collapsed"
-          onClick={[Function]}
-          type="button"
+      </ul>
+      <button
+        className="navbar-toggle collapsed"
+        onClick={[Function]}
+        type="button"
+      >
+        <span
+          className="sr-only"
         >
-          <span
-            className="sr-only"
-          >
-            Toggle navigation
-          </span>
-          <span
-            className="icon-bar"
-          />
-          <span
-            className="icon-bar"
-          />
-          <span
-            className="icon-bar"
-          />
-        </button>
-      </div>
+          Toggle navigation
+        </span>
+        <span
+          className="icon-bar"
+        />
+        <span
+          className="icon-bar"
+        />
+        <span
+          className="icon-bar"
+        />
+      </button>
       <div
         aria-expanded={null}
         className="navbar-collapse collapse"
       >
         <ul
-          className="nav navbar-nav"
+          className="nav navbar-nav navbar-left"
           role={null}
         >
-          <li
-            className=""
-            role="presentation"
-          >
-            <a
-              href="#"
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              role="button"
-            >
-              DUI
-            </a>
-          </li>
           <li
             className=""
             role="presentation"
@@ -220,13 +86,8 @@ exports[`App - should create snapshot 1`] = `
               About
             </a>
           </li>
-        </ul>
-        <ul
-          className="nav navbar-nav navbar-right"
-          role={null}
-        >
           <li
-            className=""
+            className="ghbutton"
             role="presentation"
           >
             <a
@@ -244,13 +105,8 @@ exports[`App - should create snapshot 1`] = `
               />
             </a>
           </li>
-        </ul>
-        <ul
-          className="nav navbar-nav navbar-right"
-          role={null}
-        >
           <li
-            className=""
+            className="themebutton"
             role="presentation"
           >
             <a
@@ -261,9 +117,9 @@ exports[`App - should create snapshot 1`] = `
             >
               <svg
                 aria-hidden="true"
-                height="24"
+                height="20"
                 viewBox="0 0 24 24"
-                width="24"
+                width="20"
               >
                 <g
                   transform="matrix( 1 0 0 1 4 1 )"
@@ -271,7 +127,7 @@ exports[`App - should create snapshot 1`] = `
                   <path
                     clip-rule="evenodd"
                     d="M15.3999 11C15.7999 10.1 16 9 16 8C16 3.6 12.4 0 8 0C3.6 0 0 3.6 0 8C0 9.1 0.200098 10.1 0.600098 11L2.19995 15L13.8 15L15.3999 11ZM11 22L12.6001 18L3.3999 18L5 22L11 22Z"
-                    fill="#000"
+                    fill="#fff"
                     fill-rule="evenodd"
                     opacity="1"
                   />
@@ -300,7 +156,7 @@ exports[`App - should create snapshot 1`] = `
         style={
           Object {
             "cursor": "grab",
-            "height": "714px",
+            "height": "668px",
             "position": "relative",
             "width": "1024px",
           }
@@ -350,8 +206,8 @@ exports[`App - should create snapshot 1`] = `
           className="side-panel"
           style={
             Object {
-              "background": "white",
-              "color": "black",
+              "background": "#242730",
+              "color": "white",
             }
           }
         >
@@ -359,25 +215,60 @@ exports[`App - should create snapshot 1`] = `
             className="side-pane-header"
             style={
               Object {
-                "background": "#eee",
+                "background": "#29323C",
               }
             }
           >
-            <h2>
+            <h4>
               Nothing to show
-            </h2>
-            dataset: 
-            /api/covid19
+            </h4>
           </div>
           <div>
-            <button
-              className="ae af ag ah ai aj ak al am an ao ap aq ar as at au av aw ax ay az b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd"
-              data-baseweb="button"
-              disabled={false}
-              onClick={[Function]}
+            data from 
+            <a
+              href="https://coronavirus.data.gov.uk/"
             >
-              Add data
-            </button>
+              PHE
+            </a>
+            <br />
+            <div
+              aria-label="button group"
+              className="ae"
+              data-baseweb="button-group"
+            >
+              <button
+                className="af ag ah ai aj ak al am an ao ap aq ar as at au av aw ax ay az b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb"
+                data-baseweb="button"
+                disabled={false}
+                onClick={[Function]}
+              >
+                LA
+              </button>
+              <button
+                className="af ag ah ai aj ak al am an ao ap aq ar as at au av aw ax ay az b0 b1 b2 b3 bc bd b6 b7 b8 b9 ba be bf bg bh"
+                data-baseweb="button"
+                disabled={false}
+                onClick={[Function]}
+              >
+                RE
+              </button>
+              <button
+                className="af ag ah ai aj ak al am an ao ap aq ar as at au av aw ax ay az b0 b1 b2 b3 bc bd b6 b7 b8 b9 ba be bf bg bh"
+                data-baseweb="button"
+                disabled={false}
+                onClick={[Function]}
+              >
+                UK
+              </button>
+              <button
+                className="af ag ah ai aj ak al am an ao ap aq ar as at au av aw ax ay az b0 b1 bi bj bc bd b6 b7 b8 b9 ba be bf bg bh"
+                data-baseweb="button"
+                disabled={false}
+                onClick={[Function]}
+              >
+                World
+              </button>
+            </div>
             <i
               className="fa fa-table"
               onClick={[Function]}
@@ -396,7 +287,6 @@ exports[`App - should create snapshot 1`] = `
             <div
               className="side-panel-body-content"
             >
-              <br />
               <hr
                 style={
                   Object {
@@ -492,7 +382,9 @@ exports[`App - should create snapshot 1`] = `
                     className="fade tab-pane active in"
                     id="main-tabs-pane-1"
                     role="tabpanel"
-                  />
+                  >
+                    Main view
+                  </div>
                   <div
                     aria-hidden={true}
                     aria-labelledby="main-tabs-tab-2"
@@ -632,34 +524,6 @@ exports[`App - should create snapshot 1`] = `
                         </li>
                       </ul>
                     </div>
-                    <div
-                      className="checkbox"
-                    >
-                      <label
-                        title=""
-                      >
-                        <input
-                          disabled={false}
-                          onChange={[Function]}
-                          type="checkbox"
-                        />
-                        Hex Plot
-                      </label>
-                    </div>
-                    <div
-                      className="checkbox"
-                    >
-                      <label
-                        title=""
-                      >
-                        <input
-                          disabled={false}
-                          onChange={[Function]}
-                          type="checkbox"
-                        />
-                        Subset by map boundary
-                      </label>
-                    </div>
                   </div>
                   <div
                     aria-hidden={true}
@@ -690,8 +554,8 @@ exports[`App - should create snapshot 1`] = `
                     placeholder="fly to..."
                     style={
                       Object {
-                        "background": "white",
-                        "color": "black",
+                        "background": "#242730",
+                        "color": "white",
                       }
                     }
                     type="text"
@@ -700,8 +564,8 @@ exports[`App - should create snapshot 1`] = `
                     className="input-group-addon"
                     style={
                       Object {
-                        "background": "white",
-                        "color": "black",
+                        "background": "#242730",
+                        "color": "white",
                       }
                     }
                   >
@@ -712,6 +576,10 @@ exports[`App - should create snapshot 1`] = `
                 </span>
               </div>
             </form>
+            <img
+              alt="LIDA logo"
+              src="data:image/png;base64,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"
+            />
           </div>
         </div>
         <div
@@ -740,6 +608,69 @@ exports[`App - should create snapshot 1`] = `
               }
             />
           </div>
+        </div>
+      </div>
+      <div
+        className="uol-wrapper"
+      >
+        <p>
+          © 
+           University of Leeds, Leeds, LS2 9JT
+        </p>
+        <div
+          class="menu-footer-menu-container"
+        >
+          <ul
+            className="menu"
+            id="menu-footer-menu"
+          >
+            <li
+              className="menu-item menu-item-type-custom menu-item-object-custom menu-item-53"
+              id="menu-item-53"
+            >
+              <a
+                href="http://www.leeds.ac.uk/termsandconditions"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Terms & Conditions
+              </a>
+            </li>
+            <li
+              className="menu-item menu-item-type-custom menu-item-object-custom menu-item-54"
+              id="menu-item-54"
+            >
+              <a
+                href="http://www.leeds.ac.uk/accessibility"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Accessibility
+              </a>
+            </li>
+            <li
+              className="menu-item menu-item-type-post_type menu-item-object-page menu-item-487"
+              id="menu-item-487"
+            >
+              <a
+                href="https://lida.leeds.ac.uk/privacy/"
+              >
+                Privacy
+              </a>
+            </li>
+            <li
+              className="menu-item menu-item-type-custom menu-item-object-custom menu-item-484"
+              id="menu-item-484"
+            >
+              <a
+                href="http://www.leeds.ac.uk/foi"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Freedom of Information
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
