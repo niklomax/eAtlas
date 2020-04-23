@@ -61,8 +61,7 @@ get_covid19r <- function(res) {
 #' @get /about
 #' @get /about/
 routesAllowed <- function(req, res){
-  # cat(req$PATH_INFO)
-  fname <- file.path(here::here(), "build", "index.html")
+  fname <- file.path("build", "index.html")
   plumber::include_html(fname, res)
 }
 
