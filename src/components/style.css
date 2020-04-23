@@ -101,6 +101,21 @@
   display: none;
 }
 
+.navbar-toggle {
+  float: left;
+  margin-top: -8px;
+  vertical-align: middle;
+}
+.navbar-nav > .themebutton > a,
+.navbar-nav > .ghbutton > a {
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+
+.navbar {
+  max-height: 50px;
+}
+
 @media only screen and (max-width: 770px) {
   .navbar-nav > a > img {
     position: fixed;
@@ -158,6 +173,9 @@
   height: 54px;
   max-height: 54px;
   opacity: 0.9;
+  bottom: 0;
+  position: fixed;
+  width: 100%;
 }
 
 
