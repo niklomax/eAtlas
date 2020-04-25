@@ -144,6 +144,7 @@ function initialState(data, setData, setFilteredHistory, type = "utlas") {
           }
         }
       })
+      console.log(data[type][e][measure]);
     })
     avg.push({ x: v.date, y: Math.floor(y / Object.keys(data[type]).length) })
   })

@@ -131,7 +131,6 @@ export default class DeckSidebar extends React.Component {
             }}
             className="side-pane-header">
             <h4>
-              {console.log(historyData && historyData)}
             {
               //if specific region shown, show its count
               multiVarSelect.name && multiVarSelect.name.size === 1 ?
