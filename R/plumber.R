@@ -46,19 +46,19 @@ if(!file.exists(spenser.file)) {
     destfile = spenser.file)
 }
 
-s <- readRDS(spenser.file)
-names(s)[1:5] <- c("area", "sex", "age", "eth", "year")
+p <- readRDS(spenser.file)
+names(p)[1:5] <- c("a", "s", "g", "e", "y")
 
 #' serve spenser
 #' @serializer unboxedJSON
 #' @get /api/spenser
-get_spenser <- function(area=NULL, sex=1, age=1, eth=1, year=2011) {
+get_spenser <- function(sex=1, age=1, eth=1, year=2011) {
   print(area)
   m <- list(Error = "Error: please provide correct input values")
-  if(is.null(area)) {
+  if(is.null(sex) | is.null(age) | is.null(eth) | is.null(year)) {
     return(m)
   }
-  res <- s[area==area & sex==sex & age==age & eth==eth & year == year]
+  res <- p[s==sex & g==age & e==eth & y == year]
   print("subset done...")
   print(nrow(res))
   if(nrow(res == 0)) {
