@@ -118,7 +118,8 @@ export default class Welcome extends React.Component {
       backgroundImage: gradient.backgroundImage,
       radius: 100,
       elevation: 4,
-      mapStyle: MAPBOX_ACCESS_TOKEN ? "mapbox://styles/mapbox/dark-v9" : osmtiles,
+      mapStyle: MAPBOX_ACCESS_TOKEN ? ("mapbox://styles/mapbox/" +
+        (props.dark ? "dark" : "streets") + "-v9") : osmtiles,
       initialViewState: init,
       subsetBoundsChange: false,
       lastViewPortChange: new Date(),
@@ -182,8 +183,6 @@ export default class Welcome extends React.Component {
         this._fitViewport(data)
         this._generateLayer()
       } else {
-        console.log(error);
-
         this.setState({
           loading: false,
           alert: { content: 'Could not reach: ' + fullURL }
@@ -345,6 +344,34 @@ export default class Welcome extends React.Component {
       options.getFillColor = (d) =>
         colorScale(d, data, column ? column : SPENSER ? 1 : 0)
     }
+    if (layerStyle === 'barvis') {
+      const getColor = (party) => {
+        if (!party) return null;
+        switch (party) {
+          case "lab":
+            return [255, 0, 0]
+          case "con":
+            return [0, 0, 255]
+          case "snp":
+            return [0, 0, 0]
+          case "ld":
+            return [253, 187 , 48]
+          case "pc":
+            return [63, 132, 40]
+          case "dup":
+            return [0, 0, 255]
+          default:
+            return [0, 0, 0];
+        }
+      }
+      options.getPosition = d => [d.geometry.coordinates[0],
+      d.geometry.coordinates[1], 0]
+      if (data[0].properties.first_party) options.getColor = d => 
+      getColor(d.properties.first_party.toLowerCase())
+      if (data[0].properties.result) options.getRotationAngle = d => 
+      d.properties.result.includes("gain from") ? 45 : 1
+      options.getScale = d => 200
+    }
     const alayer = generateDeckLayer(
       layerStyle, data, this._renderTooltip, options
     )
@@ -386,10 +413,11 @@ export default class Welcome extends React.Component {
     this.setState({ viewport })
   }
 
-  _renderTooltip({ x, y, object }) {
+  _renderTooltip(params) {
+    const { x, y, object} = params;
     const hoveredObject = object;
     // console.log(hoveredObject && hoveredObject.points[0].properties.speed_limit);
-    // console.log(hoveredObject)
+    console.log(params)
     // return
     if (!hoveredObject) {
       this.setState({ tooltip: "" })
@@ -501,6 +529,7 @@ export default class Welcome extends React.Component {
           </DeckGL>
         </MapGL>
         <DeckSidebarContainer
+          dark={this.props.dark}
           layerStyle={layerStyle}
           isMobile={isMobile()}
           key="decksidebar"
