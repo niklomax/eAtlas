@@ -48,22 +48,24 @@ if(!file.exists(spenser.file)) {
 
 p <- readRDS(spenser.file)
 names(p)[1:5] <- c("a", "s", "g", "e", "y")
+library(data.table)
+p$o = paste0(p$s, p$g, p$e, p$y)
+p = p[, c("a", "o", "sum")]
 
 #' serve spenser
 #' @serializer unboxedJSON
 #' @get /api/spenser
-get_spenser <- function(sex=1, age=1, eth=1, year=2011) {
-  print(area)
+get_spenser <- function(saey) {
   m <- list(Error = "Error: please provide correct input values")
-  if(is.null(sex) | is.null(age) | is.null(eth) | is.null(year)) {
+  if(is.null(saey) | nchar(saey) < 7) {
     return(m)
   }
-  res <- p[s==sex & g==age & e==eth & y == year]
+  res <- p[o==saey, c("a","sum")]
   print("subset done...")
   print(nrow(res))
-  if(nrow(res == 0)) {
-    return(m)
-  }
+  # if(nrow(res == 0)) {
+  #   return(m)
+  # }
   res
 }
 
