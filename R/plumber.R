@@ -37,7 +37,7 @@ swagger <- function(req, res){
 
 # https://github.com/layik/eAtlas/releases/
 # download/0.0.1/pop-ages-range.Rds
-spenser.file <- "pop-ages-range.Rds"
+spenser.file <- "pop-final.Rds"
 github <- "https://github.com/layik/eAtlas/releases/download/0.0.1/"
 if(!file.exists(spenser.file)) {
   download.file(
@@ -47,30 +47,28 @@ if(!file.exists(spenser.file)) {
 }
 
 p <- readRDS(spenser.file)
-names(p)[1:5] <- c("a", "s", "g", "e", "y")
 library(data.table)
-p$o = paste0(p$s, p$g, p$e, p$y)
-p = p[, c("a", "o", "sum")]
 
 #' serve spenser
 #' @serializer unboxedJSON
 #' @get /api/spenser
+#' @get /api/spenser/<saey>
 get_spenser <- function(saey) {
   m <- list(Error = "Error: please provide correct input values")
   if(is.null(saey) | nchar(saey) < 7) {
     return(m)
   }
-  res <- p[o==saey, c("a","sum")]
+  res <- p[other==saey, c("area","sum")]
   print("subset done...")
   print(nrow(res))
   # if(nrow(res == 0)) {
   #   return(m)
   # }
-  res
+  as.matrix(res)
 }
 
 #' Tell plumber where our public facing directory is to SERVE.
 #' No need to map / to the build or public index.html. This will do.
 #'
-#' @assets ./build /
+#' @assets ./public /
 list()

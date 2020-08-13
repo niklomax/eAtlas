@@ -40,7 +40,6 @@ import './App.css';
 import Tooltip from './components/Tooltip';
 import { sfType } from './geojsonutils';
 import { isNumber, isArray } from './JSUtils';
-import { fetchSPENSER } from './components/Showcases/util_quant';
 
 const osmtiles = {
   "version": 8,
@@ -62,7 +61,7 @@ const osmtiles = {
   }]
 };
 const URL = (process.env.NODE_ENV === 'development' ? Constants.DEV_URL : Constants.PRD_URL);
-const defualtURL = "/api/spenser2";
+const defualtURL = "/api/spenser?saey=1122014";
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
@@ -85,8 +84,8 @@ const LIGHT_SETTINGS = {
 
 const initMultiVarSelect = {
   year: new Set(["2011"]),
-  age:new Set(["1-14"]), 
-  sex:new Set(["1"]),
+  age: new Set(["1-14"]),
+  sex: new Set(["1"]),
   ethnicity: new Set(["15"])
 }
 
@@ -126,7 +125,7 @@ export default class Welcome extends React.Component {
       colourName: 'default',
       iconLimit: 500,
       legend: false,
-      column: "frequency"
+      column: "population"
     }
     this._generateLayer = this._generateLayer.bind(this)
     this._renderTooltip = this._renderTooltip.bind(this);
@@ -159,29 +158,32 @@ export default class Welcome extends React.Component {
       // TODO:DELETE
       // let us show a choropleth of fixed age
       // fixed sex change in years
-      if(fullURL.endsWith("spenser2")) {
-        fetchSPENSER((geojson_returned, error) =>{ 
-          // const part = geojson_returned.features.filter(f => 
-          //   f.properties.age === "1-14")
-          if(!error) {
-            this._updateWithGeoJSON(geojson_returned)
-          } else {
+      // const asObject = data.map(e => ({[e[0]]: e[1].trim()}))
+      if (!error) {
+        fetchData(URL + "/msoa.geojson", (geojson, err) => {
+          if(!err) {
+            geojson.features.forEach(feature => {
+              feature.properties.spenser = 0; // init missing ones 
+              for (let i = 0; i < data.length; i++) {
+                if (feature.properties.msoa11cd === data[i][0]) {
+                  feature.properties.spenser = Number.parseInt(data[i][1]);
+                  break
+                }
+              }
+            })
+            console.log(geojson)
             this.setState({
               loading: false,
-              alert: { content: 'Could not reach: ' + fullURL }
+              data: geojson,
+              alert: customError || null
             })
+            this._fitViewport(geojson)
+            this._generateLayer()
+          } else {
+            // alert?
+            this.setState({loading:false})
           }
         })
-        return;
-      }
-      if (!error) {
-        this.setState({
-          loading: false,
-          data: data,
-          alert: customError || null
-        })
-        this._fitViewport(data)
-        this._generateLayer()
       } else {
         this.setState({
           loading: false,
@@ -229,12 +231,12 @@ export default class Welcome extends React.Component {
     }
     const geomType = sfType(data[0]).toLowerCase();
     //if resetting a value    
-    if(!filter || filter.selected === "") {
+    if (!filter || filter.selected === "") {
       console.log("pp");
-      filter = {
-        what: 'multi', 
-        selected: initMultiVarSelect
-      }
+      // filter = {
+      //   what: 'multi',
+      //   selected: initMultiVarSelect
+      // }
     }
     console.log(filter);
 
@@ -331,11 +333,11 @@ export default class Welcome extends React.Component {
       }
     }
     if (geomType === "polygon" || geomType === "multipolygon") {
-      const cols = Object.keys(data[0] && data[0].properties && 
+      const cols = Object.keys(data[0] && data[0].properties &&
         data[0].properties);
       // TODO: remove SPENSER
-      const SPENSER = isArray(cols) && cols.length > 0 && 
-      cols[1] === 'GEOGRAPHY_CODE';
+      const SPENSER = isArray(cols) && cols.length > 0 &&
+        cols[1] === 'GEOGRAPHY_CODE';
       if (SPENSER) {
         options.getElevation = d => (isNumber(d.properties[column]) &&
           column !== 'YEAR' && d.properties[column]) || null
@@ -355,7 +357,7 @@ export default class Welcome extends React.Component {
           case "snp":
             return [0, 0, 0]
           case "ld":
-            return [253, 187 , 48]
+            return [253, 187, 48]
           case "pc":
             return [63, 132, 40]
           case "dup":
@@ -366,10 +368,10 @@ export default class Welcome extends React.Component {
       }
       options.getPosition = d => [d.geometry.coordinates[0],
       d.geometry.coordinates[1], 0]
-      if (data[0].properties.first_party) options.getColor = d => 
-      getColor(d.properties.first_party.toLowerCase())
-      if (data[0].properties.result) options.getRotationAngle = d => 
-      d.properties.result.includes("gain from") ? 45 : 1
+      if (data[0].properties.first_party) options.getColor = d =>
+        getColor(d.properties.first_party.toLowerCase())
+      if (data[0].properties.result) options.getRotationAngle = d =>
+        d.properties.result.includes("gain from") ? 45 : 1
       options.getScale = d => 200
     }
     const alayer = generateDeckLayer(
@@ -414,10 +416,10 @@ export default class Welcome extends React.Component {
   }
 
   _renderTooltip(params) {
-    const { x, y, object} = params;
+    const { x, y, object } = params;
     const hoveredObject = object;
     // console.log(hoveredObject && hoveredObject.points[0].properties.speed_limit);
-    console.log(params)
+    // console.log(params)
     // return
     if (!hoveredObject) {
       this.setState({ tooltip: "" })
@@ -524,6 +526,17 @@ export default class Welcome extends React.Component {
                 this._generateLayer()
               }
             }}
+            onHover={(info, evt) => {
+              // const mapboxFeatures = this.map.queryRenderedFeatures([evt.offsetX, evt.offsetY]);
+              // console.log(this.map.getLayer("vt"))
+              // let sp = this.map.queryRenderedFeatures()[0].properties.msoa11cd;              
+              // sp = Object.values(JSON.parse(sp))[0]
+              // const r = [];
+              // while (sp.length) {
+              //     r.push(sp.splice(0, 4));
+              // }
+              // console.log(sp)
+            }}
           >
             {tooltip}
           </DeckGL>
@@ -596,7 +609,7 @@ export default class Welcome extends React.Component {
     catch (error) {
       // load up default
       console.log(error);
-      
+
       this._fetchAndUpdateState(undefined, { content: error.message });
     }
   }
