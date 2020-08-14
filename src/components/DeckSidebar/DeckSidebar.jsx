@@ -30,7 +30,7 @@ import MultiSelect from '../MultiSelect';
 import AddVIS from '../AddVIS';
 import MultiLinePlot from '../Showcases/MultiLinePlot';
 import Boxplot from '../Boxplot/Boxplot';
-// import GenerateUI from '../UI';
+import Spenser from '../Showcases/Spenser';
 
 const URL = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
 
@@ -232,6 +232,7 @@ export default class DeckSidebar extends React.Component {
                   <i style={{ fontSize: '2rem' }}
                     className="fa fa-info" />
                 }>
+                  <Spenser />
                   {/* pick a column and vis type */}
                   <AddVIS data={data} dark={dark} plotStyle={{width: 240, margin:20}}/>
                   {/* distribution example */}
