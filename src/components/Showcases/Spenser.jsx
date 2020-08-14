@@ -4,13 +4,12 @@ import { RadioGroup, Radio } from "baseui/radio";
 import { Button } from 'baseui/button';
 
 const Spenser = (props) => {
-  const { callback } = props;
-  const [year, setYear] = useState([2011])
+  const { saeyCallback } = props;
+  const [year, setYear] = useState([2012])
   const [age, setAge] = useState([1])
-  const [eth, setEth] = useState([1])
+  const [eth, setEth] = useState([2])
   const [sex, setSex] = useState("1")
 
-  const [saey, setSaey] = useState("1122012")
   const years = Array.from(Array(40), (_, i) => i + 2011);
   const ages = Array.from(Array(9), (_, i) => i + 1);
   const eths = Array.from(Array(9), (_, i) => i + 1);
@@ -57,10 +56,10 @@ const Spenser = (props) => {
         <Radio value="2">Male</Radio>
       </RadioGroup>
       <Button onClick={() => {
-        console.log(sex + age[0] + eth[0] + year);
-
-        // typeof(callback) === 'function' &&
-        // callback(value[0])
+        const saey = sex + age[0] + eth[0] + year;
+        // console.log(sex + age[0] + eth[0] + year);
+        typeof(saeyCallback) === 'function' &&
+        saeyCallback(saey)
       }}>Update</Button>
 
     </>

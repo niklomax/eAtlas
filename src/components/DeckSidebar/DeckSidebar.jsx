@@ -232,7 +232,14 @@ export default class DeckSidebar extends React.Component {
                   <i style={{ fontSize: '2rem' }}
                     className="fa fa-info" />
                 }>
-                  <Spenser />
+                  <Spenser saeyCallback={(saey) => {
+                    onSelectCallback && onSelectCallback({
+                      what: 'saey', selected: saey
+                    });
+                    this.setState({
+                      saey
+                    })
+                  }}/>
                   {/* pick a column and vis type */}
                   <AddVIS data={data} dark={dark} plotStyle={{width: 240, margin:20}}/>
                   {/* distribution example */}

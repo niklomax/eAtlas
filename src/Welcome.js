@@ -60,8 +60,8 @@ const osmtiles = {
     "source": "simple-tiles",
   }]
 };
-const URL = (process.env.NODE_ENV === 'development' ? Constants.DEV_URL : Constants.PRD_URL);
-const defualtURL = "/api/spenser?saey=1122014";
+const ROOT = (process.env.NODE_ENV === 'development' ? Constants.DEV_URL : Constants.PRD_URL);
+const defualtURL = "/api/spenser";
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
@@ -150,9 +150,9 @@ export default class Welcome extends React.Component {
     // TODO: more sanity checks?
     const fullURL = aURL ?
       // TODO: decide which is better.
-      // URL + "/api/url?q=" + aURL : // get the server to parse it 
+      // ROOT + "/api/url?q=" + aURL : // get the server to parse it 
       aURL : // do not get the server to parse it 
-      URL + defualtURL;
+      ROOT + defualtURL + "?saey=1122014";
 
     fetchData(fullURL, (data, error) => {
       // TODO:DELETE
@@ -160,29 +160,8 @@ export default class Welcome extends React.Component {
       // fixed sex change in years
       // const asObject = data.map(e => ({[e[0]]: e[1].trim()}))
       if (!error) {
-        fetchData(URL + "/msoa.geojson", (geojson, err) => {
-          if(!err) {
-            geojson.features.forEach(feature => {
-              feature.properties.spenser = 0; // init missing ones 
-              for (let i = 0; i < data.length; i++) {
-                if (feature.properties.msoa11cd === data[i][0]) {
-                  feature.properties.spenser = Number.parseInt(data[i][1]);
-                  break
-                }
-              }
-            })
-            console.log(geojson)
-            this.setState({
-              loading: false,
-              data: geojson,
-              alert: customError || null
-            })
-            this._fitViewport(geojson)
-            this._generateLayer()
-          } else {
-            // alert?
-            this.setState({loading:false})
-          }
+        fetchData(ROOT + "/msoa.geojson", (geojson, err) => {
+          this._stateWithDataAndGeojson(err, geojson, data, customError);
         })
       } else {
         this.setState({
@@ -192,6 +171,31 @@ export default class Welcome extends React.Component {
         //network error?
       }
     })
+  }
+
+  _stateWithDataAndGeojson(err, geojson, data, customError) {
+    if (!err) {
+      geojson.features.forEach(feature => {
+        feature.properties.spenser = 0; // init missing ones 
+        for (let i = 0; i < data.length; i++) {
+          if (feature.properties.msoa11cd === data[i][0]) {
+            feature.properties.spenser = Number.parseInt(data[i][1]);
+            break;
+          }
+        }
+      });
+      this.setState({
+        loading: false,
+        data: geojson,
+        alert: customError || null
+      });
+      // this._fitViewport(geojson);
+      this._generateLayer();
+    }
+    else {
+      // alert?
+      this.setState({ loading: false });
+    }
   }
 
   /**
@@ -217,6 +221,7 @@ export default class Welcome extends React.Component {
       return;
     }
     let data = this.state.data && this.state.data.features
+    console.log(data[23].properties.spenser);
     const { colourName, iconLimit } = this.state;
     let column = (filter && filter.what === 'column' && filter.selected) ||
       this.state.column;
@@ -232,13 +237,13 @@ export default class Welcome extends React.Component {
     const geomType = sfType(data[0]).toLowerCase();
     //if resetting a value    
     if (!filter || filter.selected === "") {
-      console.log("pp");
+      // console.log("pp");
       // filter = {
       //   what: 'multi',
       //   selected: initMultiVarSelect
       // }
     }
-    console.log(filter);
+    // console.log(filter);
 
     if (filter && filter.selected !== "") {
       data = data.filter(
@@ -332,7 +337,7 @@ export default class Welcome extends React.Component {
     }
     const domain = generateDomain(data, columnNameOrIndex);
     if (geomType === "polygon" || geomType === "multipolygon" || layerStyle === 'geojson') {
-      console.log(domain, columnNameOrIndex);
+      // console.log(domain, columnNameOrIndex);
       options.getFillColor = (d) => colorScale(d, columnNameOrIndex, domain)
     }
     if (layerStyle === 'barvis') {
@@ -445,7 +450,7 @@ export default class Welcome extends React.Component {
       const box = getBbx(bounds)
       // console.log("bounds", box);
       const { xmin, ymin, xmax, ymax } = box;
-      fetchData(URL + defualtURL + xmin + "/" +
+      fetchData(ROOT + defualtURL + xmin + "/" +
         ymin + "/" + xmax + "/" + ymax,
         (data, error) => {
           if (!error) {
@@ -559,7 +564,23 @@ export default class Welcome extends React.Component {
             }
           }}
           column={this.state.column}
-          onSelectCallback={(selected) => this._generateLayer({ filter: selected })}
+          onSelectCallback={(selected) => {
+            const u = ROOT + defualtURL + "?saey=" + selected.selected
+            console.log(u);
+            if(selected.what && selected.what === "saey") {
+              fetchData(u, (data, error) => {
+                if(!error) {
+                  // console.log(data);
+                  this._stateWithDataAndGeojson(null, this.state.data, 
+                    data)
+                } else {
+                  console.log(error);
+                }
+              })
+            } else {
+              this._generateLayer({ filter: selected })
+            }
+          }}
           onChangeRadius={(value) => this._generateLayer({ radius: value })}
           onChangeElevation={(value) => this._generateLayer({ elevation: value })}
           toggleSubsetBoundsChange={(value) => {

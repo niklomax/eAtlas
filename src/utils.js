@@ -471,7 +471,6 @@ function hexToRgb(hex) {
  */
 const colorScale = (d, p = 0, domain, alpha = 180) => {
   if (!d || !isArray(domain) || !domain.length) return null;
-  console.log(p);
   const index = domain.indexOf(d.properties[p])
   let rgb = interpolateOrRd(index / domain.length);
   rgb = rgb.substring(4, rgb.length - 1)
