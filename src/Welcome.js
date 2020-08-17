@@ -221,7 +221,7 @@ export default class Welcome extends React.Component {
       return;
     }
     let data = this.state.data && this.state.data.features
-    console.log(data[23].properties.spenser);
+    // console.log(data[23].properties.spenser);
     const { colourName, iconLimit } = this.state;
     let column = (filter && filter.what === 'column' && filter.selected) ||
       this.state.column;
@@ -543,7 +543,7 @@ export default class Welcome extends React.Component {
           alert={alert}
           multiVarSelect={initMultiVarSelect}
           data={this.state.filtered}
-          fullData={this.state.filtered && this.state.data.features}
+          loading={loading}
           colourCallback={(colourName) =>
             this._generateLayer({ cn: colourName })
           }
@@ -566,8 +566,9 @@ export default class Welcome extends React.Component {
           column={this.state.column}
           onSelectCallback={(selected) => {
             const u = ROOT + defualtURL + "?saey=" + selected.selected
-            console.log(u);
+            // console.log(u);
             if(selected.what && selected.what === "saey") {
+              this.setState({loading: true})
               fetchData(u, (data, error) => {
                 if(!error) {
                   // console.log(data);

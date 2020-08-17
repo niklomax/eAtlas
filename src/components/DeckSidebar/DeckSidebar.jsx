@@ -6,14 +6,13 @@ import {
 import { Button, KIND, SIZE } from 'baseui/button';
 
 import './DeckSidebar.css';
-import DataInput from '../DataInput';
 import MapboxBaseLayers from '../MapboxBaseLayers';
 import {
   xyObjectByProperty, percentDiv,
   searchNominatom,
   humanize, generateLegend, sortNumericArray
 } from '../../utils';
-import { LineSeries, VerticalBarSeries } from 'react-vis';
+import { LineSeries } from 'react-vis';
 import Variables from '../Variables';
 import RBAlert from '../RBAlert';
 import { propertyCount } from '../../geojsonutils';
@@ -23,11 +22,10 @@ import Modal from '../Modal';
 import DataTable from '../Table';
 
 import { yearSlider } from '../Showcases/Widgets';
-import { popPyramid, crashes_plot_data } from '../Showcases/Plots';
+import { crashes_plot_data } from '../Showcases/Plots';
 import SeriesPlot from '../Showcases/SeriesPlot';
 import { isEmptyOrSpaces, isNumber } from '../../JSUtils';
 import MultiSelect from '../MultiSelect';
-import AddVIS from '../AddVIS';
 import MultiLinePlot from '../Showcases/MultiLinePlot';
 import Boxplot from '../Boxplot/Boxplot';
 import Spenser from '../Showcases/Spenser';
@@ -56,6 +54,7 @@ export default class DeckSidebar extends React.Component {
     const { data, alert, loading } = this.props;
     const { elevation, radius, reset,
       barChartVariable } = this.state;
+    // console.log(loading, nextProps.loading);
     // avoid rerender as directly operating on document.get* 
     // does not look neat. Keeping it React way.
     if (reset !== nextState.reset ||
@@ -64,9 +63,11 @@ export default class DeckSidebar extends React.Component {
       alert !== nextProps.alert ||
       loading !== nextProps.loading ||
       barChartVariable !== nextState.barChartVariable) return true;
-    //TODO:  a more functional way is needed        
-    if (data && nextProps && nextProps.data &&
-      data.length === nextProps.data.length) {
+    //TODO:  a more functional way is needed   
+  
+    if (data && nextProps && nextProps.data && data.length > 1 && 
+      nextProps.data.length > 1 &&
+      data[1].properties.spenser === nextProps.data[1].properties.spenser ) {
       return false
     }
     return true;
@@ -129,6 +130,9 @@ export default class DeckSidebar extends React.Component {
         datasetName: urlOrName || this.state.datasetName
       })
     }
+    const spenserValues = data && data.length &&
+    data.length - data.filter(e => e.properties.spenser === 0).length
+    // console.log(spenserValues);
     return (
       <>
         <div
@@ -143,22 +147,12 @@ export default class DeckSidebar extends React.Component {
               background: dark ? '#29323C' : '#eee'
             }}
             className="side-pane-header">
-            <h2>{data && data.length ?
-              data.length + " row" + (data.length > 1 ? "s" : "") + "."
+            <h2>{spenserValues ? spenserValues + " row" + (spenserValues > 1 ? "s" : "") + "."
               : "Nothing to show"}
             </h2>
             dataset: {this.state.datasetName}
           </div>
           <div>
-            <DataInput
-              toggleOpen={() => typeof toggleOpen === 'function' && toggleOpen()}
-              urlCallback={(url, geojson, name) => {
-                resetState(url || name);
-                typeof (urlCallback) === 'function'
-                  && urlCallback(url, geojson);
-                typeof (toggleOpen) === 'function' && toggleOpen()
-              }
-              } />
             <Modal
               toggleOpen={() => typeof toggleOpen === 'function' && toggleOpen()}
               component={<DataTable data={data} />} />
@@ -233,6 +227,7 @@ export default class DeckSidebar extends React.Component {
                     className="fa fa-info" />
                 }>
                   <Spenser saeyCallback={(saey) => {
+                    // check saey, if same do not fetch
                     onSelectCallback && onSelectCallback({
                       what: 'saey', selected: saey
                     });
@@ -241,7 +236,7 @@ export default class DeckSidebar extends React.Component {
                     })
                   }}/>
                   {/* pick a column and vis type */}
-                  <AddVIS data={data} dark={dark} plotStyle={{width: 240, margin:20}}/>
+                  {/* <AddVIS data={data} dark={dark} plotStyle={{width: 240, margin:20}}/> */}
                   {/* distribution example */}
                   {notEmpty &&
                     data[0].properties.hasOwnProperty(['age_of_casualty']) &&
@@ -296,29 +291,6 @@ export default class DeckSidebar extends React.Component {
                   }
                   {/* TODO: example of generating vis based on column
                   cloudl now be deleted. */}
-                  {<SeriesPlot
-                    dark={dark}
-                    data={columnPlot.data}
-                    type={VerticalBarSeries}
-                    onValueClick={(datapoint) => {
-                      // convert back to string
-                      multiVarSelect[column ||
-                        barChartVariable] = new Set([datapoint.x + ""]);
-                      this.setState({ multiVarSelect })
-                      onSelectCallback &&
-                        onSelectCallback({ what: 'multi', selected: multiVarSelect })
-                    }}
-                    onDragSelected={(datapoints) => {
-                      multiVarSelect[column ||
-                        barChartVariable] = new Set(datapoints.map(e => e + ""));
-                      this.setState({ multiVarSelect })
-                      onSelectCallback &&
-                        onSelectCallback({ what: 'multi', selected: multiVarSelect })
-                    }}
-                    plotStyle={{ marginBottom: 100 }} noYAxis={true}
-
-                  />}
-                  {popPyramid({ data, dark: dark })}
                 </Tab>
                 <Tab eventKey="2" title={
                   <i style={{ fontSize: '2rem' }}
