@@ -59,8 +59,8 @@ get_spenser <- function(saey) {
     return(m)
   }
   res <- p[other==saey, c("area","sum")]
-  print("subset done...")
-  print(nrow(res))
+  # print("subset done...")
+  # print(nrow(res))
   # if(nrow(res == 0)) {
   #   return(m)
   # }

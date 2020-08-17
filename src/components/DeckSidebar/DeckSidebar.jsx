@@ -217,7 +217,7 @@ export default class DeckSidebar extends React.Component {
                         { what: '' } : { what: 'multi', selected: multiVarSelect })
                   }, dark))
               }
-              <hr style={{ clear: 'both' }} />
+              {/* <hr style={{ clear: 'both' }} /> */}
               {columnDomain.length > 1 &&
               <Boxplot data={columnDomain}/>}
 
@@ -269,6 +269,7 @@ export default class DeckSidebar extends React.Component {
                       <h6>Column for layer:</h6>
                       <MultiSelect
                         title="Choose Column"
+                        value={column}
                         single={true}
                         values={
                           Object.keys(data[0].properties).map(e =>

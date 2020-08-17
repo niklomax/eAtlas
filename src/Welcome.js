@@ -185,6 +185,7 @@ export default class Welcome extends React.Component {
         }
       });
       this.setState({
+        column: "spenser",
         loading: false,
         data: geojson,
         alert: customError || null
@@ -337,7 +338,9 @@ export default class Welcome extends React.Component {
     }
     const domain = generateDomain(data, columnNameOrIndex);
     if (geomType === "polygon" || geomType === "multipolygon" || layerStyle === 'geojson') {
-      // console.log(domain, columnNameOrIndex);
+      options.updateTriggers = {
+        getFillColor: [data.map((d) => colorScale(d, columnNameOrIndex, domain))]
+      };
       options.getFillColor = (d) => colorScale(d, columnNameOrIndex, domain)
     }
     if (layerStyle === 'barvis') {
