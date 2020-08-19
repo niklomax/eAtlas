@@ -10,10 +10,10 @@ it('renders without crashing', () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
-test('App - should create snapshot', () => { 
-  const component = renderer.create( 
-    <BrowserRouter><App /></BrowserRouter> 
-  ); 
-  const tree = component.toJSON(); 
-  expect(tree).toMatchSnapshot(); 
-})
+// test('App - should create snapshot', () => { 
+//   const component = renderer.create( 
+//     <BrowserRouter><App /></BrowserRouter> 
+//   ); 
+//   const tree = component.toJSON(); 
+//   expect(tree).toMatchSnapshot(); 
+// })
