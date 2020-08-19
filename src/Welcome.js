@@ -27,7 +27,7 @@ import _ from 'underscore';
 import {
   fetchData, generateDeckLayer,
   getParamsFromSearch, getBbx,
-  isMobile, colorScale, 
+  isMobile, colorScale, theme,
   colorRanges, generateDomain,
   convertRange, getMin, getMax, isURL
 } from './utils';
@@ -603,7 +603,12 @@ export default class Welcome extends React.Component {
         {
           legend && (geomType === 'polygon' ||
             geomType === 'multipolygon') &&
-          <div className="right-side-panel mapbox-legend">
+            <div 
+            style={{
+              ...theme(this.props.dark),
+              textAlign: 'center', 
+              marginBottom: 45}}
+            className="mapboxgl-ctrl-bottom-right mapbox-legend">
             {legend}
           </div>
         }

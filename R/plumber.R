@@ -70,5 +70,5 @@ get_spenser <- function(saey) {
 #' Tell plumber where our public facing directory is to SERVE.
 #' No need to map / to the build or public index.html. This will do.
 #'
-#' @assets ./public /
+#' @assets ./build /
 list()

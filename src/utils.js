@@ -619,7 +619,9 @@ const generateLegend = (options) => {
             +(jMin) / 300 : jMin).toFixed(2)
           }</i>
         }
-        <span key={i} style={{ background: interpolate(i / 10) }}>
+        <span key={i} style={{ 
+          margin: 'auto',
+          background: interpolate(i / 10) }}>
         </span>
         {i === 9 &&
           <i>{(title === humanize('Mean.Travel.Time..Seconds.') ?
@@ -667,6 +669,13 @@ const sortNumericArray = (array) => {
   return array
 }
 
+const theme = (dark) => {
+  return({
+    background: !dark ? '#fff9' : 'rgb(36,39,48,0.8)',
+    color: dark ? '#fff' : '#000',
+  })
+}
+
 const getMax = (arr) => {
   return arr.reduce((max, v) => max >= v ? max : v, -Infinity);
 }
@@ -699,5 +708,6 @@ export {
   getBbx,
   getMin,
   getMax,
+  theme,
   isURL,
 }
