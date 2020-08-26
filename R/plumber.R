@@ -46,8 +46,26 @@ if(!file.exists(spenser.file)) {
     destfile = spenser.file)
 }
 
+msoa.geojson <- "msoa.geojson"
+if(!file.exists(msoa.geojson)) {
+  download.file(
+    paste0(github,
+           msoa.geojson),
+    destfile = msoa.geojson)
+}
+
+msoa.geojson <- readChar(msoa.geojson, file.info(msoa.geojson)$size)
+#' serve the msoa.geojson
+#' 
+#' @get /api/msoa.geojson
+get_msoa <- function(res) {
+  res$headers$`Content-type` <- "application/json"
+  res$body <- msoa.geojson
+  res
+}
+
 p <- readRDS(spenser.file)
-library(data.table)
+p = p[, other := as.numeric(other)]
 
 #' serve spenser
 #' @serializer unboxedJSON
@@ -58,12 +76,30 @@ get_spenser <- function(saey) {
   if(is.null(saey) | nchar(saey) < 7) {
     return(m)
   }
-  res <- p[other==saey, c("area","sum")]
+  res <- p[other==as.numeric(saey), c("area","sum")]
   # print("subset done...")
   # print(nrow(res))
   # if(nrow(res == 0)) {
   #   return(m)
   # }
+  as.matrix(res)
+}
+
+#' Get every combination for an area. It takes an area code and
+#' filters the entire population data and returns all combinations
+#' of spenser data for the given area. It does not return area code.
+#' 
+#' r.data.table can do this fast!
+#' 
+#' @serializer unboxedJSON
+#' @get /api/area
+#' @get /api/area/<code>
+get_full_area <- function(code) {
+  m <- list(Error = "Error: please provide valid area code.")
+  if(is.null(code) | nchar(code) != 9) { # nchar("E02004899") == 9
+    return(m)
+  }
+  res <- p[area == code, c("other", "sum")]
   as.matrix(res)
 }
 

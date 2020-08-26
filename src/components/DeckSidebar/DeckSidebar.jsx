@@ -226,7 +226,7 @@ export default class DeckSidebar extends React.Component {
                   <i style={{ fontSize: '2rem' }}
                     className="fa fa-info" />
                 }>
-                  <Spenser saeyCallback={(saey) => {
+                  {notEmpty && <Spenser saeyCallback={(saey) => {
                     // check saey, if same do not fetch
                     onSelectCallback && onSelectCallback({
                       what: 'saey', selected: saey
@@ -234,7 +234,7 @@ export default class DeckSidebar extends React.Component {
                     this.setState({
                       saey
                     })
-                  }}/>
+                  }}/>}
                   {/* pick a column and vis type */}
                   {/* <AddVIS data={data} dark={dark} plotStyle={{width: 240, margin:20}}/> */}
                   {/* distribution example */}

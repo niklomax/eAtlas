@@ -5,6 +5,7 @@ import { humanize } from '../utils';
 import SeriesPlot from './Showcases/SeriesPlot';
 import { propertyCountByProperty } from '../geojsonutils';
 import MultiLinePlot from './Showcases/MultiLinePlot';
+import SpenserAreaGraph from './Showcases/SpenserAreaGraph';
 
 const WIDTH = 220;
 const BAR_HEIGHT = 80;
@@ -155,6 +156,12 @@ export default class Tooltip extends React.Component {
             /> :
             <SeriesPlot title={severity_keys.length === 1 && severity_keys[0]} 
             data= {crashes_data} type= {LineSeries} />
+          }
+          {
+            type_feature &&
+            <SpenserAreaGraph 
+            saey={this.props.saey}
+            area={hoveredObject.properties.msoa11cd}/>
           }
         </div>
       </div >

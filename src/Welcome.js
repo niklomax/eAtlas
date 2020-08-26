@@ -22,7 +22,7 @@ import DeckGL from 'deck.gl';
 import MapGL, { NavigationControl, FlyToInterpolator } from 'react-map-gl';
 import centroid from '@turf/centroid';
 import bbox from '@turf/bbox';
-import _ from 'underscore';
+import _, { object } from 'underscore';
 
 import {
   fetchData, generateDeckLayer,
@@ -125,7 +125,8 @@ export default class Welcome extends React.Component {
       colourName: 'default',
       iconLimit: 500,
       legend: false,
-      column: "population"
+      column: "population",
+      saey: "1122014"
     }
     this._generateLayer = this._generateLayer.bind(this)
     this._renderTooltip = this._renderTooltip.bind(this);
@@ -152,7 +153,7 @@ export default class Welcome extends React.Component {
       // TODO: decide which is better.
       // ROOT + "/api/url?q=" + aURL : // get the server to parse it 
       aURL : // do not get the server to parse it 
-      ROOT + defualtURL + "?saey=1122014";
+      ROOT + defualtURL + "?saey=" + this.state.saey;
 
     fetchData(fullURL, (data, error) => {
       // TODO:DELETE
@@ -160,7 +161,7 @@ export default class Welcome extends React.Component {
       // fixed sex change in years
       // const asObject = data.map(e => ({[e[0]]: e[1].trim()}))
       if (!error) {
-        fetchData(ROOT + "/msoa.geojson", (geojson, err) => {
+        fetchData(ROOT + "/api/msoa.geojson", (geojson, err) => {
           this._stateWithDataAndGeojson(err, geojson, data, customError);
         })
       } else {
@@ -426,6 +427,7 @@ export default class Welcome extends React.Component {
       tooltip:
         // react did not like x and y props.
         <Tooltip
+          saey={this.state.saey}
           isMobile={isMobile()}
           topx={x} topy={y} hoveredObject={hoveredObject} />
     })
@@ -518,6 +520,7 @@ export default class Welcome extends React.Component {
             // adding-interactivity?
             // section=using-the-built-in-event-handling
             onClick={(e) => {
+              // e.object && this._renderTooltip(e)
               if (!e.layer && coords) {
                 this.setState({ coords: null })
                 this._generateLayer()
@@ -571,7 +574,7 @@ export default class Welcome extends React.Component {
             const u = ROOT + defualtURL + "?saey=" + selected.selected
             // console.log(u);
             if(selected.what && selected.what === "saey") {
-              this.setState({loading: true})
+              this.setState({loading: true, saey: selected.selected})
               fetchData(u, (data, error) => {
                 if(!error) {
                   // console.log(data);
