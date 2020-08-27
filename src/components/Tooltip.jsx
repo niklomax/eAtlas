@@ -160,6 +160,7 @@ export default class Tooltip extends React.Component {
           {
             type_feature &&
             <SpenserAreaGraph 
+            dark={this.props.dark}
             saey={this.props.saey}
             area={hoveredObject.properties.msoa11cd}/>
           }
