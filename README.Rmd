@@ -3,11 +3,9 @@ output: github_document
 ---
 # eAtlas &middot; [![Build Status](https://travis-ci.org/layik/eAtlas.svg)](https://travis-ci.org/layik/eAtlas) [![Project Status: WIP](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#)
 
-Currently this is just a "WIP" as we explore and gather requirements of the project. The idea of an eAtlas is one by Sir Alan Wilson (Turing Institute):
+#### This README is for branch `spenser` 
 
-> A key message from the Foresight Future of Cities Project is the importance of interdependence: between urban subsystems and between associated planning and policy challenges. ~ Sir Alan Wilson.
-
-There are some [notes](https://github.com/layik/eAtlas/blob/master/notes/project_planning.md) to read. These are thoughts and background reading material as we take steps towards understanding what an "interdependent" eAtlas might be. Would it be "Turing Geovisualization Engine"?
+The `eAtlas` project itself has a different README. The rest of the document, outlining development and deployment of the app is the same.
 
 ### Development
 The front end is an npm package, so if you do not need the backend, having cloned the repo:
