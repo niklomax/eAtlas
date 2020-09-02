@@ -3,8 +3,15 @@
 
 #### This README is for branch `spenser`
 
-The `eAtlas` project itself has a different README. The rest of the
-document, outlining development and deployment of the app is the same.
+The `eAtlas` project itself has a different README.
+
+### SPENSER
+
+TODO: add project details here, description of the data processing and
+vis.
+
+The rest of the document, outlining development and deployment of the
+app is the same.
 
 ### Development
 
@@ -16,6 +23,12 @@ npm i # or yarn
 # and run
 npm start
 ```
+
+<script type="text/javascript">
+npm i # or yarn
+# and run
+npm start
+</script>
 
 The frontend is a
 [`create-react-app`](https://create-react-app.dev/docs/getting-started/)
@@ -73,7 +86,3 @@ docker run -d -p 8000:8001 --name eatlas eatlas
 
 Use your favourite document server (nginx for example) to proxy requets
 (more later hopefully).
-
-### Screenshots/gif’s
-
-<img width="100%" alt="eAtlas screen shot" src="https://user-images.githubusercontent.com/408568/76419738-c46edc80-6398-11ea-8bbe-496394f90adc.png">
