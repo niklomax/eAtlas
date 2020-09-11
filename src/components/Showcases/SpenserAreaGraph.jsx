@@ -49,19 +49,23 @@ const SpenserAreaGraph = (props) => {
     return((v1 === v2)  || v1 === v2.replace(sex, oSex))
   });
 
-  const sexes = [[], []];
+  let sexes = [{}, {}];
   years.forEach(e => {
-    const xy = {x: +(e[0]+ "").substr(-4), y:e[1]};
-    // separate sexes
+    // e[0] is saey and e[1] is pop
+    const year = +(e[0]+ "").substr(-4);
+    // separate sexes by checking starting 1 or 2
     if((e[0]+ "").startsWith(sex)) {
       // current
-      sexes[0].push(xy)
+      sexes[0][year] = e[1]
     } else {
-      sexes[1].push(xy)
+      sexes[1][year] = e[1]
     }
   });
-  // console.log(sexes);
-
+  // order them
+  sexes.forEach((each,i) => {
+    sexes[i] = Object.keys(each).sort().map(yy => ({x:yy, y: each[yy]}))
+  })
+  
   return (
     <MultiLinePlot 
       // {x: 2012, y: 45}
@@ -70,8 +74,8 @@ const SpenserAreaGraph = (props) => {
       // legend={Object.keys(ages).map(i => "Range " + (i + 1))}
       data={sexes}
       legend={[1,2].map(e => e === sex ? 'Male' : 'Female')}
-      title="All years"
-      plotStyle={{ height: 100, marginBottom: 50 }}
+      title="Total Population by sexes"
+      plotStyle={{ height: 150, marginBottom: 50 }}
     />
   )
 }

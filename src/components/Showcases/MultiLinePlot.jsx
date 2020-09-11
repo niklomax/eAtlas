@@ -49,6 +49,16 @@ export default function MultiLinePlot(options) {
       >
         {!noXAxis && // if provided dont
           <XAxis
+            tickValues={
+              (data[0].length > limit)
+                ? data[0]
+                  .filter((item, idx) => {
+                    if ((idx % Math.floor(data[0].length / limit)) === 0) {
+                      return item.x
+                    }
+                  }).map(item => (item.x))
+                : data[0].map(item => (item.x))
+            }
             tickSize={0}
             tickFormat={v => shortenName(v, 10)}
             position="right" tickLabelAngle={-65} style={{

@@ -181,6 +181,7 @@ export default class Welcome extends React.Component {
         for (let i = 0; i < data.length; i++) {
           if (feature.properties.msoa11cd === data[i][0]) {
             feature.properties.spenser = Number.parseInt(data[i][1]);
+            feature.properties.year = this.state.saey.substr(this.state.saey.length - 4);
             break;
           }
         }
@@ -427,7 +428,7 @@ export default class Welcome extends React.Component {
       tooltip:
         // react did not like x and y props.
         <Tooltip
-          dark={this.state.dark}
+          dark={this.props.dark}
           saey={this.state.saey}
           isMobile={isMobile()}
           topx={x} topy={y} hoveredObject={hoveredObject} />
