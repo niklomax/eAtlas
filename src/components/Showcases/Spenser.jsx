@@ -68,7 +68,8 @@ const Spenser = (props) => {
         // console.log(sex + age + eth + year);
         typeof(saeyCallback) === 'function' &&
         saeyCallback(saey)
-      }}>Update</Button>
+      }}
+      style={{marginBottom:50}}>Update</Button>
 
     </>
   )

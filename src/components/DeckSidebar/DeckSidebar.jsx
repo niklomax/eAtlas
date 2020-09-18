@@ -27,7 +27,7 @@ import SeriesPlot from '../Showcases/SeriesPlot';
 import { isEmptyOrSpaces, isNumber } from '../../JSUtils';
 import MultiSelect from '../MultiSelect';
 import MultiLinePlot from '../Showcases/MultiLinePlot';
-import Boxplot from '../Boxplot/Boxplot';
+// import Boxplot from '../Boxplot/Boxplot';
 import Spenser from '../Showcases/Spenser';
 
 const URL = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
@@ -174,52 +174,12 @@ export default class DeckSidebar extends React.Component {
                 {/* <DateSlider data={yy} multiVarSelect={multiVarSelect}
                   onSelectCallback={(changes) => console.log(changes)} 
                   callback={(changes) => console.log(changes)}/> */}
-              {/* range of two values slider is not native html */
-                yearSlider({data, year, multiVarSelect,
-                  // for callback we get { year: "",multiVarSelect }
-                  onSelectCallback, callback: (changes) => this.setState(changes)})
-              }
-              {
-                //only if there is such a property
-                data && data.length > 1 && data[0].properties['road_type'] &&
-                <MultiSelect
-                  title={humanize('road_type')}
-                  filter='road_type' // showcase/hardcode section
-                  multiVarSelect={multiVarSelect}
-                  // showcase/hardcode section all_road_types
-                  values={all_road_types.map(e => ({ id: e, value: e }))}
-                  onSelectCallback={(filter) => {
-                    onSelectCallback && onSelectCallback(filter);
-                    this.setState({
-                      multiVarSelect: filter.selected || {} // not ""
-                    })
-                  }}
-                  // sync state
-                  value={multiVarSelect && multiVarSelect['road_type'] &&
-                    Array.from(multiVarSelect['road_type'])
-                      .map(e => ({ id: e, value: e }))}
-                />
-              }
+              
               <br />
-              {/* TODO: generate this declaritively too */}
-              {
-                severity_data && severity_data.map(each =>
-                  percentDiv(each.x, 100 * each.y / data.length, () => {
-                    if (multiVarSelect && multiVarSelect['accident_severity'] &&
-                      multiVarSelect['accident_severity'].has(each.x)) {
-                      delete multiVarSelect['accident_severity'];
-                    } else {
-                      multiVarSelect['accident_severity'] = new Set([each.x]);
-                      this.setState({ multiVarSelect })
-                    }
-                    onSelectCallback &&
-                      onSelectCallback(Object.keys(multiVarSelect).length === 0 ?
-                        { what: '' } : { what: 'multi', selected: multiVarSelect })
-                  }, dark))
-              }
+              
               {/* <hr style={{ clear: 'both' }} /> */}
-              {columnDomain.length > 1 &&
-              <Boxplot data={columnDomain}/>}
+              {/* {columnDomain.length > 1 &&
+              <Boxplot data={columnDomain}/>} */}
 
               <Tabs defaultActiveKey={"1"} id="main-tabs">
                 <Tab eventKey="1" title={
@@ -261,35 +221,7 @@ export default class DeckSidebar extends React.Component {
                       plotStyle={{ height: 100, marginBottom: 50 }}
                     />
                   }
-                  {
-                    notEmpty &&
-                    Object.keys(data[0].properties)
-                      .filter(p => !isEmptyOrSpaces(p)).length > 0 &&
-                    <>
-                      <h6>Column for layer:</h6>
-                      <MultiSelect
-                        title="Choose Column"
-                        value={column}
-                        single={true}
-                        values={
-                          Object.keys(data[0].properties).map(e =>
-                            ({ id: humanize(e), value: e }))
-                        }
-                        onSelectCallback={(selected) => {
-                          // array of seingle {id: , value: } object
-                          const newBarChartVar = (selected && selected[0]) ?
-                            selected[0].value : barChartVariable;
-                          this.setState({
-                            barChartVariable: newBarChartVar
-                          });
-                          typeof onSelectCallback === 'function' &&
-                            onSelectCallback({
-                              what: 'column', selected: newBarChartVar
-                            });
-                        }}
-                      />
-                    </>
-                  }
+                  
                   {/* TODO: example of generating vis based on column
                   cloudl now be deleted. */}
                 </Tab>
