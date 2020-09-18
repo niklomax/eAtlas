@@ -126,7 +126,7 @@ export default class Welcome extends React.Component {
       iconLimit: 500,
       legend: false,
       column: "population",
-      saey: "1122014"
+      saey: "1122012"
     }
     this._generateLayer = this._generateLayer.bind(this)
     this._renderTooltip = this._renderTooltip.bind(this);

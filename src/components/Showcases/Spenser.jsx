@@ -64,8 +64,8 @@ const Spenser = (props) => {
         <Radio value="2">Male</Radio>
       </RadioGroup>
       <Button onClick={() => {
-        const saey = sex + age[0] + eth[0] + year;
-        // console.log(sex + age[0] + eth[0] + year);
+        const saey = sex + age + eth + year;
+        // console.log(sex + age + eth + year);
         typeof(saeyCallback) === 'function' &&
         saeyCallback(saey)
       }}>Update</Button>
