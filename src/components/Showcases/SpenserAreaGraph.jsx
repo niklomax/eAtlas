@@ -54,7 +54,7 @@ const SpenserAreaGraph = (props) => {
   years.forEach(e => {
     // e[0] is saey and e[1] is pop
     const year = +(e[0]+ "").substr(-4);
-    if(year > 2018) population[year] = e[1];
+    population[year] = e[1];
     // separate sexes by checking starting 1 or 2
     if((e[0]+ "").startsWith(sex)) {
       // current

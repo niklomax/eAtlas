@@ -177,17 +177,18 @@ export default class Welcome extends React.Component {
   _stateWithDataAndGeojson(err, geojson, data, customError) {
     if (!err) {
       geojson.features.forEach(feature => {
-        feature.properties.spenser = 0; // init missing ones 
+        feature.properties.population = 0; // init missing ones 
         for (let i = 0; i < data.length; i++) {
           if (feature.properties.msoa11cd === data[i][0]) {
-            feature.properties.spenser = Number.parseInt(data[i][1]);
+            delete feature.properties.populationdensity;
+            feature.properties.population = Number.parseInt(data[i][1]);
             feature.properties.year = this.state.saey.substr(this.state.saey.length - 4);
             break;
           }
         }
       });
       this.setState({
-        column: "spenser",
+        column: "population",
         loading: false,
         data: geojson,
         alert: customError || null
@@ -224,7 +225,7 @@ export default class Welcome extends React.Component {
       return;
     }
     let data = this.state.data && this.state.data.features
-    // console.log(data[23].properties.spenser);
+    // console.log(data[23].properties.population);
     const { colourName, iconLimit } = this.state;
     let column = (filter && filter.what === 'column' && filter.selected) ||
       this.state.column;
