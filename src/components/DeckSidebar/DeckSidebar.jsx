@@ -1,31 +1,28 @@
 import React from 'react';
 import {
   Tabs, Tab, FormGroup, InputGroup,
-  FormControl, Glyphicon, Checkbox
+  FormControl, Glyphicon
 } from 'react-bootstrap';
 import { Button, KIND, SIZE } from 'baseui/button';
 
 import './DeckSidebar.css';
 import MapboxBaseLayers from '../MapboxBaseLayers';
 import {
-  xyObjectByProperty, percentDiv,
+  xyObjectByProperty,
   searchNominatom,
   humanize, generateLegend, sortNumericArray
 } from '../../utils';
 import { LineSeries } from 'react-vis';
 // import Variables from '../Variables';
 import RBAlert from '../RBAlert';
-import { propertyCount } from '../../geojsonutils';
-import {DEV_URL, PRD_URL, LAYERSTYLES} from '../../Constants';
+import {DEV_URL, PRD_URL} from '../../Constants';
 import ColorPicker from '../ColourPicker';
 import Modal from '../Modal';
 import DataTable from '../Table';
 
-import { yearSlider } from '../Showcases/Widgets';
 import { crashes_plot_data } from '../Showcases/Plots';
 import SeriesPlot from '../Showcases/SeriesPlot';
-import { isEmptyOrSpaces, isNumber } from '../../JSUtils';
-import MultiSelect from '../MultiSelect';
+import { isNumber } from '../../JSUtils';
 import MultiLinePlot from '../Showcases/MultiLinePlot';
 // import Boxplot from '../Boxplot/Boxplot';
 import Spenser from '../Showcases/Spenser';
@@ -78,18 +75,14 @@ export default class DeckSidebar extends React.Component {
    * Partly because we like to load from a URL.
    */
   render() {
-    const { elevation,
-      radius, all_road_types, year,
-      subsetBoundsChange, multiVarSelect, barChartVariable } = this.state;
-    const { onChangeRadius, onChangeElevation,
-      onSelectCallback, data, colourCallback, layerStyle,
-      toggleSubsetBoundsChange, urlCallback, alert,
-      onlocationChange, column, dark, toggleOpen, toggleHexPlot } = this.props;
+    const { barChartVariable } = this.state;
+    const {
+      onSelectCallback, data, colourCallback, urlCallback, alert,
+      onlocationChange, column, dark, toggleOpen } = this.props;
     let plot_data = [];
     let plot_data_multi = [[], []];
     const notEmpty = data && data.length > 1;
     plot_data = crashes_plot_data(notEmpty, data, plot_data, plot_data_multi);
-    const severity_data = propertyCount(data, "accident_severity");    
     let columnDomain = [];
     let columnData = notEmpty ?
       xyObjectByProperty(data, column || barChartVariable) : [];
@@ -112,13 +105,6 @@ export default class DeckSidebar extends React.Component {
             }
           )
         );
-    }
-
-    const columnPlot = {
-      data: columnData,
-      opacity: 1,
-      stroke: 'rgb(72, 87, 104)',
-      fill: 'rgb(18, 147, 154)',
     }
 
     const resetState = (urlOrName) => {      
