@@ -3,15 +3,16 @@ import { Slider } from 'baseui/slider';
 import { RadioGroup, Radio } from "baseui/radio";
 import { Button } from 'baseui/button';
 
+import MultiSelect from '../MultiSelect';
+
 const Spenser = (props) => {
   const { saeyCallback } = props;
   const [year, setYear] = useState([2012])
-  const [age, setAge] = useState([1])
-  const [eth, setEth] = useState([2])
+  const [age, setAge] = useState(1)
+  const [eth, setEth] = useState(2)
   const [sex, setSex] = useState("1")
 
   const years = Array.from(Array(40), (_, i) => i + 2011);
-  const ages = Array.from(Array(9), (_, i) => i + 1);
   const eths = Object.keys(lookup.eth);
 
   return (
@@ -25,22 +26,29 @@ const Spenser = (props) => {
           // console.log(value[0])
         }}
       />
-      {lookup.age[age]}
-      <Slider
-        min={ages[0]} max={ages[ages.length - 1]}
-        value={age}
-        onChange={({ value }) => {
-          value && setAge(value);
-          // console.log(value[0])
+      <MultiSelect
+        title="Age"
+        value={{id: lookup.age[age], value: age}}
+        single={true}
+        values={
+          Object.keys(lookup.age).map(e =>
+            ({ id: lookup.age[e], value: e }))
+        }
+        onSelectCallback={(selected) => {
+          // array of seingle {id: , key: } object
+          selected && setAge(selected[0].value)
         }}
       />
-      {lookup.eth[eth]}
-      <Slider
-        min={eths[0]} max={eths[eths.length - 1]}
-        value={eth}
-        onChange={({ value }) => {
-          value && setEth(value);
-          // console.log(value[0])
+      <MultiSelect
+        title="Ethnicity"
+        value={{id: lookup.eth[eth], value: eth }}
+        single={true}
+        values={
+          eths.map(e => ({ id: lookup.eth[e], value: e }))
+        }
+        onSelectCallback={(selected) => {
+          // array of seingle {id: , key: } object
+          selected && setEth(selected[0].value)
         }}
       />
       <RadioGroup

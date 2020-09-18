@@ -13,7 +13,7 @@ import {
   humanize, generateLegend, sortNumericArray
 } from '../../utils';
 import { LineSeries } from 'react-vis';
-import Variables from '../Variables';
+// import Variables from '../Variables';
 import RBAlert from '../RBAlert';
 import { propertyCount } from '../../geojsonutils';
 import {DEV_URL, PRD_URL, LAYERSTYLES} from '../../Constants';
@@ -302,65 +302,8 @@ export default class DeckSidebar extends React.Component {
                       <ColorPicker colourCallback={(color) =>
                           typeof colourCallback === 'function' &&
                           colourCallback(color)} />
-                      <input
-                        type="range"
-                        id="radius"
-                        min={50}
-                        max={1000}
-                        step={50}
-                        value={radius}
-                        onChange={(e) => {
-                          this.setState({
-                            radius: e.target.value,
-                          })
-                          typeof (onChangeRadius) === 'function' &&
-                            onChangeRadius(e.target.value)
-                        }}
-                      />
-                      <h5>Radius: {radius}.</h5>
-                      <input
-                        type="range"
-                        id="elevation"
-                        min={2}
-                        max={8}
-                        step={2}
-                        value={elevation}
-                        onChange={(e) => {
-                          this.setState({
-                            elevation: e.target.value
-                          })
-                          typeof (onChangeElevation) === 'function' &&
-                            onChangeElevation(e.target.value)
-                        }}
-                      />
-                      <h5>Elevation: {elevation}.</h5>
                     </div>
                     }
-                  {notEmpty &&
-                    <>
-                      <h6>Deck Layer:</h6>
-                      <MultiSelect
-                        title="Choose Layer"
-                        single={true}
-                        values={
-                          LAYERSTYLES.map(e =>
-                            ({ id: humanize(e), value: e }))
-                        }
-                        onSelectCallback={(selected) => {
-                          // array of seingle {id: , value: } object
-                          const newBarChartVar = (selected && selected[0]) ?
-                            selected[0].value : barChartVariable;
-                          this.setState({
-                            barChartVariable: newBarChartVar
-                          });
-                          typeof onSelectCallback === 'function' &&
-                            onSelectCallback({
-                              what: 'layerStyle', selected: newBarChartVar
-                            });
-                        }}
-                      />
-                    </>
-                  }
                   Map Styles
                   <br />
                   <MapboxBaseLayers
@@ -372,18 +315,6 @@ export default class DeckSidebar extends React.Component {
                       })
                     }
                   />
-                  <Checkbox
-                    onChange={() => toggleHexPlot && toggleHexPlot()}
-                  >Hex Plot</Checkbox>
-                  <Checkbox
-                    onChange={() => {
-                      this.setState({ subsetBoundsChange: !subsetBoundsChange })
-                      if (toggleSubsetBoundsChange && typeof (toggleSubsetBoundsChange) === 'function') {
-                        toggleSubsetBoundsChange(!subsetBoundsChange) //starts with false
-                      }
-                    }}
-                  >Subset by map boundary</Checkbox>
-                  
                 </Tab>
                 {/* <Tab eventKey="3" title={
                   <i style={{ fontSize: '2rem' }}
@@ -391,7 +322,7 @@ export default class DeckSidebar extends React.Component {
                 }>
                   Tab 3
                 </Tab> */}
-                <Tab eventKey="3" title={
+                {/* <Tab eventKey="3" title={
                   <i style={{ fontSize: '2rem' }}
                     className="fa fa-filter" />
                 }>
@@ -409,7 +340,7 @@ export default class DeckSidebar extends React.Component {
                       }}
                       data={data} />
                   }
-                </Tab>
+                </Tab> */}
               </Tabs>
             </div>
             <div className="space"></div>
