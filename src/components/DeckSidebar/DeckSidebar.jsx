@@ -1,9 +1,10 @@
 import React from 'react';
 import {
-  Tabs, Tab, FormGroup, InputGroup,
+  FormGroup, InputGroup,
   FormControl, Glyphicon
 } from 'react-bootstrap';
 import { Button, KIND, SIZE } from 'baseui/button';
+import { Card } from 'baseui/card';
 
 import './DeckSidebar.css';
 import MapboxBaseLayers from '../MapboxBaseLayers';
@@ -12,20 +13,20 @@ import {
   searchNominatom,
   humanize, generateLegend, sortNumericArray
 } from '../../utils';
-import { LineSeries } from 'react-vis';
 // import Variables from '../Variables';
 import RBAlert from '../RBAlert';
-import {DEV_URL, PRD_URL} from '../../Constants';
-import ColorPicker from '../ColourPicker';
+import { DEV_URL, PRD_URL } from '../../Constants';
+// import ColorPicker from '../ColourPicker';
 import Modal from '../Modal';
 import DataTable from '../Table';
 
 import { crashes_plot_data } from '../Showcases/Plots';
-import SeriesPlot from '../Showcases/SeriesPlot';
 import { isNumber } from '../../JSUtils';
-import MultiLinePlot from '../Showcases/MultiLinePlot';
 // import Boxplot from '../Boxplot/Boxplot';
 import Spenser from '../Showcases/Spenser';
+
+//color-box and others
+import '../style.css';
 
 const URL = (process.env.NODE_ENV === 'development' ? DEV_URL : PRD_URL);
 
@@ -33,8 +34,6 @@ export default class DeckSidebar extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      radius: 100,
-      elevation: 4,
       // must match the order in plumber.R
       all_road_types: ["Dual carriageway",
         "Single carriageway", "Roundabout", "Unknown",
@@ -49,22 +48,19 @@ export default class DeckSidebar extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const { data, alert, loading } = this.props;
-    const { elevation, radius, reset,
-      barChartVariable } = this.state;
+    const { reset, barChartVariable } = this.state;
     // console.log(loading, nextProps.loading);
     // avoid rerender as directly operating on document.get* 
     // does not look neat. Keeping it React way.
     if (reset !== nextState.reset ||
-      elevation !== nextState.elevation ||
-      radius !== nextState.radius ||
       alert !== nextProps.alert ||
       loading !== nextProps.loading ||
       barChartVariable !== nextState.barChartVariable) return true;
     //TODO:  a more functional way is needed   
-  
-    if (data && nextProps && nextProps.data && data.length > 1 && 
+
+    if (data && nextProps && nextProps.data && data.length > 1 &&
       nextProps.data.length > 1 &&
-      data[1].properties.spenser === nextProps.data[1].properties.spenser ) {
+      data[1].properties.spenser === nextProps.data[1].properties.spenser) {
       return false
     }
     return true;
@@ -88,26 +84,27 @@ export default class DeckSidebar extends React.Component {
       xyObjectByProperty(data, column || barChartVariable) : [];
     const geomType = notEmpty && data[0].geometry.type.toLowerCase();
     // console.log(geomType);
-    if(notEmpty && column && (geomType === 'polygon' ||
-    geomType === 'multipolygon' || "linestring") &&
+    if (notEmpty && column && (geomType === 'polygon' ||
+      geomType === 'multipolygon' || "linestring") &&
       isNumber(data[0].properties[column])) {
-        // we dont need to use generateDomain(data, column)
-        // columnData already has this in its x'es
-        columnDomain = columnData.map(e => e.x);
-        // we will just sort it        
-        columnDomain = sortNumericArray(columnDomain);
-        // console.log(columnDomain);
-        
-        this.props.showLegend(
-          generateLegend(
-            {domain: columnDomain, 
-              title: humanize(column)
-            }
-          )
-        );
+      // we dont need to use generateDomain(data, column)
+      // columnData already has this in its x'es
+      columnDomain = columnData.map(e => e.x);
+      // we will just sort it        
+      columnDomain = sortNumericArray(columnDomain);
+      // console.log(columnDomain);
+
+      this.props.showLegend(
+        generateLegend(
+          {
+            domain: columnDomain,
+            title: humanize(column)
+          }
+        )
+      );
     }
 
-    const resetState = (urlOrName) => {      
+    const resetState = (urlOrName) => {
       this.setState({
         reset: true,
         year: "",
@@ -117,7 +114,7 @@ export default class DeckSidebar extends React.Component {
       })
     }
     const spenserValues = data && data.length &&
-    data.length - data.filter(e => e.properties.spenser === 0).length
+      data.length - data.filter(e => e.properties.spenser === 0).length
     // console.log(spenserValues);
     return (
       <>
@@ -151,115 +148,43 @@ export default class DeckSidebar extends React.Component {
                   typeof (urlCallback) === 'function'
                     && urlCallback(URL + "/api/stats19");
                   typeof (this.props.showLegend) === 'function' &&
-                  this.props.showLegend(false);
+                    this.props.showLegend(false);
                 }}>Reset</Button>
             }
           </div>
+          <hr />
           <div className="side-panel-body">
             <div className="side-panel-body-content">
-                {/* <DateSlider data={yy} multiVarSelect={multiVarSelect}
-                  onSelectCallback={(changes) => console.log(changes)} 
-                  callback={(changes) => console.log(changes)}/> */}
-              
+              <Card overrides={{ Root: { style: { background: 'inherit' } } }}>
+                {notEmpty && <Spenser saeyCallback={(saey) => {
+                  // check saey, if same do not fetch
+                  onSelectCallback && onSelectCallback({
+                    what: 'saey', selected: saey
+                  });
+                  this.setState({
+                    saey
+                  })
+                }} />}
+              </Card>
               <br />
-              
-              {/* <hr style={{ clear: 'both' }} /> */}
-              {/* {columnDomain.length > 1 &&
-              <Boxplot data={columnDomain}/>} */}
-
-              <Tabs defaultActiveKey={"1"} id="main-tabs">
-                <Tab eventKey="1" title={
-                  <i style={{ fontSize: '2rem' }}
-                    className="fa fa-info" />
-                }>
-                  {notEmpty && <Spenser saeyCallback={(saey) => {
-                    // check saey, if same do not fetch
-                    onSelectCallback && onSelectCallback({
-                      what: 'saey', selected: saey
-                    });
-                    this.setState({
-                      saey
+              <Card overrides={{ Root: { style: { background: 'inherit' } } }}>
+                {/* {notEmpty && <ColorPicker colourCallback={(color) =>
+                typeof colourCallback === 'function' &&
+                colourCallback(color)} />
+              } */}
+              Map Styles
+              <br />
+                <MapboxBaseLayers
+                  onSelectCallback={(selected) =>
+                    onSelectCallback &&
+                    onSelectCallback({
+                      selected: selected,
+                      what: 'mapstyle'
                     })
-                  }}/>}
-                  {/* pick a column and vis type */}
-                  {/* <AddVIS data={data} dark={dark} plotStyle={{width: 240, margin:20}}/> */}
-                  {/* distribution example */}
-                  {notEmpty &&
-                    data[0].properties.hasOwnProperty(['age_of_casualty']) &&
-                    <SeriesPlot
-                      dark={dark}
-                      title="Casualty age" noYAxis={true}
-                      plotStyle={{ height: 100 }} noLimit={true}
-                      type={LineSeries}
-                      // sorts the results if x is a number
-                      // TODO: do we want to do this?
-                      // also think about sorting according to y
-                      data={xyObjectByProperty(data, "age_of_casualty")}
-                    />
                   }
-                  {notEmpty && plot_data_multi[0].length > 0 &&
-                    <MultiLinePlot
-                      dark={dark}
-                      data={
-                        [...plot_data_multi, plot_data]
-                      } legend={["Male", "Female", "Total"]}
-                      title="Crashes" noYAxis={true}
-                      plotStyle={{ height: 100, marginBottom: 50 }}
-                    />
-                  }
-                  
-                  {/* TODO: example of generating vis based on column
-                  cloudl now be deleted. */}
-                </Tab>
-                <Tab eventKey="2" title={
-                  <i style={{ fontSize: '2rem' }}
-                    className="fa fa-sliders" />
-                }>
-                  {notEmpty &&
-                    <div>
-                      <ColorPicker colourCallback={(color) =>
-                          typeof colourCallback === 'function' &&
-                          colourCallback(color)} />
-                    </div>
-                    }
-                  Map Styles
-                  <br />
-                  <MapboxBaseLayers
-                    onSelectCallback={(selected) =>
-                      onSelectCallback &&
-                      onSelectCallback({
-                        selected: selected,
-                        what: 'mapstyle'
-                      })
-                    }
-                  />
-                </Tab>
-                {/* <Tab eventKey="3" title={
-                  <i style={{ fontSize: '2rem' }}
-                    className="fa fa-tasks" />
-                }>
-                  Tab 3
-                </Tab> */}
-                {/* <Tab eventKey="3" title={
-                  <i style={{ fontSize: '2rem' }}
-                    className="fa fa-filter" />
-                }>
-                  {
-                    data && data.length > 0 &&
-                    <Variables
-                      dark={dark}
-                      multiVarSelect={multiVarSelect}
-                      onSelectCallback={(mvs) => {
-                        typeof (onSelectCallback) === 'function' &&
-                          onSelectCallback(
-                            Object.keys(mvs).length === 0 ?
-                              { what: '' } : { what: 'multi', selected: mvs })
-                        this.setState({ multiVarSelect: mvs })
-                      }}
-                      data={data} />
-                  }
-                </Tab> */}
-              </Tabs>
+                />
+              </Card>
+
             </div>
             <div className="space"></div>
             <form className="search-form" onSubmit={(e) => {

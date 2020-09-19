@@ -69,7 +69,7 @@ const Spenser = (props) => {
         typeof(saeyCallback) === 'function' &&
         saeyCallback(saey)
       }}
-      style={{marginBottom:50}}>Update</Button>
+      >Update</Button>
 
     </>
   )

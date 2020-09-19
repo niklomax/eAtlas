@@ -22,7 +22,7 @@ import DeckGL from 'deck.gl';
 import MapGL, { NavigationControl, FlyToInterpolator } from 'react-map-gl';
 import centroid from '@turf/centroid';
 import bbox from '@turf/bbox';
-import _, { object } from 'underscore';
+import _ from 'underscore';
 
 import {
   fetchData, generateDeckLayer,
@@ -39,7 +39,7 @@ import history from './history';
 import './App.css';
 import Tooltip from './components/Tooltip';
 import { sfType } from './geojsonutils';
-import { isNumber, isArray } from './JSUtils';
+import { isNumber } from './JSUtils';
 
 const osmtiles = {
   "version": 8,
