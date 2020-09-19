@@ -82,7 +82,7 @@
 
 .mapbox-legend span {
   border-radius: 50%;
-  display: inline-block;
+  display: block;
   margin-right: 5px;
   width: 10px;
   height: 10px;

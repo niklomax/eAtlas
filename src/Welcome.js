@@ -612,8 +612,7 @@ export default class Welcome extends React.Component {
             <div 
             style={{
               ...theme(this.props.dark),
-              textAlign: 'center', 
-              marginBottom: 45}}
+              textAlign: 'center'}}
             className="mapboxgl-ctrl-bottom-right mapbox-legend">
             {legend}
           </div>
