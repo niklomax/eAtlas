@@ -93,10 +93,10 @@ export default class Welcome extends React.Component {
   constructor(props) {
     super(props)
     const init = {
-      longitude: -1.6362,
-      latitude: 53.8321,
-      zoom: 10,
-      pitch: 55,
+      longitude: -1.9521,
+      latitude: 53.1121,
+      zoom: 6,
+      pitch: 0,
       bearing: 0,
     }
     const param = getParamsFromSearch(props.location.search);
