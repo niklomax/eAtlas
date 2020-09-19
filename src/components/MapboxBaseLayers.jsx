@@ -1,5 +1,5 @@
 import React from 'react';
-import RBDropDown from './RBDropdownComponent';
+import MultiSelect from './MultiSelect';
 
 export default class MapboxBaseLayers extends React.Component {
     constructor(props) {
@@ -24,15 +24,18 @@ export default class MapboxBaseLayers extends React.Component {
         // console.log(selected);
         
         return(
-            <RBDropDown
-                title={selected === 'dark' ? "Default(dark)" : selected}
-                menuitems={bases}
-                onSelectCallback= {(selected) => {
-                    this.setState({selected});
-                    typeof(onSelectCallback) === 'function' &&
-                    onSelectCallback(selected)
-                }}
-            />
+          <MultiSelect
+            title={selected === 'dark' ? "Default(dark)" : selected}
+            single={true}
+            values={
+              bases.map(e => ({ id: e, value: e }))
+            }
+            onSelectCallback={(selected) => {
+              this.setState({ selected });
+              typeof (onSelectCallback) === 'function' &&
+                onSelectCallback(selected[0].value)
+            }}
+          />
         )
     }
 }

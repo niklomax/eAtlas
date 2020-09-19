@@ -155,17 +155,15 @@ export default class DeckSidebar extends React.Component {
           <hr />
           <div className="side-panel-body">
             <div className="side-panel-body-content">
-              <Card overrides={{ Root: { style: { background: 'inherit' } } }}>
-                {notEmpty && <Spenser saeyCallback={(saey) => {
-                  // check saey, if same do not fetch
-                  onSelectCallback && onSelectCallback({
-                    what: 'saey', selected: saey
-                  });
-                  this.setState({
-                    saey
-                  })
-                }} />}
-              </Card>
+              {notEmpty && <Spenser saeyCallback={(saey) => {
+                // check saey, if same do not fetch
+                onSelectCallback && onSelectCallback({
+                  what: 'saey', selected: saey
+                });
+                this.setState({
+                  saey
+                })
+              }} />}
               <br />
               <Card overrides={{ Root: { style: { background: 'inherit' } } }}>
                 {/* {notEmpty && <ColorPicker colourCallback={(color) =>
