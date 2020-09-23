@@ -103,8 +103,12 @@ get_full_area <- function(code) {
   as.matrix(res)
 }
 
+#' BROKEN SINCE 1.0.0
+#' https://www.rplumber.io/news/index.html#breaking-changes
+#' plumber changes dir to this file's directory before processing.
+#' 
 #' Tell plumber where our public facing directory is to SERVE.
 #' No need to map / to the build or public index.html. This will do.
 #'
-#' @assets ./build /
+#' @assets ../build /
 list()
