@@ -65,7 +65,7 @@ get_msoa <- function(res) {
 }
 
 p <- readRDS(spenser.file)
-p = p[, other := as.numeric(other)]
+# p = p[, other := as.numeric(other)]
 
 #' serve spenser
 #' @serializer unboxedJSON
