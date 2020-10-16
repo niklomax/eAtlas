@@ -153,7 +153,7 @@ export default class Welcome extends React.Component {
       // TODO: decide which is better.
       // ROOT + "/api/url?q=" + aURL : // get the server to parse it 
       aURL : // do not get the server to parse it 
-      ROOT + defualtURL + "?saey=" + this.state.saey;
+      ROOT + defualtURL + "?other=" + this.state.saey;
 
     fetchData(fullURL, (data, error) => {
       // TODO:DELETE
@@ -574,7 +574,7 @@ export default class Welcome extends React.Component {
           }}
           column={this.state.column}
           onSelectCallback={(selected) => {
-            const u = ROOT + defualtURL + "?saey=" + selected.selected
+            const u = ROOT + defualtURL + "?other=" + selected.selected
             // console.log(u);
             if(selected.what && selected.what === "saey") {
               this.setState({loading: true, saey: selected.selected})

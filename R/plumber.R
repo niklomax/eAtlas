@@ -1,3 +1,4 @@
+t1 = Sys.time()
 if(is.null(curl::nslookup("r-project.org", error = FALSE))) {
   stop(message(
     "No connection",
@@ -37,13 +38,15 @@ swagger <- function(req, res){
 
 # https://github.com/layik/eAtlas/releases/
 # download/0.0.1/pop-ages-range.Rds
-spenser.file <- "pop-final.Rds"
+pop.file <- "pop-final.Rds"
+hh.file <- "~/Desktop/data/spenser/hh-final.Rds"
+
 github <- "https://github.com/layik/eAtlas/releases/download/0.0.1/"
-if(!file.exists(spenser.file)) {
+if(!file.exists(pop.file)) {
   download.file(
     paste0(github,
-           spenser.file),
-    destfile = spenser.file)
+           pop.file),
+    destfile = pop.file)
 }
 
 msoa.geojson <- "msoa.geojson"
@@ -64,19 +67,34 @@ get_msoa <- function(res) {
   res
 }
 
-p <- readRDS(spenser.file)
+p <- readRDS(pop.file)
+h <- readRDS(hh.file)
+print(head(h))
 # p = p[, other := as.numeric(other)]
 
 #' serve spenser
+#' saey in case of pop and everything in case of hh
+#' 
 #' @serializer unboxedJSON
 #' @get /api/spenser
-#' @get /api/spenser/<saey>
-get_spenser <- function(saey) {
+#' @get /api/spenser/<other>/<hh>
+get_spenser <- function(other = "", hh = "") {
   m <- list(Error = "Error: please provide correct input values")
-  if(is.null(saey) | nchar(saey) < 7) {
+  # sanity checks
+  if(length(other) > 50 | length(hh) > 5) {
     return(m)
   }
-  res <- p[other==as.numeric(saey), c("area","sum")]
+  if(is.null(other) | nchar(other) < 7) {
+    return(m)
+  }
+  if(nchar(hh) > 0) {
+    # other patterm 1:2:3:4.. 
+    message("households with other = ", other)
+    res <- h[other==other, c("area","sum")]
+  } else {
+    message("population with other = ", other)
+    res <- p[other==as.numeric(other), c("area","sum")]
+  }
   # print("subset done...")
   # print(nrow(res))
   # if(nrow(res == 0)) {
@@ -93,16 +111,27 @@ get_spenser <- function(saey) {
 #' 
 #' @serializer unboxedJSON
 #' @get /api/area
-#' @get /api/area/<code>
-get_full_area <- function(code) {
+#' @get /api/area/<code>/<hh>
+get_full_area <- function(code = "", hh = "") {
   m <- list(Error = "Error: please provide valid area code.")
+  if(length(code) > 12 | length(hh) > 5) {
+    return(m)
+  }
   if(is.null(code) | nchar(code) != 9) { # nchar("E02004899") == 9
     return(m)
   }
-  res <- p[area == code, c("other", "sum")]
+  if(nchar(hh) > 0) {
+    message("households with code = ", code)
+    res <- h[area == code, c("other", "sum")]
+  } else {
+    message("population with code = ", code)
+    res <- p[area == code, c("other", "sum")]
+  }
   as.matrix(res)
 }
 
+t2 = Sys.time()
+message(t2 - t1)
 #' BROKEN SINCE 1.0.0
 #' https://www.rplumber.io/news/index.html#breaking-changes
 #' plumber changes dir to this file's directory before processing.

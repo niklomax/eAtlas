@@ -5,8 +5,8 @@ function define(name, value) {
   });
 }
 
-// TODO: change to domain name 
-define("PRD_URL", 'http://spenser.geoplumber.com');
+// geospenser.com
+define("PRD_URL", 'http://geospenser.com');
 define("DEV_URL", 'http://localhost:8000');
 define("UI_LIST", [
   "checkbox",
