@@ -67,7 +67,7 @@ get_msoa <- function(res) {
 }
 
 p <- readRDS(pop.file)
-h <- p[1:100, ] # readRDS(hh.file)
+h <- readRDS(hh.file)
 print(head(h))
 if(!inherits(p$other, "numeric")) p = p[, other := as.numeric(other)]
 
@@ -83,9 +83,6 @@ get_spenser <- function(other = "", hh = "") {
   if(length(other) > 50 | length(hh) > 5) {
     return(m)
   }
-  if(is.null(other) | nchar(other) < 7) {
-    return(m)
-  }
   # data.table column vs variable name
   o <- other
   if(nchar(hh) > 0) {
@@ -93,6 +90,9 @@ get_spenser <- function(other = "", hh = "") {
     message("households with other = ", o)
     res <- h[other== o, c("area","sum")]
   } else {
+    if(is.null(o) | nchar(o) < 7) {
+      return(m)
+    }
     message("population with other = ", o)
     res <- p[other == as.numeric(o), c("area", "sum")]
   }
@@ -118,13 +118,13 @@ get_full_area <- function(code = "", hh = "") {
   if(length(code) > 12 | length(hh) > 5) {
     return(m)
   }
-  if(is.null(code) | nchar(code) != 9) { # nchar("E02004899") == 9
-    return(m)
-  }
   if(nchar(hh) > 0) {
     message("households with code = ", code)
     res <- h[area == code, c("other", "sum")]
   } else {
+    if(is.null(code) | nchar(code) != 9) { # nchar("E02004899") == 9
+      return(m)
+    }
     message("population with code = ", code)
     res <- p[area == code, c("other", "sum")]
   }
