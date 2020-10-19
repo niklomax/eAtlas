@@ -39,23 +39,22 @@ swagger <- function(req, res){
 # https://github.com/layik/eAtlas/releases/
 # download/0.0.1/pop-ages-range.Rds
 pop.file <- "pop-final.Rds"
-hh.file <- "~/Desktop/data/spenser/hh-final.Rds"
+hh.file <- "hh-final.Rds"
 
 github <- "https://github.com/layik/eAtlas/releases/download/0.0.1/"
-if(!file.exists(pop.file)) {
-  download.file(
-    paste0(github,
-           pop.file),
-    destfile = pop.file)
+check_download <- function(fname) {
+  if(!file.exists(fname)) {
+    download.file(
+      paste0(github,
+             fname),
+      destfile = fname)
+  } 
 }
+check_download(pop.file)
+check_download(hh.file)
 
 msoa.geojson <- "msoa.geojson"
-if(!file.exists(msoa.geojson)) {
-  download.file(
-    paste0(github,
-           msoa.geojson),
-    destfile = msoa.geojson)
-}
+check_download(msoa.geojson)
 
 msoa.geojson <- readChar(msoa.geojson, file.info(msoa.geojson)$size)
 #' serve the msoa.geojson
@@ -68,9 +67,9 @@ get_msoa <- function(res) {
 }
 
 p <- readRDS(pop.file)
-h <- readRDS(hh.file)
+h <- p[1:100, ] # readRDS(hh.file)
 print(head(h))
-# p = p[, other := as.numeric(other)]
+if(!inherits(p$other, "numeric")) p = p[, other := as.numeric(other)]
 
 #' serve spenser
 #' saey in case of pop and everything in case of hh
@@ -87,13 +86,15 @@ get_spenser <- function(other = "", hh = "") {
   if(is.null(other) | nchar(other) < 7) {
     return(m)
   }
+  # data.table column vs variable name
+  o <- other
   if(nchar(hh) > 0) {
     # other patterm 1:2:3:4.. 
-    message("households with other = ", other)
-    res <- h[other==other, c("area","sum")]
+    message("households with other = ", o)
+    res <- h[other== o, c("area","sum")]
   } else {
-    message("population with other = ", other)
-    res <- p[other==as.numeric(other), c("area","sum")]
+    message("population with other = ", o)
+    res <- p[other == as.numeric(o), c("area", "sum")]
   }
   # print("subset done...")
   # print(nrow(res))
