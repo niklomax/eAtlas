@@ -155,7 +155,7 @@ export default class DeckSidebar extends React.Component {
           <hr />
           <div className="side-panel-body">
             <div className="side-panel-body-content">
-              {notEmpty && <Spenser saeyCallback={(saey) => {
+              {<Spenser saeyCallback={(saey) => {
                 // check saey, if same do not fetch
                 onSelectCallback && onSelectCallback({
                   what: 'saey', selected: saey
