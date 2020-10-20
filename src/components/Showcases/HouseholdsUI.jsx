@@ -1,20 +1,58 @@
 import React, { useState } from 'react';
 import { Slider } from 'baseui/slider';
-import { RadioGroup, Radio } from "baseui/radio";
 import { Button } from 'baseui/button';
 
 import MultiSelect from '../MultiSelect';
 
-const Spenser = (props) => {
-  const { saeyCallback } = props;
-  const [year, setYear] = useState([2012])
+const columns = ['accomodation','ownership','domestic','commsize',
+  'occupants','rooms','bedrooms','perbedroom',
+  'centralheating','nssec','ethnicity','cars','year'];
 
-  // accom,ownership,domestic,commsize,
-  // occupants,rooms,bedrooms,perbedroom,
-  // centralheating,nssec,ethnicity,cars,year
+const parseColumns = (str) => {
+  if(!str || typeof(str) !== 'string' ||
+  str.split(":").length !== columns.length) return
+  const split = str.split(":");
+  return columns.reduce((previous, current, i) => {
+    if(typeof(previous) === 'string') { //first value
+      return({
+        [previous]: split[i-1],
+        [current]: split[i]
+      })
+    } else {
+      return({
+        ...previous,
+        [current]: split[i]
+      })
+    }
+  })
+}
+
+const assembleColumns = (obj) => {
+  if(!obj || typeof(obj) !== 'object' ||
+  Object.keys(obj).length !== columns.length) return
+  return columns.reduce((previous, current, i) => {
+    if(i === 1) {
+      return obj[previous] + ":" + obj[current]
+    } else {
+      return(previous + ":" + obj[current])
+    }
+  })
+}
+
+const HouseholdUI = (props) => {
+  // const { saeyCallback } = props;
+  const [year, setYear] = useState([2012]);
+  const [values, setValues] = useState(
+    parseColumns('1:2:0:50:1:6:2:3:1:4:2:2:' + year)
+  ); // household fields' values
 
   const years = Array.from(Array(40), (_, i) => i + 2011);
   const fields = Object.keys(lookup);
+
+  // const t = '1:2:3:4:5:6:7:8:9:10:11:12:13'
+  // const p = parseColumns(t)
+  // const a = assembleColumns(parseColumns(t))
+  // console.log(a === t)
 
   return (
     <>
@@ -30,21 +68,26 @@ const Spenser = (props) => {
       {
         fields.map(each => <MultiSelect
           title={each}
-          // value={{ id: lookup.age[age], value: age }}
+          value={{ id: lookup[each][values[each]], value: values[each]}}
           single={true}
           values={
             Object.keys(lookup[each]).map(e =>
               ({ id: lookup[each][e], value: e }))
           }
-          // onSelectCallback={(selected) => {
-          //   // array of seingle {id: , key: } object
-          //   selected && setAge(selected[0].value)
-          // }}
+          onSelectCallback={(selected) => {
+            // array of seingle {id: , key: } object
+            setValues(Object.assign(values, {[each]:selected[0].value}))
+            console.log(values);
+            // selected && setAge(selected[0].value)
+          }}
         />)
       }
       <Button onClick={() => {
-        // const saey = sex + age + eth + year;
-        // console.log(sex + age + eth + year);
+        // assemble
+        const o = assembleColumns({
+          ...values, year: year, commsize:50
+        })
+        console.log(o);
         // typeof (saeyCallback) === 'function' &&
         //   saeyCallback(saey)
       }}
@@ -79,8 +122,6 @@ const lookup = {
     "3": "Cohabiting couple household",
     "4": "Lone parent household",
     "5": "Multi-person household"
-  },
-  "commsize": {
   },
   "occupants": {
     "0": "All categories: Household size",
@@ -148,4 +189,4 @@ const lookup = {
   }
 }
 
-export default Spenser;
+export default HouseholdUI;
