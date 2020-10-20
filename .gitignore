@@ -39,6 +39,6 @@ layik*
 
 spenser.*
 quant*
-msoa_*geojson
+*.geojson
 
 /data
