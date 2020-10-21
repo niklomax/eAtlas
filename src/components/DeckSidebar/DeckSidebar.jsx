@@ -155,10 +155,10 @@ export default class DeckSidebar extends React.Component {
           <hr />
           <div className="side-panel-body">
             <div className="side-panel-body-content">
-              {<Spenser saeyCallback={(saey) => {
+              {<Spenser saeyCallback={(saey, households) => {
                 // check saey, if same do not fetch
                 onSelectCallback && onSelectCallback({
-                  what: 'saey', selected: saey
+                  what: 'saey', selected: saey, households: households
                 });
                 this.setState({
                   saey

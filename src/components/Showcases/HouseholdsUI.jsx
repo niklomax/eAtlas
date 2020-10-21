@@ -4,22 +4,22 @@ import { Button } from 'baseui/button';
 
 import MultiSelect from '../MultiSelect';
 
-const columns = ['accomodation','ownership','domestic','commsize',
-  'occupants','rooms','bedrooms','perbedroom',
-  'centralheating','nssec','ethnicity','cars','year'];
+const columns = ['accomodation', 'ownership', 'domestic', 'commsize',
+  'occupants', 'rooms', 'bedrooms', 'perbedroom',
+  'centralheating', 'nssec', 'ethnicity', 'cars', 'year'];
 
 const parseColumns = (str) => {
-  if(!str || typeof(str) !== 'string' ||
-  str.split(":").length !== columns.length) return
+  if (!str || typeof (str) !== 'string' ||
+    str.split(":").length !== columns.length) return
   const split = str.split(":");
   return columns.reduce((previous, current, i) => {
-    if(typeof(previous) === 'string') { //first value
-      return({
-        [previous]: split[i-1],
+    if (typeof (previous) === 'string') { //first value
+      return ({
+        [previous]: split[i - 1],
         [current]: split[i]
       })
     } else {
-      return({
+      return ({
         ...previous,
         [current]: split[i]
       })
@@ -28,13 +28,13 @@ const parseColumns = (str) => {
 }
 
 const assembleColumns = (obj) => {
-  if(!obj || typeof(obj) !== 'object' ||
-  Object.keys(obj).length !== columns.length) return
+  if (!obj || typeof (obj) !== 'object' ||
+    Object.keys(obj).length !== columns.length) return
   return columns.reduce((previous, current, i) => {
-    if(i === 1) {
+    if (i === 1) {
       return obj[previous] + ":" + obj[current]
     } else {
-      return(previous + ":" + obj[current])
+      return (previous + ":" + obj[current])
     }
   })
 }
@@ -43,7 +43,7 @@ const HouseholdUI = (props) => {
   // const { saeyCallback } = props;
   const [year, setYear] = useState([2012]);
   const [values, setValues] = useState(
-    parseColumns('1:2:0:50:1:6:2:3:1:4:2:2:' + year)
+    parseColumns('3:2:3:-2:4:6:3:-1:2:6:2:2:' + year)
   ); // household fields' values
 
   const years = Array.from(Array(40), (_, i) => i + 2011);
@@ -68,7 +68,7 @@ const HouseholdUI = (props) => {
       {
         fields.map(each => <MultiSelect
           title={each}
-          value={{ id: lookup[each][values[each]], value: values[each]}}
+          value={{ id: lookup[each][values[each]], value: values[each] }}
           single={true}
           values={
             Object.keys(lookup[each]).map(e =>
@@ -76,7 +76,7 @@ const HouseholdUI = (props) => {
           }
           onSelectCallback={(selected) => {
             // array of seingle {id: , key: } object
-            setValues(Object.assign(values, {[each]:selected[0].value}))
+            setValues(Object.assign(values, { [each]: selected[0].value }))
             console.log(values);
             // selected && setAge(selected[0].value)
           }}
@@ -85,7 +85,11 @@ const HouseholdUI = (props) => {
       <Button onClick={() => {
         // assemble
         const o = assembleColumns({
-          ...values, year: year, commsize:50
+          // comsize summary from R
+          // summary(d$CommunalSize)
+          // Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+          // -2.000   -2.000   -2.000   -1.962   -2.000 1654.000 
+          ...values, year: year, commsize: -2
         })
         console.log(o);
         // typeof (saeyCallback) === 'function' &&

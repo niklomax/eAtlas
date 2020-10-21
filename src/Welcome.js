@@ -291,7 +291,7 @@ export default class Welcome extends React.Component {
     };
     // generate a domain
     const columnNameOrIndex =
-    (filter && filter.what === 'column' && filter.selected) || column || 1;    
+      (filter && filter.what === 'column' && filter.selected) || column || 1;
     if (layerStyle === 'heatmap') {
       options.getPosition = d => d.geometry.coordinates
       // options.getWeight = d => d.properties[columnNameOrIndex]
@@ -573,15 +573,15 @@ export default class Welcome extends React.Component {
             }
           }}
           column={this.state.column}
-          onSelectCallback={(selected) => {
+          onSelectCallback={(selected, households) => {
             const u = ROOT + defualtURL + "?other=" + selected.selected
             // console.log(u);
-            if(selected.what && selected.what === "saey") {
-              this.setState({loading: true, saey: selected.selected})
+            if (selected.what && selected.what === "saey") {
+              this.setState({ loading: true, saey: selected.selected })
               fetchData(u, (data, error) => {
-                if(!error) {
+                if (!error) {
                   // console.log(data);
-                  this._stateWithDataAndGeojson(null, this.state.data, 
+                  this._stateWithDataAndGeojson(null, this.state.data,
                     data)
                 } else {
                   console.log(error);
@@ -609,10 +609,11 @@ export default class Welcome extends React.Component {
         {
           legend && (geomType === 'polygon' ||
             geomType === 'multipolygon') &&
-            <div 
+          <div
             style={{
               ...theme(this.props.dark),
-              textAlign: 'center'}}
+              textAlign: 'center'
+            }}
             className="mapboxgl-ctrl-bottom-right mapbox-legend">
             {legend}
           </div>
