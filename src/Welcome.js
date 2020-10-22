@@ -176,6 +176,8 @@ export default class Welcome extends React.Component {
 
   _stateWithDataAndGeojson(err, geojson, data, customError) {
     if (!err) {
+      console.log(data[1])
+
       geojson.features.forEach(feature => {
         feature.properties.population = 0; // init missing ones 
         for (let i = 0; i < data.length; i++) {
@@ -573,17 +575,22 @@ export default class Welcome extends React.Component {
             }
           }}
           column={this.state.column}
-          onSelectCallback={(selected, households) => {
-            const u = ROOT + defualtURL + "?other=" + selected.selected
+          onSelectCallback={(selected) => {
+            let u = ROOT + defualtURL + "?other=" + selected.selected
             // console.log(u);
             if (selected.what && selected.what === "saey") {
               this.setState({ loading: true, saey: selected.selected })
+              if(selected.households) {
+                u += "&hh=true"
+              }
+              console.log(u);
               fetchData(u, (data, error) => {
                 if (!error) {
                   // console.log(data);
                   this._stateWithDataAndGeojson(null, this.state.data,
                     data)
                 } else {
+                  this.setState({loading:false})
                   console.log(error);
                 }
               })
@@ -604,7 +611,6 @@ export default class Welcome extends React.Component {
             this._fitViewport(bboxLonLat)
           }}
           showLegend={(legend) => this.setState({ legend })}
-          datasetName={defualtURL}
         />
         {
           legend && (geomType === 'polygon' ||

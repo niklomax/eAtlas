@@ -42,7 +42,6 @@ export default class DeckSidebar extends React.Component {
       reset: false,
       multiVarSelect: {},
       barChartVariable: "road_type",
-      datasetName: props.datasetName
     }
   }
 
@@ -110,7 +109,6 @@ export default class DeckSidebar extends React.Component {
         year: "",
         multiVarSelect: {},
         barChartVariable: "road_type",
-        datasetName: urlOrName || this.state.datasetName
       })
     }
     const spenserValues = data && data.length &&
@@ -133,7 +131,6 @@ export default class DeckSidebar extends React.Component {
             <h2>{spenserValues ? spenserValues + " row" + (spenserValues > 1 ? "s" : "") + "."
               : "Nothing to show"}
             </h2>
-            dataset: {this.state.datasetName}
           </div>
           <div>
             <Modal

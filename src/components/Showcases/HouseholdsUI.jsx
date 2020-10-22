@@ -40,7 +40,7 @@ const assembleColumns = (obj) => {
 }
 
 const HouseholdUI = (props) => {
-  // const { saeyCallback } = props;
+  const { saeyCallback } = props;
   const [year, setYear] = useState([2012]);
   const [values, setValues] = useState(
     parseColumns('3:2:3:-2:4:6:3:-1:2:6:2:2:' + year)
@@ -92,8 +92,8 @@ const HouseholdUI = (props) => {
           ...values, year: year, commsize: -2
         })
         console.log(o);
-        // typeof (saeyCallback) === 'function' &&
-        //   saeyCallback(saey)
+        typeof (saeyCallback) === 'function' &&
+          saeyCallback(o, true)
       }}
       >Update</Button>
 

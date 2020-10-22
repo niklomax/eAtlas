@@ -30,7 +30,7 @@ export default function URL(props) {
       </ButtonGroup>
       <hr/>
       {
-        pop ? <PopUI {...props} /> : <HHUI />
+        pop ? <PopUI {...props} /> : <HHUI {...props}/>
       }
     </>
   )
