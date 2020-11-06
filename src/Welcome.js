@@ -175,6 +175,7 @@ export default class Welcome extends React.Component {
   }
 
   _stateWithDataAndGeojson(err, geojson, data, customError) {
+    const {saey, households} = this.state;
     if (!err) {
       // console.log(data)
       if (!data) {
@@ -190,7 +191,7 @@ export default class Welcome extends React.Component {
           if (feature.properties.msoa11cd === data[i][0]) {
             delete feature.properties.populationdensity;
             feature.properties.population = Number.parseInt(data[i][1]);
-            feature.properties.year = this.state.saey.substr(this.state.saey.length - 4);
+            feature.properties.year = households ? saey : saey.substr(saey.length - 4);
             break;
           }
         }
@@ -586,8 +587,9 @@ export default class Welcome extends React.Component {
 
           // households value is set in HouseholdsUI comp via Spenser comp
           onSelectCallback={(selected, households) => {
-            console.log(households);
-            const u = ROOT + defualtURL + "?other=" + selected.selected
+            const u = ROOT + defualtURL + "?other=" + selected.selected + (
+              households ? "&hh=true" : ""
+            )
             // console.log(u);
             if (selected.what && selected.what === "saey") {
               this.setState({
