@@ -1,4 +1,3 @@
-t1 = Sys.time()
 if(is.null(curl::nslookup("r-project.org", error = FALSE))) {
   stop(message(
     "No connection",
@@ -68,7 +67,7 @@ get_msoa <- function(res) {
 
 p <- readRDS(pop.file)
 h <- readRDS(hh.file)
-print(head(h))
+
 if(!inherits(p$other, "numeric")) p = p[, other := as.numeric(other)]
 
 #' serve spenser
@@ -131,9 +130,6 @@ get_full_area <- function(code = "", hh = "") {
   as.matrix(res)
 }
 
-t2 = Sys.time()
-message(t2 - t1)
-#' BROKEN SINCE 1.0.0
 #' https://www.rplumber.io/news/index.html#breaking-changes
 #' plumber changes dir to this file's directory before processing.
 #' 

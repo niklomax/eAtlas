@@ -176,8 +176,14 @@ export default class Welcome extends React.Component {
 
   _stateWithDataAndGeojson(err, geojson, data, customError) {
     if (!err) {
-      console.log(data[1])
-
+      console.log(data)
+      if(!data) {
+        this.setState({
+          loading: false,
+          alert: { content: 'No results for parameters.' }
+        })
+        return;
+      }
       geojson.features.forEach(feature => {
         feature.properties.population = 0; // init missing ones 
         for (let i = 0; i < data.length; i++) {

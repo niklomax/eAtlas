@@ -12,8 +12,9 @@ const SpenserAreaGraph = (props) => {
   // console.log(area);
 
   useEffect(() => {
-    fetchData(ROOT + "/api/area?code=" + area, (result) => {
+    fetchData(ROOT + "/api/area?code=" + area, (result, error) => {
       // console.log(result);
+      if(error) console.log(error);
       setData(result)
     })
   }, [area])
@@ -68,7 +69,7 @@ const SpenserAreaGraph = (props) => {
     sexes[i] = Object.keys(each).sort().map(yy => ({x:yy, y: each[yy]}))
   })
   population = Object.keys(population).sort().map(yy => ({x:+yy, y: population[yy]}))
-  // console.log(population);
+  console.log(population);
   return (
     <MultiLinePlot 
       // {x: 2012, y: 45}
