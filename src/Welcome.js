@@ -176,8 +176,8 @@ export default class Welcome extends React.Component {
 
   _stateWithDataAndGeojson(err, geojson, data, customError) {
     if (!err) {
-      console.log(data)
-      if(!data) {
+      // console.log(data)
+      if (!data) {
         this.setState({
           loading: false,
           alert: { content: 'No results for parameters.' }
@@ -433,12 +433,14 @@ export default class Welcome extends React.Component {
       this.setState({ tooltip: "" })
       return;
     }
+    console.log(this.state.households);
     this.setState({
       tooltip:
         // react did not like x and y props.
         <Tooltip
           dark={this.props.dark}
           saey={this.state.saey}
+          households={this.state.households}
           isMobile={isMobile()}
           topx={x} topy={y} hoveredObject={hoveredObject} />
     })
@@ -581,22 +583,25 @@ export default class Welcome extends React.Component {
             }
           }}
           column={this.state.column}
-          onSelectCallback={(selected) => {
-            let u = ROOT + defualtURL + "?other=" + selected.selected
+
+          // households value is set in HouseholdsUI comp via Spenser comp
+          onSelectCallback={(selected, households) => {
+            console.log(households);
+            const u = ROOT + defualtURL + "?other=" + selected.selected
             // console.log(u);
             if (selected.what && selected.what === "saey") {
-              this.setState({ loading: true, saey: selected.selected })
-              if(selected.households) {
-                u += "&hh=true"
-              }
-              console.log(u);
+              this.setState({
+                loading: true,
+                saey: selected.selected,
+                households: households // state must be named
+              })
               fetchData(u, (data, error) => {
                 if (!error) {
                   // console.log(data);
                   this._stateWithDataAndGeojson(null, this.state.data,
                     data)
                 } else {
-                  this.setState({loading:false})
+                  this.setState({ loading: false })
                   console.log(error);
                 }
               })

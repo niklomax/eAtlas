@@ -155,8 +155,8 @@ export default class DeckSidebar extends React.Component {
               {<Spenser saeyCallback={(saey, households) => {
                 // check saey, if same do not fetch
                 onSelectCallback && onSelectCallback({
-                  what: 'saey', selected: saey, households: households
-                });
+                  what: 'saey', selected: saey
+                }, households);
                 this.setState({
                   saey
                 })

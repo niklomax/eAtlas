@@ -43,12 +43,12 @@ export default class Tooltip extends React.Component {
     const { isMobile } = this.state;
     // console.log(topx, topy);
     // console.log(hoveredObject)
-    
+
     if (!hoveredObject) return null;
 
-    const type_feature = hoveredObject.type && 
-    hoveredObject.type === 'Feature';
-    const cluster = hoveredObject && hoveredObject.cluster 
+    const type_feature = hoveredObject.type &&
+      hoveredObject.type === 'Feature';
+    const cluster = hoveredObject && hoveredObject.cluster
     // {cluster: true, cluster_id: 8, point_count: 54, 
     // point_count_abbreviated: 54}
 
@@ -56,7 +56,7 @@ export default class Tooltip extends React.Component {
     let severity_keys = [];
     let crashes_data = [];
     let severity_data = [];
-    let severity_data_separate = [];    
+    let severity_data_separate = [];
     if (!type_feature && !cluster) {
       list = hoveredObject.points.map(feature => {
         const aKey = {}
@@ -107,27 +107,27 @@ export default class Tooltip extends React.Component {
       // 2016: {Serious: 1, Slight: 2}, 2017: {Slight: 1}}
       Object.keys(severity_by_year).forEach(y => {
         severity_by_year[y] &&
-        Object.keys(severity_by_year[y]).forEach(kk => {
-          // get index of kk
-          const index = severity_keys.indexOf(kk);
-          if(!severity_data_separate[index]) {
-            severity_data_separate[index] = [];
-          }
-          // 2016: {Serious: 1, Slight: 2}
-          severity_data_separate[index].push({
-            x: +(y), y: severity_by_year[y][kk]
+          Object.keys(severity_by_year[y]).forEach(kk => {
+            // get index of kk
+            const index = severity_keys.indexOf(kk);
+            if (!severity_data_separate[index]) {
+              severity_data_separate[index] = [];
+            }
+            // 2016: {Serious: 1, Slight: 2}
+            severity_data_separate[index].push({
+              x: +(y), y: severity_by_year[y][kk]
+            })
           })
-        })
       })
     }
     // console.log(crashes_data);
-    
+
     const w = window.innerWidth;
     const y = window.innerHeight;
     const n_topy = isMobile ? 10 :
       topy + (WIDTH + BAR_HEIGHT) > y ? topy - WIDTH : topy;
     const n_left = isMobile ? 10 :
-      topx + WIDTH > w ? topx - WIDTH : topx;    
+      topx + WIDTH > w ? topx - WIDTH : topx;
     const tooltip =
       <div
         className="xyz" style={{
@@ -135,7 +135,7 @@ export default class Tooltip extends React.Component {
           left: topx + WIDTH > w ? n_left : topx
         }}>
         <div>
-          <b>Total: {cluster ? hoveredObject.point_count : 
+          <b>Total: {cluster ? hoveredObject.point_count :
             type_feature ? 1 : hoveredObject.points.length}</b>
         </div>
         <div>
@@ -148,21 +148,22 @@ export default class Tooltip extends React.Component {
           }
           {
             severity_data_separate.length > 1 ?
-            <MultiLinePlot
-              data={[...severity_data_separate, crashes_data]}
-              legend={[...severity_keys, 'Total']}
-              title="Crashes" noYAxis={true}
-              plotStyle={{ height: 100, marginBottom: 50 }}
-            /> :
-            <SeriesPlot title={severity_keys.length === 1 && severity_keys[0]} 
-            data= {crashes_data} type= {LineSeries} />
+              <MultiLinePlot
+                data={[...severity_data_separate, crashes_data]}
+                legend={[...severity_keys, 'Total']}
+                title="Crashes" noYAxis={true}
+                plotStyle={{ height: 100, marginBottom: 50 }}
+              /> :
+              <SeriesPlot title={severity_keys.length === 1 && severity_keys[0]}
+                data={crashes_data} type={LineSeries} />
           }
           {
             type_feature &&
-            <SpenserAreaGraph 
-            dark={this.props.dark}
-            saey={this.props.saey}
-            area={hoveredObject.properties.msoa11cd}/>
+            <SpenserAreaGraph
+              dark={this.props.dark}
+              saey={this.props.saey}
+              households={this.props.households}
+              area={hoveredObject.properties.msoa11cd} />
           }
         </div>
       </div >
@@ -172,30 +173,30 @@ export default class Tooltip extends React.Component {
   _listPropsAndValues(hoveredObject) {
     let DATA = []
     const props = hoveredObject.properties;
-    if(props) {
+    if (props) {
       DATA = Object.keys(props)
-      .map(p => {
-        return([humanize(p), props[p]])
-      })
+        .map(p => {
+          return ([humanize(p), props[p]])
+        })
     } else { // two points passed go through first one
       DATA = Object.keys(hoveredObject.points[0].properties)
-      .map(p => {
-        let points = [
-          humanize(p), 
-          hoveredObject.points[0].properties[p],
-        ]
-        if(hoveredObject.points[1]) {
-          points.push(hoveredObject.points[1].properties[p])
-        }
-        return(points)
-      })
+        .map(p => {
+          let points = [
+            humanize(p),
+            hoveredObject.points[0].properties[p],
+          ]
+          if (hoveredObject.points[1]) {
+            points.push(hoveredObject.points[1].properties[p])
+          }
+          return (points)
+        })
     }
-    return <Table style={{maxWidth: '320px'}} 
-    columns={
-      hoveredObject.points && 
-      hoveredObject.points.length === 2 ? 
-      ['Property', 'Value p1', 'Value p2'] : ['Property', 'Value'] 
-    } data={DATA} />
+    return <Table style={{ maxWidth: '320px' }}
+      columns={
+        hoveredObject.points &&
+          hoveredObject.points.length === 2 ?
+          ['Property', 'Value p1', 'Value p2'] : ['Property', 'Value']
+      } data={DATA} />
 
   }
 }

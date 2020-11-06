@@ -67,6 +67,10 @@ get_msoa <- function(res) {
 
 p <- readRDS(pop.file)
 h <- readRDS(hh.file)
+# laterst hh-final.Rds has Year, MSOA11CD, sum
+# make sure it is c("other", "area", "sum") 
+# to keep below functions similar
+names(h) <- c("other", "area", "sum")
 
 if(!inherits(p$other, "numeric")) p = p[, other := as.numeric(other)]
 
@@ -83,7 +87,7 @@ get_spenser <- function(other = "", hh = "") {
     return(m)
   }
   # data.table column vs variable name
-  o <- other
+  o <- as.numeric(other)
   if(nchar(hh) > 0) {
     # other patterm 1:2:3:4.. 
     message("households with other = ", o)
@@ -93,7 +97,7 @@ get_spenser <- function(other = "", hh = "") {
       return(m)
     }
     message("population with other = ", o)
-    res <- p[other == as.numeric(o), c("area", "sum")]
+    res <- p[other == o, c("area", "sum")]
   }
   # print("subset done...")
   # print(nrow(res))
