@@ -129,7 +129,7 @@ export default class DeckSidebar extends React.Component {
             }}
             className="side-pane-header">
             <h2>{spenserValues ? spenserValues + " row" + (spenserValues > 1 ? "s" : "") + "."
-              : "Nothing to show"}
+              : this.props.loading ? "loading..." : "Nothing to show"}
             </h2>
           </div>
           <div>

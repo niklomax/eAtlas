@@ -12,6 +12,8 @@ export default function URL(props) {
   return (
     <>
       <ButtonGroup
+        kind={KIND.secondary}
+        size={SIZE.compact}
         mode={MODE.radio}
         selected={[pop ? 0 : 1]}
       >
@@ -19,8 +21,6 @@ export default function URL(props) {
           ['POP', 'HH'].map(each =>
             <Button
               key={each}
-              kind={KIND.secondary}
-              size={SIZE.compact}
               onClick={() =>
                 setPop(pop => !pop)
               }>
@@ -28,9 +28,9 @@ export default function URL(props) {
             </Button>)
         }
       </ButtonGroup>
-      <hr/>
+      <hr />
       {
-        pop ? <PopUI {...props} /> : <HHUI {...props}/>
+        pop ? <PopUI {...props} /> : <HHUI {...props} />
       }
     </>
   )
