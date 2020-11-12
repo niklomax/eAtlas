@@ -49,7 +49,8 @@ const osmtiles = {
       "tiles": [
         // "http://tile.openstreetmap.org/{z}/{x}/{y}.png",
         // "http://b.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        "http://tile.stamen.com/toner/{z}/{x}/{y}.png"
+        // "http://tile.stamen.com/toner/{z}/{x}/{y}.png"
+        'https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg'
       ],
       "tileSize": 256
     }
@@ -175,7 +176,7 @@ export default class Welcome extends React.Component {
   }
 
   _stateWithDataAndGeojson(err, geojson, data, customError) {
-    const {saey, households} = this.state;
+    const { saey, households } = this.state;
     if (!err) {
       // console.log(data)
       if (!data) {
