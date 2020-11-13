@@ -9,12 +9,15 @@ const SpenserAreaGraph = (props) => {
   const { area, saey, households } = props;
   const [data, setData] = useState(null)
   useEffect(() => {
-    fetchData(ROOT + "/api/area?code=" + area, (result, error) => {
-      // console.log(result);
-      if (error) console.log(error);
-      setData(result)
+    const fullURL = ROOT + "/api/area?code=" + area + (households ? "&hh=true" : "");
+    fetchData(fullURL, (result, error) => {
+      if(!error) {
+        setData(result)
+      } else {
+        console.log(error);
+      }
     })
-  }, [area])
+  }, [area, households])
 
   if (!area || !data || !data.length) return null;
   if (households) {
