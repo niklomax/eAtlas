@@ -162,23 +162,25 @@ export default class DeckSidebar extends React.Component {
                 })
               }} />}
               <br />
-              <Card overrides={{ Root: { style: { background: 'inherit' } } }}>
-                {/* {notEmpty && <ColorPicker colourCallback={(color) =>
+              {/* {notEmpty && <ColorPicker colourCallback={(color) =>
                 typeof colourCallback === 'function' &&
                 colourCallback(color)} />
               } */}
-              Map Styles
-              <br />
-                <MapboxBaseLayers
-                  onSelectCallback={(selected) =>
-                    onSelectCallback &&
-                    onSelectCallback({
-                      selected: selected,
-                      what: 'mapstyle'
-                    })
-                  }
-                />
-              </Card>
+              { process.env.REACT_APP_MAPBOX_ACCESS_TOKEN &&
+                <Card overrides={{ Root: { style: { background: 'inherit' } } }}>
+                Map Styles
+                <br />
+                  <MapboxBaseLayers
+                    onSelectCallback={(selected) =>
+                      onSelectCallback &&
+                      onSelectCallback({
+                        selected: selected,
+                        what: 'mapstyle'
+                      })
+                    }
+                  />
+                </Card>
+              }
 
             </div>
             <div className="space"></div>

@@ -187,18 +187,24 @@ export default class Welcome extends React.Component {
         return;
       }
       geojson.features.forEach(feature => {
-        feature.properties.population = 0; // init missing ones 
+        delete feature.properties.populationdensity;
+        if(households) {
+          delete feature.properties.population;
+        } else {
+          delete feature.properties.households;
+        }
+        feature.properties[
+          households ? "households" : "population"] = 0; // init missing ones 
         for (let i = 0; i < data.length; i++) {
           if (feature.properties.msoa11cd === data[i][0]) {
-            delete feature.properties.populationdensity;
-            feature.properties.population = Number.parseInt(data[i][1]);
+            feature.properties[
+              households ? "households" : "population"] = Number.parseInt(data[i][1]);
             feature.properties.year = households ? saey : saey.substr(saey.length - 4);
             break;
           }
         }
       });
       this.setState({
-        column: "population",
         loading: false,
         data: geojson,
         alert: customError || null
@@ -435,7 +441,7 @@ export default class Welcome extends React.Component {
       this.setState({ tooltip: "" })
       return;
     }
-    console.log(this.state.households);
+    // console.log(this.state.households);
     this.setState({
       tooltip:
         // react did not like x and y props.
@@ -596,7 +602,8 @@ export default class Welcome extends React.Component {
               this.setState({
                 loading: true,
                 saey: selected.selected,
-                households: households // state must be named
+                households: households, // state must be named
+                column: households ? "households" : "population",
               })
               fetchData(u, (data, error) => {
                 if (!error) {

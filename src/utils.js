@@ -86,17 +86,22 @@ const xyObjectByProperty = (data, property, noNulls = true) => {
   if (!data || !property) return;
   //data = [{...data = 12/12/12}]       
   const map = new Map()
+  const addToMap = (v) => {
+    if (map.get(v)) {
+      map.set(v, map.get(v) + 1)
+    } else {
+      map.set(typeof v === 'number' ? +(v) : v, 1)
+    }
+  }
   data.forEach(feature => {
     let value = feature.properties[property];
     if (typeof (value) === 'string' && value.split("/")[2]) {
       value = value.split("/")[2]
     }
-    if (noNulls && value !== null) { // remove nulls here
-      if (map.get(value)) {
-        map.set(value, map.get(value) + 1)
-      } else {
-        map.set(typeof value === 'number' ? +(value) : value, 1)
-      }
+    if (noNulls && value) { // remove nulls here
+      addToMap(value)
+    } else {
+      addToMap(value)
     }
   });
   const sortedMap = typeof Array.from(map.keys())[0] === 'number' ?
@@ -611,23 +616,16 @@ const generateLegend = (options) => {
   const jMax = domain[domain.length - 1], jMin = domain[0];
   const legend = [<p key='title'>{title}</p>]
 
+  // console.log(title, domain, jMax, jMin);
   for (var i = 0; i < 10; i += 1) {
     legend.push(
       <>
-        {i === 0 &&
-          <i>{(title === humanize('Mean.Travel.Time..Seconds.') ?
-            +(jMin) / 300 : jMin).toFixed(2)
-          }</i>
-        }
+        {i === 0 && <i>{jMin.toFixed(2)}</i>}
         <span key={i} style={{ 
           margin: 'auto',
           background: interpolate(i / 10) }}>
         </span>
-        {i === 9 &&
-          <i>{(title === humanize('Mean.Travel.Time..Seconds.') ?
-            +(jMax) / 300 : jMax).toFixed(2)
-          }</i>
-        }
+        {i === 9 && <i>{jMax.toFixed(2)}</i>}
       </>)
   }
   return legend;
