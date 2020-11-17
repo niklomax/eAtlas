@@ -162,6 +162,7 @@ export default class Welcome extends React.Component {
       // fixed sex change in years
       // const asObject = data.map(e => ({[e[0]]: e[1].trim()}))
       if (!error) {
+        this.setState({ apiURL: fullURL })
         fetchData(ROOT + "/api/msoa.geojson", (geojson, err) => {
           this._stateWithDataAndGeojson(err, geojson, data, customError);
         })
@@ -188,7 +189,7 @@ export default class Welcome extends React.Component {
       }
       geojson.features.forEach(feature => {
         delete feature.properties.populationdensity;
-        if(households) {
+        if (households) {
           delete feature.properties.population;
         } else {
           delete feature.properties.households;
@@ -591,7 +592,7 @@ export default class Welcome extends React.Component {
             }
           }}
           column={this.state.column}
-
+          apiURL={this.state.apiURL}
           // households value is set in HouseholdsUI comp via Spenser comp
           onSelectCallback={(selected, households) => {
             const u = ROOT + defualtURL + "?other=" + selected.selected + (
@@ -608,6 +609,7 @@ export default class Welcome extends React.Component {
               fetchData(u, (data, error) => {
                 if (!error) {
                   // console.log(data);
+                  this.setState({ apiURL: u })
                   this._stateWithDataAndGeojson(null, this.state.data,
                     data)
                 } else {

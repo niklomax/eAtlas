@@ -161,14 +161,21 @@ export default class DeckSidebar extends React.Component {
                   saey
                 })
               }} />}
+              |
+              {notEmpty &&
+                <Button
+                  onClick={() => {
+                    window.open(this.props.apiURL)
+                  }}>Download</Button>
+              }
               <br />
               {/* {notEmpty && <ColorPicker colourCallback={(color) =>
                 typeof colourCallback === 'function' &&
                 colourCallback(color)} />
               } */}
-              { process.env.REACT_APP_MAPBOX_ACCESS_TOKEN &&
+              {process.env.REACT_APP_MAPBOX_ACCESS_TOKEN &&
                 <Card overrides={{ Root: { style: { background: 'inherit' } } }}>
-                Map Styles
+                  Map Styles
                 <br />
                   <MapboxBaseLayers
                     onSelectCallback={(selected) =>
