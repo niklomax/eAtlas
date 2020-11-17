@@ -27,7 +27,9 @@ class About extends Component {
     const { markdown } = this.state;
 
     return (
-      <section style={{ background: 'white', padding: '5%' }}>
+      <section style={{ 
+        margin: 'auto', maxWidth:1024,
+        background: 'white', padding: '5%' }}>
         <article dangerouslySetInnerHTML={{ __html: markdown }}></article>
       </section>
     )
