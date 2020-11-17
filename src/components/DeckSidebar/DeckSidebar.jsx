@@ -5,6 +5,7 @@ import {
 } from 'react-bootstrap';
 import { Button, KIND, SIZE } from 'baseui/button';
 import { Card } from 'baseui/card';
+import { StyledLink } from "baseui/link";
 
 import './DeckSidebar.css';
 import MapboxBaseLayers from '../MapboxBaseLayers';
@@ -136,6 +137,17 @@ export default class DeckSidebar extends React.Component {
             <Modal
               toggleOpen={() => typeof toggleOpen === 'function' && toggleOpen()}
               component={<DataTable data={data} />} />
+            {notEmpty &&
+              <StyledLink href={this.props.apiURL + "&download=true"}>
+                {<i
+                style={{
+                  margin: 5,
+                  cursor: 'pointer',
+                  fontSize: '1.5em'
+                }}
+                className={"fa fa-download"}></i>}
+                </StyledLink>
+            }
             {
               this.state.reset &&
               <Button
@@ -161,13 +173,6 @@ export default class DeckSidebar extends React.Component {
                   saey
                 })
               }} />}
-              |
-              {notEmpty &&
-                <Button
-                  onClick={() => {
-                    window.open(this.props.apiURL)
-                  }}>Download</Button>
-              }
               <br />
               {/* {notEmpty && <ColorPicker colourCallback={(color) =>
                 typeof colourCallback === 'function' &&

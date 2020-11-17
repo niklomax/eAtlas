@@ -80,7 +80,7 @@ if(!inherits(p$other, "numeric")) p = p[, other := as.numeric(other)]
 #' @serializer unboxedJSON
 #' @get /api/spenser
 #' @get /api/spenser/<other>/<hh>
-get_spenser <- function(other = "", hh = "") {
+get_spenser <- function(other = "", hh = "", download = "") {
   m <- list(Error = "Error: please provide correct input values")
   # sanity checks
   if(length(other) > 50 | length(hh) > 5) {
@@ -91,13 +91,25 @@ get_spenser <- function(other = "", hh = "") {
   if(nchar(hh) > 0) {
     # other patterm 1:2:3:4.. 
     message("households with other = ", o)
-    res <- h[other== o, c("area","sum")]
+    d <- h[other== o, c("area","sum")]
+    if(identical(download, "true")) {
+      return(as_attachment(d, 
+        paste0("housholds-", o, ".json")
+      ))
+    }
+    res <- d
   } else {
     if(is.null(o) | nchar(o) < 7) {
       return(m)
     }
     message("population with other = ", o)
-    res <- p[other == o, c("area", "sum")]
+    d <- p[other == o, c("area", "sum")]
+    if(identical(download, "true")) {
+      return(as_attachment(d, 
+        paste0("population-", o, ".json")
+      ))
+    }
+    res <- d
   }
   # print("subset done...")
   # print(nrow(res))
@@ -116,20 +128,32 @@ get_spenser <- function(other = "", hh = "") {
 #' @serializer unboxedJSON
 #' @get /api/area
 #' @get /api/area/<code>/<hh>
-get_full_area <- function(code = "", hh = "") {
+get_full_area <- function(code = "", hh = "", download = "") {
   m <- list(Error = "Error: please provide valid area code.")
   if(length(code) > 12 | length(hh) > 5) {
     return(m)
   }
   if(nchar(hh) > 0) {
     message("households with code = ", code)
-    res <- h[area == code, c("other", "sum")]
+    d <- h[area == code, c("other", "sum")]
+    if(identical(download, "true")) {
+      return(as_attachment(d, 
+        paste0("households-", code, ".json")
+      ))
+    }
+    res <- d
   } else {
     if(is.null(code) | nchar(code) != 9) { # nchar("E02004899") == 9
       return(m)
     }
     message("population with code = ", code)
-    res <- p[area == code, c("other", "sum")]
+    d <- p[area == code, c("other", "sum")]
+    if(identical(download, "true")) {
+      return(as_attachment(d, 
+        paste0("population-",code, ".json")
+      ))
+    }
+    res <- d
   }
   as.matrix(res)
 }
