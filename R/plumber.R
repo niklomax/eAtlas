@@ -5,7 +5,7 @@ if(is.null(curl::nslookup("r-project.org", error = FALSE))) {
     "Please re-run when you are connected."
   ))
 }
-packages <- c("data.table", "curl")
+packages <- c("data.table", "curl", "plumber")
 
 
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
