@@ -6,7 +6,7 @@ function define(name, value) {
 }
 
 // geospenser.com
-define("PRD_URL", 'http://geospenser.com');
+define("PRD_URL", 'https://geospenser.com');
 define("DEV_URL", 'http://localhost:8000');
 define("UI_LIST", [
   "checkbox",
