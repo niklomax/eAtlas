@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/eAtlas/static/css/main.045520eb.chunk.css",
+    "main.js": "/eAtlas/static/js/main.0caac642.chunk.js",
+    "main.js.map": "/eAtlas/static/js/main.0caac642.chunk.js.map",
+    "runtime-main.js": "/eAtlas/static/js/runtime-main.924e523e.js",
+    "runtime-main.js.map": "/eAtlas/static/js/runtime-main.924e523e.js.map",
+    "static/js/2.130b4af2.chunk.js": "/eAtlas/static/js/2.130b4af2.chunk.js",
+    "static/js/2.130b4af2.chunk.js.map": "/eAtlas/static/js/2.130b4af2.chunk.js.map",
+    "static/js/3.23ecdd08.chunk.js": "/eAtlas/static/js/3.23ecdd08.chunk.js",
+    "static/js/3.23ecdd08.chunk.js.map": "/eAtlas/static/js/3.23ecdd08.chunk.js.map",
+    "index.html": "/eAtlas/index.html",
+    "precache-manifest.cfd274b264b2c52a6115a23bc4d21922.js": "/eAtlas/precache-manifest.cfd274b264b2c52a6115a23bc4d21922.js",
+    "service-worker.js": "/eAtlas/service-worker.js",
+    "static/css/main.045520eb.chunk.css.map": "/eAtlas/static/css/main.045520eb.chunk.css.map",
+    "static/js/2.130b4af2.chunk.js.LICENSE.txt": "/eAtlas/static/js/2.130b4af2.chunk.js.LICENSE.txt",
+    "static/media/location-icon-atlas.png": "/eAtlas/static/media/location-icon-atlas.37932833.png",
+    "static/media/notes.md": "/eAtlas/static/media/notes.d652360a.md"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.924e523e.js",
+    "static/js/2.130b4af2.chunk.js",
+    "static/css/main.045520eb.chunk.css",
+    "static/js/main.0caac642.chunk.js"
+  ]
+}
